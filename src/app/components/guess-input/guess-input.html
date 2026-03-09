@@ -1,0 +1,63 @@
+<div class="guess-list">
+  @if (listeningService.showSubtitles()) {
+  <div class="warning-banner">
+    Subtítulos visibles 👀. Ocultalos para poder seguir transcribiendo.
+  </div>
+  } @if (isEvaluated() && currentClipAverage() > 0) {
+  <div class="summary-card">
+    <div class="summary-score">{{ currentClipAverage() }}%</div>
+    <p>¡Buen trabajo! Esta es tu precisión media en este clip.</p>
+    <button class="btn-reset" (click)="reset()">Volver a intentar</button>
+  </div>
+  } @for (line of lines(); track $index) {
+  <div
+    class="guess-card"
+    [class.active]="activeLineIndex() === $index"
+    [class.evaluated]="line.score !== null"
+  >
+    <div class="line-header">
+      <span class="line-number">Frase {{ $index + 1 }}</span>
+      @if (line.score !== null) {
+      <span class="line-score" [class.perfect]="line.score === 100">
+        {{ line.score }}%
+      </span>
+      }
+    </div>
+
+    <div class="input-wrapper">
+      <input
+        type="text"
+        [value]="line.guess"
+        (input)="updateGuess($index, $event)"
+        (keyup.enter)="evaluateLine($index)"
+        [disabled]="listeningService.showSubtitles()"
+        placeholder="Escribe lo que escuchas..."
+      />
+      <button
+        class="btn-check"
+        (click)="evaluateLine($index)"
+        [disabled]="!line.guess || listeningService.showSubtitles()"
+      >
+        <span>✓</span>
+      </button>
+    </div>
+
+    @if (line.score !== null && line.score < 100) {
+    <div class="target-reveal">
+      <small>Objetivo:</small>
+      <p>{{ line.targetHiragana }}</p>
+    </div>
+    }
+  </div>
+  } @if (!isEvaluated()) {
+  <div class="list-footer">
+    <button
+      class="btn-evaluate-all"
+      (click)="evaluateAll()"
+      [disabled]="listeningService.showSubtitles()"
+    >
+      Finalizar Evaluación
+    </button>
+  </div>
+  }
+</div>

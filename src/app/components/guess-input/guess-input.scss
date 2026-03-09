@@ -1,0 +1,249 @@
+.guess-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.warning-banner {
+    background: rgba(255, 193, 7, 0.15);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    color: #ffc107;
+    padding: 1rem;
+    border-radius: 12px;
+    text-align: center;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    animation: slideIn 0.3s ease-out;
+}
+
+.guess-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+    &.active {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(233, 30, 99, 0.3);
+        box-shadow: 0 15px 40px rgba(233, 30, 99, 0.1);
+        transform: translateY(-2px);
+    }
+
+    &.evaluated {
+        opacity: 0.8;
+    }
+
+    .line-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        .line-number {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .line-score {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--primary);
+            background: rgba(233, 30, 99, 0.1);
+            padding: 0.2rem 0.8rem;
+            border-radius: 12px;
+            border: 1px solid rgba(233, 30, 99, 0.2);
+
+            &.perfect {
+                color: var(--secondary);
+                background: rgba(0, 242, 255, 0.1);
+                border-color: rgba(0, 242, 255, 0.2);
+                box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+            }
+        }
+    }
+
+    .input-wrapper {
+        display: flex;
+        gap: 0.5rem;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        padding: 0.4rem;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.8rem 1rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+            outline: none;
+
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.2);
+            }
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+
+        .btn-check {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            span {
+                font-size: 1.2rem;
+                font-weight: bold;
+            }
+
+            &:hover:not(:disabled) {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+                transform: scale(1.05);
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+        }
+    }
+
+    .target-reveal {
+        margin-top: 1.2rem;
+        padding-top: 1.2rem;
+        border-top: 1px dashed rgba(255, 255, 255, 0.1);
+
+        small {
+            display: block;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        p {
+            margin: 0;
+            font-size: 1.4rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+    }
+}
+
+.list-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    padding-bottom: 4rem;
+
+    .btn-evaluate-all {
+        background: linear-gradient(135deg, var(--primary), #ff4d85);
+        color: white;
+        border: none;
+        padding: 1rem 2.5rem;
+        border-radius: 20px;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        letter-spacing: 0.05em;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(233, 30, 99, 0.3);
+
+        &:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(233, 30, 99, 0.4);
+        }
+
+        &:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.4);
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+    }
+}
+
+.summary-card {
+    background: linear-gradient(135deg, rgba(233, 30, 99, 0.1), rgba(0, 242, 255, 0.1));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 3rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+    animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    .summary-score {
+        font-size: 5rem;
+        font-weight: 900;
+        font-family: 'Outfit', sans-serif;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+        line-height: 1;
+    }
+
+    p {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        margin-bottom: 2rem;
+    }
+
+    .btn-reset {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 12px;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

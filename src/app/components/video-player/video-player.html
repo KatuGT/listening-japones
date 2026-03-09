@@ -1,0 +1,94 @@
+<div class="video-player-wrapper">
+  <div class="video-stage">
+    <video
+      #videoPlayer
+      [src]="videoSrc"
+      class="main-video"
+      (timeupdate)="onTimeUpdate($event)"
+      (loadedmetadata)="onLoadedMetadata($event)"
+      (ended)="onEnded()"
+      (click)="togglePlay()"
+    ></video>
+
+    <div class="subtitle-mask"></div>
+    <app-subtitle-display></app-subtitle-display>
+  </div>
+
+  <div class="custom-controls">
+    <div class="progress-area">
+      <input
+        type="range"
+        class="seek-bar"
+        min="0"
+        step="any"
+        [max]="duration()"
+        [value]="currentTime()"
+        [style.background]="'linear-gradient(to right, var(--primary) ' + (currentTime() / (duration() || 1) * 100) + '%, rgba(255, 255, 255, 0.1) ' + (currentTime() / (duration() || 1) * 100) + '%)'"
+        (input)="seek($event)"
+      />
+      <div class="time-display">
+        <span>{{ formatTime(currentTime()) }}</span>
+        <span class="divider">/</span>
+        <span>{{ formatTime(duration()) }}</span>
+      </div>
+    </div>
+
+    <div class="buttons-row">
+      <div class="main-actions">
+        <button class="control-btn play-pause" (click)="togglePlay()">
+          <span class="icon" [class.play-icon]="!isPlaying()"
+            >{{ isPlaying() ? '⏸' : '▶' }}</span
+          >
+        </button>
+
+        <button
+          class="control-btn sub-toggle"
+          (click)="toggleSubtitles()"
+          [class.active]="listeningService.showSubtitles()"
+        >
+          <span class="sub-toggle-text"
+            >{{ listeningService.showSubtitles() ? 'Ocultar subtítulos' :
+            'Mostrar subtítulos' }}</span
+          >
+        </button>
+      </div>
+
+      <div class="secondary-actions">
+        <div class="volume-control">
+          <button class="control-btn mute-btn" (click)="toggleMute()">
+            <span class="icon"
+              >{{ isMuted() || volume() === 0 ? '🔇' : '🔊' }}</span
+            >
+          </button>
+          <input
+            type="range"
+            class="volume-slider"
+            min="0"
+            max="1"
+            step="0.01"
+            [value]="volume()"
+            [style.background]="'linear-gradient(to right, var(--secondary) ' + (volume() * 100) + '%, rgba(255, 255, 255, 0.1) ' + (volume() * 100) + '%)'"
+            (input)="setVolume($event)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (showSurrenderModal()) {
+  <div class="surrender-modal-overlay">
+    <div class="surrender-modal">
+      <div class="modal-icon">👀</div>
+      <h3>{{ surrenderMessage() }}</h3>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="cancelSurrender()">
+          Seguir intentando
+        </button>
+        <button class="btn-confirm" (click)="confirmSurrender()">
+          Nah, mostrar subs
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+</div>

@@ -1,0 +1,44 @@
+:host {
+    display: block;
+    position: absolute;
+    bottom: 10%; // Ajustado para que quede bien sobre la máscara negra
+    left: 0;
+    width: 100%;
+    z-index: 20; // IMPORTANTE: Debe estar por encima de la máscara (z-index: 10)
+    pointer-events: none; // Para que no bloquee clics en el video
+}
+
+.subtitle-box {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    width: 90%;
+    text-align: center;
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5);
+    pointer-events: none; // Para que no bloquee clicks en el video
+
+    .text {
+        margin: 0;
+        line-height: 1.8; // Más espacio para las lecturas arriba
+
+        ruby {
+            ruby-align: center;
+
+            rt {
+                font-size: 0.7rem; // Tamaño pequeño para furigana
+                color: var(--secondary); // Color cian para destacar
+                font-weight: 300;
+                transform: translateY(-2px);
+                opacity: 0.9;
+                text-shadow: none; // Limpiar sombra pesada para que sea legible
+            }
+
+            rb {
+                // El kanji principal
+            }
+        }
+    }
+}

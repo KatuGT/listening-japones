@@ -1,0 +1,5 @@
+@if (show() && currentSubtitle()) {
+<div class="subtitle-box">
+  <p class="text" [innerHTML]="currentSubtitle()?.safeHtml"></p>
+</div>
+}

@@ -1,0 +1,326 @@
+.video-player-wrapper {
+  width: 100%;
+  margin: 0 auto 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 24px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+
+  .video-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+    cursor: pointer;
+
+    .main-video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .subtitle-mask {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 18%; // Ajustar según el tamaño de los subs pegados
+      background: linear-gradient(to top, #000 80%, rgba(0, 0, 0, 0));
+      pointer-events: none;
+      z-index: 5;
+    }
+  }
+
+  .custom-controls {
+    margin-top: 1rem;
+    padding: 0 0.5rem;
+
+    .progress-area {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+
+      .seek-bar {
+        flex: 1;
+        cursor: pointer;
+        height: 6px;
+        border-radius: 10px;
+        appearance: none; // Importante para el background custom
+        background: rgba(255, 255, 255, 0.1);
+        outline: none;
+        margin: 0;
+        padding: 0;
+
+        &::-webkit-slider-thumb {
+          appearance: none;
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          background: var(--primary);
+          box-shadow: 0 0 10px rgba(233, 30, 99, 0.5);
+          cursor: pointer;
+          border: 2px solid white;
+          position: relative;
+          z-index: 2;
+        }
+
+        &::-moz-range-thumb {
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          background: var(--primary);
+          border: 2px solid white;
+          cursor: pointer;
+        }
+      }
+
+      .time-display {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        min-width: 100px;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+
+        .divider {
+          margin: 0 0.2rem;
+          opacity: 0.5;
+        }
+      }
+    }
+
+    .buttons-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .control-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 0;
+
+        .icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
+        }
+
+        .play-icon {
+          padding-left: 3px; // Visual correction for play triangle
+        }
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.15);
+          transform: scale(1.05);
+          border-color: var(--primary);
+          color: var(--primary);
+        }
+
+        &.play-pause {
+          width: 54px;
+          height: 54px;
+          background: rgba(233, 30, 99, 0.15);
+          border-color: rgba(233, 30, 99, 0.3);
+          font-size: 1.4rem;
+
+          &:hover {
+            box-shadow: 0 0 25px rgba(233, 30, 99, 0.3);
+          }
+        }
+      }
+
+      .main-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .sub-toggle {
+          font-family: 'Outfit', sans-serif;
+          font-weight: 700;
+          font-size: 0.8rem;
+          color: var(--text-muted);
+          width: auto;
+          padding: 0 1rem;
+          border-radius: 12px;
+
+          &.active {
+            background: rgba(0, 242, 255, 0.1);
+            border-color: rgba(0, 242, 255, 0.3);
+            color: var(--secondary);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+          }
+        }
+      }
+
+      .secondary-actions {
+        .volume-control {
+          display: flex;
+          align-items: center;
+          gap: 0.8rem;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 0.3rem 0.8rem;
+          border-radius: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+
+          .volume-slider {
+            width: 80px;
+            height: 4px;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            outline: none;
+            cursor: pointer;
+
+            &::-webkit-slider-thumb {
+              appearance: none;
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              background: var(--secondary);
+              cursor: pointer;
+            }
+          }
+
+          .mute-btn {
+            background: none;
+            border: none;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+
+            &:hover {
+              transform: none;
+              color: var(--secondary);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // --- Modal de Rendirse ---
+  .surrender-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 24px; // Mismo borde que el contenedor principal
+    animation: fadeIn 0.3s ease-out;
+
+    .surrender-modal {
+      background: rgba(20, 20, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+      border-radius: 20px;
+      padding: 2.5rem;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      transform: scale(0.95);
+      animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+
+      .modal-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      h3 {
+        font-family: 'Outfit', sans-serif;
+        color: white;
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        line-height: 1.4;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+
+        button {
+          font-family: 'Outfit', sans-serif;
+          font-size: 0.9rem;
+          font-weight: 600;
+          padding: 0.8rem 1.2rem;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          border: none;
+
+          &.btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            &:hover {
+              background: rgba(255, 255, 255, 0.2);
+              transform: translateY(-2px);
+            }
+          }
+
+          &.btn-confirm {
+            background: linear-gradient(135deg, var(--primary), #ff4d85);
+            color: white;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @keyframes modalPop {
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+}
