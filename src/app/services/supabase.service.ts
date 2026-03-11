@@ -2,6 +2,15 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 
+export interface VideoFilters {
+    onlyActive?: boolean;
+    searchQuery?: string;
+    mediaFormat?: string;
+    difficulty?: number;
+    limit?: number;
+    offset?: number;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -12,20 +21,41 @@ export class SupabaseService {
         this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
     }
 
+
+
     // Videos
-    async getVideos(onlyActive: boolean = false) {
+    async getVideos(filters: VideoFilters = {}) {
         let query = this.supabase
             .from('videos')
-            .select('*')
+            .select('*', { count: 'exact' })
             .order('created_at', { ascending: false });
 
-        if (onlyActive) {
+        if (filters.onlyActive) {
             query = query.eq('is_active', true);
         }
 
-        const { data, error } = await query;
+        if (filters.searchQuery) {
+            // Buscamos en el título o en la descripción
+            query = query.or(`title.ilike.%${filters.searchQuery}%,description.ilike.%${filters.searchQuery}%`);
+        }
+
+        if (filters.mediaFormat && filters.mediaFormat !== 'Todos') {
+            query = query.eq('media_format', filters.mediaFormat);
+        }
+
+        if (filters.difficulty && filters.difficulty > 0) {
+            query = query.eq('difficulty', filters.difficulty);
+        }
+
+        if (filters.limit !== undefined && filters.offset !== undefined) {
+             query = query.range(filters.offset, filters.offset + filters.limit - 1);
+        } else if (filters.limit !== undefined) {
+             query = query.limit(filters.limit);
+        }
+
+        const { data, error, count } = await query;
         if (error) throw error;
-        return data;
+        return { data, count };
     }
 
     async getVideoById(id: string) {

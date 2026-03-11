@@ -5,14 +5,28 @@ import { KanjiParserService } from '../../services/kanji-parser';
 import { toHiragana } from 'wanakana';
 
 import { TranslationService } from '../../services/translation.service';
+import { JishoService, JishoResult } from '../../services/jisho.service';
+
+export interface TargetToken {
+  surface: string;
+  reading: string | null;
+  isKanji: boolean;
+  base_form?: string;
+  pos?: string;
+  isLoadingJisho?: boolean;
+  jishoLoaded?: boolean;
+  jishoData?: JishoResult | null;
+}
 
 export interface LineState {
   subtitle: any;
   guess: string;
   score: number | null;
   targetHiragana: string;
+  targetTokens: TargetToken[];
   translation?: string;
   isTranslating?: boolean;
+  showTranslation?: boolean;
 }
 
 @Component({
@@ -26,9 +40,9 @@ export class GuessInput {
   public listeningService = inject(ListeningService);
   private kanjiParser = inject(KanjiParserService);
   public translationService = inject(TranslationService);
+  public jishoService = inject(JishoService);
 
   lines = signal<LineState[]>([]);
-  isEvaluated = signal(false);
 
   // Inicializamos las líneas automáticamente cuando cambian los subtítulos
   constructor() {
@@ -54,11 +68,13 @@ export class GuessInput {
       guess: '',
       score: null,
       targetHiragana: this.kanjiParser.toHiragana(sub.text),
-      translation: '',
-      isTranslating: false
+      targetTokens: this.kanjiParser.tokenizeForDisplay(sub.text),
+      translation: sub.translation || '',
+      isTranslating: false,
+      showTranslation: false
     }));
     this.lines.set(initialLines);
-    this.isEvaluated.set(false);
+    this.listeningService.isEvaluated.set(false);
   }
 
   activeLineIndex = computed(() => {
@@ -113,7 +129,7 @@ export class GuessInput {
       }
     });
 
-    this.isEvaluated.set(true);
+    this.listeningService.isEvaluated.set(true);
     const avg = this.currentClipAverage();
     if (avg > 0) {
       this.listeningService.addScore(avg);
@@ -159,51 +175,56 @@ export class GuessInput {
     this.initLines(this.listeningService.allSubtitles());
   }
 
-  // --- IA Translation Logic ---
+  // --- Translation Toggle Logic ---
 
-  async translateLine(index: number) {
-    const line = this.lines()[index];
-    if (!line.subtitle.text) return;
-
-    // Si ya existe una traducción guardada en el subtítulo (desde el admin), la usamos directamente
-    if (line.subtitle.translation) {
-      this.lines.update(current => {
-        const updated = [...current];
-        updated[index] = { ...line, translation: line.subtitle.translation };
-        return updated;
-      });
-      return;
-    }
-
+  toggleTranslation(index: number) {
     this.lines.update(current => {
       const updated = [...current];
-      updated[index] = { ...line, isTranslating: true };
+      updated[index] = { ...updated[index], showTranslation: !updated[index].showTranslation };
       return updated;
     });
+  }
 
-    try {
-      const contextBefore = index > 0 ? this.lines()[index - 1].subtitle.text : '';
-      const contextAfter = index < this.lines().length - 1 ? this.lines()[index + 1].subtitle.text : '';
-
-      // Pedimos a nuestro backend (Serverless) la traducción
-      const translation = await this.translationService.translateText(
-        line.subtitle.text,
-        contextBefore,
-        contextAfter
-      );
-
-      this.lines.update(current => {
-        const updated = [...current];
-        updated[index] = { ...updated[index], translation, isTranslating: false };
-        return updated;
-      });
-    } catch (e) {
-      console.error(e);
-      this.lines.update(current => {
-        const updated = [...current];
-        updated[index] = { ...updated[index], translation: 'Error al traducir.', isTranslating: false };
-        return updated;
-      });
+  // --- Audio Replay Logic ---
+  
+  replayLine(index: number) {
+    const line = this.lines()[index];
+    if (line && line.subtitle) {
+      this.listeningService.requestSeek.set(line.subtitle.start);
     }
+  }
+
+  // --- Jisho Tooltip Logic ---
+
+  async onKanjiHover(lineIndex: number, tokenIndex: number) {
+    const lines = this.lines();
+    const token = lines[lineIndex].targetTokens[tokenIndex];
+    if (token.jishoLoaded || token.isLoadingJisho) return;
+
+    // Set loading
+    this.lines.update(current => {
+      const newLines = [...current];
+      const newTokens = [...newLines[lineIndex].targetTokens];
+      newTokens[tokenIndex] = { ...newTokens[tokenIndex], isLoadingJisho: true };
+      newLines[lineIndex] = { ...newLines[lineIndex], targetTokens: newTokens };
+      return newLines;
+    });
+
+    const keyword = token.base_form || token.surface;
+    const result = await this.jishoService.search(keyword);
+
+    // Set loaded
+    this.lines.update(current => {
+      const newLines = [...current];
+      const newTokens = [...newLines[lineIndex].targetTokens];
+      newTokens[tokenIndex] = { 
+         ...newTokens[tokenIndex], 
+         isLoadingJisho: false,
+         jishoLoaded: true,
+         jishoData: result
+      };
+      newLines[lineIndex] = { ...newLines[lineIndex], targetTokens: newTokens };
+      return newLines;
+    });
   }
 }

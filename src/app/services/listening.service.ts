@@ -15,6 +15,13 @@ export class ListeningService {
     private supabaseService = inject(SupabaseService);
 
     currentTime = signal(0);
+    // Señal especial para pedirle al reproductor de video que salte a un momento
+    requestSeek = signal<number | null>(null);
+    
+    // Progreso
+    currentScore = signal(0);
+    isEvaluated = signal(false); // <--- Nuevo estado global para saber si el usuario ya terminó
+    // Opciones de UI
     showSubtitles = signal(false);
     subtitlesType = signal<'hiragana' | 'kanji'>('kanji');
 

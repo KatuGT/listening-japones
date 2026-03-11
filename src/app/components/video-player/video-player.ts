@@ -55,6 +55,23 @@ export class VideoPlayerComponent {
                 video.pause()
             }
         })
+
+        effect(() => {
+            const seekRequest = this.listeningService.requestSeek();
+            if (seekRequest !== null) {
+                const video = this.videoElement()?.nativeElement;
+                if (video) {
+                    video.currentTime = seekRequest;
+                    this.currentTime.set(seekRequest);
+                    
+                    if (!this.isPlaying()) {
+                        this.isPlaying.set(true);
+                    }
+                }
+                // Limpiamos la request
+                setTimeout(() => this.listeningService.requestSeek.set(null), 10);
+            }
+        }, { allowSignalWrites: true })
     }
 
     togglePlay() {
@@ -110,8 +127,11 @@ export class VideoPlayerComponent {
         if (this.listeningService.showSubtitles()) {
             // Si están activos, simplemente los apagamos
             this.listeningService.showSubtitles.set(false);
+        } else if (this.listeningService.isEvaluated()) {
+            // Si ya terminó el ejercicio y fue evaluado, mostramos sin preguntar
+            this.listeningService.showSubtitles.set(true);
         } else {
-            // Si están apagados, mostramos el modal de "rendirse"
+            // Si no ha terminado, mostramos el modal de "rendirse"
             this.isPlaying.set(false); // Pausamos el video para que decida
 
             // Elegir mensaje aleatorio

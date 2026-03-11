@@ -10,7 +10,11 @@
     </div>
 
     <div class="inputs-section">
-      <app-guess-input></app-guess-input>
+      @if (listeningService.isLoading()) {
+        <app-guess-input-skeleton></app-guess-input-skeleton>
+      } @else {
+        <app-guess-input></app-guess-input>
+      }
     </div>
   </div>
 </div>

@@ -1,0 +1,79 @@
+.guess-list-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.guess-card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #333;
+
+  .line-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    .line-number-skeleton {
+      width: 60px;
+      height: 18px;
+    }
+  }
+
+  .input-wrapper {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    .skeleton-input {
+      flex: 1;
+      height: 50px;
+      border-radius: 8px;
+      background: #2a2a2a;
+    }
+
+    .skeleton-button-check {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      background: #2a2a2a;
+      flex-shrink: 0;
+    }
+  }
+
+  .translation-area {
+    display: flex;
+    justify-content: flex-end;
+
+    .skeleton-button-translate {
+      height: 40px;
+      width: 160px;
+      border-radius: 20px;
+      background: #2a2a2a;
+    }
+  }
+}
+
+// Configuración de la animación de pulso
+.skeleton-pulse {
+  .skeleton-text,
+  .skeleton-input,
+  .skeleton-button-check,
+  .skeleton-button-translate {
+    background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+    background-size: 200% 100%;
+    animation: pulse 1.5s infinite linear;
+    border-radius: 4px;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

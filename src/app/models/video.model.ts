@@ -5,5 +5,6 @@ export interface Video {
     thumbnail_url?: string;
     video_url: string;
     difficulty: number;
+    media_format?: string;
     created_at: string;
 }

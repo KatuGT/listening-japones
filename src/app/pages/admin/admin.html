@@ -21,7 +21,14 @@
   <div class="admin-content">
     <div class="form-section">
       <div class="form-header">
-        <h3>{{ editingVideoId() ? 'Editar Video' : 'Datos del Video' }}</h3>
+        <div class="title-with-actions">
+          <h3>{{ editingVideoId() ? 'Editar Video' : 'Datos del Video' }}</h3>
+          @if(editingVideoId()) {
+            <a [routerLink]="['/play', editingVideoId()]" target="_blank" class="btn-view-public" title="Ver video publicado en una nueva pestaña">
+              👁️ Ver Video
+            </a>
+          }
+        </div>
         @if(editingVideoId()) {
           <button class="btn-cancel" (click)="resetForm(); setTab('manage')">Cancelar</button>
         }
@@ -47,6 +54,18 @@
       <div class="form-group">
         <label>Dificultad (1-5)</label>
         <input type="number" min="1" max="5" [(ngModel)]="difficulty" />
+        <p class="hint">1: Principiante (N5), 5: Nativo (N1)</p>
+      </div>
+
+      <div class="form-group">
+        <label>Formato de Video</label>
+        <select [(ngModel)]="mediaFormat" class="format-select">
+          <option value="Anime">🎬 Anime</option>
+          <option value="J-Drama">🎭 J-Drama</option>
+          <option value="Noticias">📰 Noticias / Documental</option>
+          <option value="Vlog">🤳 Vlog / Entrevista</option>
+          <option value="Música">🎵 Música</option>
+        </select>
       </div>
 
       <div class="form-group toggle-group">
@@ -243,6 +262,9 @@
               </div>
             </div>
             <div class="video-actions">
+              <a [routerLink]="['/play', video.id]" target="_blank" class="btn-view" title="Ver publicado">
+                👁️
+              </a>
               <button class="btn-edit" (click)="editVideo(video)" title="Editar">
                 ✏️
               </button>

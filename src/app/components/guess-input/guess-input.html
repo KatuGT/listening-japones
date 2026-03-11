@@ -3,20 +3,25 @@
   <div class="warning-banner">
     Subtítulos visibles 👀. Ocultalos para poder seguir transcribiendo.
   </div>
-  } @if (isEvaluated() && currentClipAverage() > 0) {
+  } @if (listeningService.isEvaluated() && currentClipAverage() > 0) {
   <div class="summary-card">
     <div class="summary-score">{{ currentClipAverage() }}%</div>
     <p>¡Buen trabajo! Esta es tu precisión media en este clip.</p>
     <button class="btn-reset" (click)="reset()">Volver a intentar</button>
   </div>
-  } @for (line of lines(); track $index) {
+  } @for (line of lines(); track $index; let lineIndex = $index) {
   <div
     class="guess-card"
     [class.active]="activeLineIndex() === $index"
     [class.evaluated]="line.score !== null"
   >
     <div class="line-header">
-      <span class="line-number">Frase {{ $index + 1 }}</span>
+      <div class="line-title-group">
+        <button class="btn-replay" (click)="replayLine($index)" title="Reproducir frase">
+          ▶️
+        </button>
+        <span class="line-number">Frase {{ $index + 1 }}</span>
+      </div>
       @if (line.score !== null) {
       <span class="line-score" [class.perfect]="line.score === 100">
         {{ line.score }}%
@@ -42,33 +47,102 @@
       </button>
     </div>
 
-    @if (line.score !== null && line.score < 100) {
+    @if (line.score !== null) {
     <div class="target-reveal">
       <small>Objetivo:</small>
-      <p>{{ line.targetHiragana }}</p>
+      <p class="target-sentence">
+        @for (token of line.targetTokens; track $index; let tokenIndex = $index) {
+          @if (token.isKanji) {
+            <ruby class="kanji-tooltip-container" (mouseenter)="onKanjiHover(lineIndex, tokenIndex)">
+              <rb>{{ token.surface }}</rb>
+              <rt>{{ token.reading }}</rt>
+              <div class="kanji-tooltip">
+                @if (token.isLoadingJisho) {
+                  <div class="jisho-loader">
+                    <span class="pulse-dot"></span> Buscando en Jisho...
+                  </div>
+                } @else if (token.jishoLoaded && token.jishoData) {
+                  <div class="jisho-header">
+                    <span class="jisho-word">{{ token.jishoData.slug }}</span>
+                    <div class="badges-group">
+                      @if (token.jishoData.is_common) {
+                        <span class="badge-common">Común</span>
+                      }
+                      @if (token.jishoData.jlpt && token.jishoData.jlpt.length > 0) {
+                        <span class="badge-jlpt">{{ token.jishoData.jlpt[0] | uppercase }}</span>
+                      }
+                    </div>
+                  </div>
+
+                  @if (token.jishoData.japanese && token.jishoData.japanese.length > 1) {
+                    <div class="jisho-readings">
+                      <span class="readings-title">Otras lecturas:</span>
+                      <div class="readings-list">
+                      @for (jap of token.jishoData.japanese | slice:1:4; track jap.word || jap.reading) {
+                        <span class="reading-tag">{{ jap.word ? jap.word + ' (' + jap.reading + ')' : jap.reading }}</span>
+                      }
+                      </div>
+                    </div>
+                  }
+                  
+                  <div class="jisho-meanings">
+                    @for (sense of token.jishoData.senses | slice:0:2; track sense) {
+                      <div class="sense-item">
+                        <span class="pos-tag">{{ sense.parts_of_speech && sense.parts_of_speech.length > 0 ? (sense.parts_of_speech[0].split(',')[0]) : '' }}</span>
+                        <span class="meaning-text">{{ sense.english_definitions.join(', ') }}</span>
+                      </div>
+                    }
+                  </div>
+                } @else if (token.jishoLoaded && !token.jishoData) {
+                  <!-- Fallback si jisho no encuentra -->
+                  <div class="tooltip-row">
+                    <span class="tooltip-title">Tipo:</span>
+                    <span class="tooltip-value">{{ token.pos }}</span>
+                  </div>
+                  <div class="tooltip-row">
+                    <span class="tooltip-title">Base:</span>
+                    <span class="tooltip-value">{{ token.base_form || token.surface }}</span>
+                  </div>
+                } @else {
+                  <div class="jisho-loader">Cargando...</div>
+                }
+
+                <div class="tooltip-actions">
+                  <a [href]="'https://jisho.org/search/' + (token.base_form || token.surface)" target="_blank" rel="noopener noreferrer" class="jisho-link">
+                    Ver más en Jisho ↗
+                  </a>
+                </div>
+              </div>
+            </ruby>
+          } @else {
+            <span>{{ token.surface }}</span>
+          }
+        }
+      </p>
     </div>
     }
 
-    <!-- IA Translation Area -->
+    <!-- Translation Area -->
     <div class="translation-area">
       @if (line.translation) {
-      <div class="translation-text">
-        <small>Traducción (AI):</small>
-        <p>{{ line.translation }}</p>
-      </div>
-      } @else {
-      <button
-        class="btn-translate"
-        (click)="translateLine($index)"
-        [disabled]="line.isTranslating"
-      >
-        <span class="icon">✨</span>
-        {{ line.isTranslating ? 'Traduciendo...' : 'Mostrar traducción' }}
-      </button>
+        @if (line.showTranslation) {
+        <div class="translation-text">
+          <small>Traducción:</small>
+          <p>{{ line.translation }}</p>
+        </div>
+        } @else {
+        <button
+          class="btn-translate"
+          (click)="toggleTranslation($index)"
+        >
+          <span class="icon">✨</span>
+          Mostrar traducción
+        </button>
+        }
       }
     </div>
   </div>
-  } @if (!isEvaluated()) {
+  } @if (!listeningService.isEvaluated()) {
   <div class="list-footer">
     <button
       class="btn-evaluate-all"

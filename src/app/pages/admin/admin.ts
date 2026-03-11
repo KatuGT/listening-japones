@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../services/supabase.service';
 import { AuthService } from '../../services/auth.service';
 import { TranslationService } from '../../services/translation.service';
@@ -16,7 +16,7 @@ export interface AdminSubtitleLine {
 
 @Component({
   selector: 'app-admin',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './admin.html',
   styleUrl: './admin.scss',
 })
@@ -29,6 +29,7 @@ export class Admin {
   title = signal('');
   description = signal('');
   difficulty = signal(1);
+  mediaFormat = signal('Anime');
   isActive = signal(false);
   videoFile = signal<File | null>(null);
   vttFile = signal<File | null>(null);
@@ -52,8 +53,8 @@ export class Admin {
 
   async loadVideos() {
     try {
-      const videos = await this.supabase.getVideos();
-      this.videoList.set(videos);
+      const { data: videos } = await this.supabase.getVideos();
+      this.videoList.set(videos as any[]);
     } catch (err) {
       console.error('Error loading videos', err);
     }
@@ -148,10 +149,18 @@ export class Admin {
 
   private timeToSeconds(timeStr: string): number {
     const parts = timeStr.trim().split('.');
-    const hhmmss = parts[0];
-    const ms = parts[1] || '000';
-    const [hh, mm, ss] = hhmmss.split(':').map(Number);
-    return (hh * 3600) + (mm * 60) + ss + (Number(ms) / 1000);
+    const timeParts = parts[0].split(':').map(Number);
+    const ms = Number(parts[1] || '000') / 1000;
+    
+    let hh = 0, mm = 0, ss = 0;
+    
+    if (timeParts.length === 3) {
+      [hh, mm, ss] = timeParts;
+    } else if (timeParts.length === 2) {
+      [mm, ss] = timeParts;
+    }
+    
+    return (hh * 3600) + (mm * 60) + ss + ms;
   }
 
   async translateAll() {
@@ -228,6 +237,7 @@ export class Admin {
     this.title.set(video.title);
     this.description.set(video.description || '');
     this.difficulty.set(video.difficulty || 1);
+    this.mediaFormat.set(video.media_format || 'Anime');
     this.isActive.set(video.is_active || false);
     
     // El videoFile no se puede cargar de una URL fácilmente a un Input File,
@@ -240,8 +250,10 @@ export class Admin {
       if (subsData) {
         this.parsedSubtitles.set(subsData.subtitles_json);
       }
+      this.statusMessage.set(''); // Limpiar el mensaje de estado al terminar
       this.setTab('upload');
     } catch (err: any) {
+      this.statusMessage.set(''); // Limpiar si hay error
       alert(`Error cargando subtítulos: ${err.message}`);
     }
   }
@@ -251,6 +263,7 @@ export class Admin {
     this.title.set('');
     this.description.set('');
     this.difficulty.set(1);
+    this.mediaFormat.set('Anime');
     this.isActive.set(false);
     this.videoFile.set(null);
     this.vttFile.set(null);
@@ -309,6 +322,7 @@ export class Admin {
         title: this.title(),
         description: this.description(),
         difficulty: this.difficulty(),
+        media_format: this.mediaFormat(),
         is_active: this.isActive(),
       };
       if (videoUrl) videoData.video_url = videoUrl;

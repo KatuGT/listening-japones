@@ -87,10 +87,36 @@
         align-items: center;
         margin-bottom: 1.5rem;
 
-        h3 {
-            margin: 0;
-            color: var(--primary);
-            font-family: 'Outfit', sans-serif;
+        .title-with-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            h3 {
+                margin: 0;
+                color: var(--primary);
+                font-family: 'Outfit', sans-serif;
+            }
+
+            .btn-view-public {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.3rem;
+                padding: 0.3rem 0.6rem;
+                background: rgba(26, 233, 184, 0.1);
+                color: #1ae9b8;
+                text-decoration: none;
+                border-radius: 20px;
+                border: 1px solid rgba(26, 233, 184, 0.3);
+                font-size: 0.85rem;
+                font-weight: 500;
+                transition: all 0.2s;
+
+                &:hover {
+                    background: rgba(26, 233, 184, 0.2);
+                    transform: scale(1.05);
+                }
+            }
         }
 
         .btn-cancel {
@@ -124,7 +150,8 @@
 
     input[type="text"],
     input[type="number"],
-    textarea {
+    textarea,
+    select {
         width: 100%;
         padding: 0.75rem 1rem;
         background: #2a2a2a;
@@ -137,6 +164,22 @@
         &:focus {
             outline: none;
             border-color: var(--primary);
+        }
+    }
+
+    select {
+        cursor: pointer;
+        appearance: none; /* Quita la flechita nativa por defecto en algunos navegadores si queremos, o la dejamos. Mejor dejar que tome el estilo base dark */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1em;
+        padding-right: 2.5rem; // Espacio para la flechita
+        
+        option {
+            background-color: #2a2a2a; /* Fondo oscuro para las opciones del dropdown */
+            color: white;
+            padding: 0.5rem;
         }
     }
 
@@ -702,7 +745,7 @@
         display: flex;
         gap: 0.75rem;
 
-        button {
+        button, a {
             width: 40px;
             height: 40px;
             border-radius: 10px;
@@ -715,6 +758,12 @@
             justify-content: center;
             transition: all 0.2s;
             font-size: 1.1rem;
+            text-decoration: none;
+
+            &.btn-view:hover {
+                background: rgba(0, 204, 255, 0.1);
+                border-color: #00ccff;
+            }
 
             &.btn-edit:hover {
                 background: rgba(26, 233, 184, 0.1);

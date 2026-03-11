@@ -2,11 +2,12 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { VideoPlayerComponent } from '../../components/video-player/video-player';
 import { GuessInput } from '../../components/guess-input/guess-input';
+import { GuessInputSkeletonComponent } from '../../components/skeletons/guess-input-skeleton/guess-input-skeleton';
 import { ListeningService } from '../../services/listening.service';
 
 @Component({
   selector: 'app-play',
-  imports: [VideoPlayerComponent, GuessInput],
+  imports: [VideoPlayerComponent, GuessInput, GuessInputSkeletonComponent],
   templateUrl: './play.html',
   styleUrl: './play.scss',
 })

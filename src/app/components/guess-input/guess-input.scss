@@ -45,13 +45,41 @@
         align-items: center;
         margin-bottom: 1rem;
 
-        .line-number {
-            font-family: 'Outfit', sans-serif;
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .line-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+
+            .btn-replay {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: white;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-size: 0.9rem;
+                padding-left: 2px; // optical alignment for play icon
+
+                &:hover {
+                    background: rgba(0, 204, 255, 0.15);
+                    border-color: #00ccff;
+                    transform: scale(1.1);
+                }
+            }
+
+            .line-number {
+                font-family: 'Outfit', sans-serif;
+                color: var(--text-muted);
+                font-weight: 600;
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
         }
 
         .line-score {
@@ -146,11 +174,258 @@
             letter-spacing: 0.05em;
         }
 
-        p {
+        .target-sentence {
             margin: 0;
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             color: var(--secondary);
             font-weight: 500;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            line-height: 1.8;
+
+            span {
+                display: inline-block;
+            }
+
+            ruby {
+                ruby-align: center;
+            }
+
+            rt {
+                font-size: 0.8rem;
+                color: rgba(0, 242, 255, 0.8);
+                font-weight: 400;
+                transform: translateY(2px);
+            }
+
+            .kanji-tooltip-container {
+                position: relative;
+                // display: inline-block;
+                cursor: help;
+                border-bottom: 1px dotted rgba(0, 242, 255, 0.5);
+                transition: all 0.2s;
+
+                &:hover {
+                    color: white;
+                    border-bottom-color: white;
+
+                    .kanji-tooltip {
+                        opacity: 1;
+                        transform: translate(-50%, 0) scale(1);
+                        visibility: visible;
+                    }
+                }
+
+                .kanji-tooltip {
+                    position: absolute;
+                    bottom: calc(100% + 15px); // space for ruby text
+                    left: 50%;
+                    transform: translate(-50%, 10px) scale(0.95);
+                    opacity: 0;
+                    visibility: hidden;
+                    background: rgba(15, 15, 25, 0.95);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 8px;
+                    padding: 0.5rem 0.8rem;
+                    white-space: nowrap;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+                    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    z-index: 100;
+
+                    // Puente invisible para que el hover no se rompa al bajar el mouse al tooltip
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        bottom: 100%;
+                        left: 0;
+                        width: 100%;
+                        height: 15px; // Mismo tamaño que el espacio de separación
+                    }
+
+                    // Flechita hacia abajo
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        top: 100%;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        border-width: 6px;
+                        border-style: solid;
+                        border-color: rgba(15, 15, 25, 0.95) transparent transparent transparent;
+                    }
+
+                    // Estilos Jisho
+                    min-width: 200px;
+                    max-width: 280px;
+                    text-align: left;
+                    white-space: normal; // Permitir que el texto baje de línea
+
+                    .jisho-loader {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        color: rgba(255, 255, 255, 0.7);
+                        font-size: 0.85rem;
+                        padding: 0.5rem;
+
+                        .pulse-dot {
+                            width: 8px;
+                            height: 8px;
+                            background: var(--primary);
+                            border-radius: 50%;
+                            animation: pulse 1.5s infinite;
+                        }
+                    }
+
+                    .jisho-header {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        margin-bottom: 0.5rem;
+                        padding-bottom: 0.2rem;
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+                        .jisho-word {
+                            font-size: 1.2rem;
+                            font-weight: 600;
+                            color: white;
+                        }
+
+                        .badges-group {
+                            display: flex;
+                            gap: 0.3rem;
+                            flex-wrap: wrap;
+
+                            .badge-common {
+                                background: rgba(0, 242, 255, 0.15);
+                                color: #00ccff;
+                                font-size: 0.6rem;
+                                padding: 0.2rem 0.4rem;
+                                border-radius: 4px;
+                                text-transform: uppercase;
+                                letter-spacing: 0.05em;
+                                font-weight: bold;
+                            }
+
+                            .badge-jlpt {
+                                background: rgba(233, 30, 99, 0.15);
+                                color: #ff4d85;
+                                font-size: 0.6rem;
+                                padding: 0.2rem 0.4rem;
+                                border-radius: 4px;
+                                text-transform: uppercase;
+                                letter-spacing: 0.05em;
+                                font-weight: bold;
+                            }
+                        }
+                    }
+
+                    .jisho-readings {
+                        margin-bottom: 0.6rem;
+                        background: rgba(0, 0, 0, 0.2);
+                        padding: 0.4rem;
+                        border-radius: 6px;
+
+                        .readings-title {
+                            display: block;
+                            font-size: 0.65rem;
+                            color: var(--text-muted);
+                            text-transform: uppercase;
+                            margin-bottom: 0.3rem;
+                        }
+
+                        .readings-list {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 0.3rem;
+
+                            .reading-tag {
+                                background: rgba(255, 255, 255, 0.05);
+                                border: 1px solid rgba(255, 255, 255, 0.1);
+                                color: rgba(255, 255, 255, 0.8);
+                                font-size: 0.75rem;
+                                padding: 0.1rem 0.4rem;
+                                border-radius: 4px;
+                            }
+                        }
+                    }
+
+                    .jisho-meanings {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 0.4rem;
+
+                        .sense-item {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 0.1rem;
+
+                            .pos-tag {
+                                font-size: 0.65rem;
+                                color: var(--text-muted);
+                                text-transform: uppercase;
+                                font-style: italic;
+                            }
+
+                            .meaning-text {
+                                font-size: 0.9rem;
+                                color: rgba(255, 255, 255, 0.9);
+                                line-height: 1.3;
+                            }
+                        }
+                    }
+
+                    // Fallbacks
+                    .tooltip-row {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: baseline;
+                        gap: 1rem;
+                        padding: 0.2rem 0;
+
+                        &:not(:last-child) {
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                        }
+                    }
+
+                    .tooltip-title {
+                        font-family: 'Outfit', sans-serif;
+                        font-size: 0.65rem;
+                        color: rgba(255, 255, 255, 0.5);
+                        text-transform: uppercase;
+                        letter-spacing: 0.05em;
+                    }
+
+                    .tooltip-value {
+                        font-family: fallback, 'Outfit', sans-serif;
+                        font-size: 1.1rem;
+                        color: rgba(0, 242, 255, 0.9);
+                        font-weight: 500;
+                    }
+
+                    .tooltip-actions {
+                        margin-top: 0.5rem;
+                        padding-top: 0.5rem;
+                        border-top: 1px dashed rgba(255, 255, 255, 0.1);
+                        text-align: center;
+
+                        .jisho-link {
+                            color: var(--primary);
+                            font-size: 0.75rem;
+                            text-decoration: none;
+                            font-weight: 600;
+                            text-transform: uppercase;
+                            letter-spacing: 0.05em;
+                            transition: color 0.2s;
+
+                            &:hover {
+                                color: var(--secondary);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -299,6 +574,7 @@
     }
 }
 
+
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -309,4 +585,10 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.5; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.5; }
 }

@@ -1,3 +1,8 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
 .catalog-container {
     padding: 2rem;
     max-width: 98%; // Aprovechar todo el ancho
@@ -19,9 +24,109 @@
     }
 }
 
+.filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    .search-group {
+        width: 100%;
+        max-width: 600px;
+        position: relative;
+        margin-bottom: 1rem;
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            pointer-events: none;
+            font-size: 1.1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: rgba(30,30,45, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+
+            &:focus {
+                outline: none;
+                border-color: var(--primary);
+                background: rgba(30,30,45, 1);
+                box-shadow: 0 0 15px rgba(26, 233, 184, 0.2);
+            }
+
+            &::placeholder {
+                color: #666;
+            }
+        }
+    }
+
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+
+        .filter-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 0.5rem;
+        }
+
+        .filter-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+            }
+
+            &.active {
+                background: rgba(0, 242, 255, 0.15);
+                border-color: #00ccff;
+                color: #00ccff;
+                font-weight: 600;
+                box-shadow: 0 0 10px rgba(0, 204, 255, 0.2);
+            }
+
+            &.diff.active {
+                background: rgba(233, 30, 99, 0.15);
+                border-color: #ff4d85;
+                color: #ff4d85;
+                box-shadow: 0 0 10px rgba(233, 30, 99, 0.2);
+            }
+        }
+    }
+}
+
 .video-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); // Cartas más pequeñas
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); // Cartas ligeramente más anchas
     gap: 1.5rem;
 }
 
@@ -49,16 +154,45 @@
             transition: transform 0.3s ease;
         }
 
-        .difficulty-badge {
+        .badges-container {
             position: absolute;
             top: 10px;
             right: 10px;
-            background: rgba(255, 64, 129, 0.9);
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.3rem;
+
+            span {
+                padding: 0.2rem 0.5rem;
+                backdrop-filter: blur(4px);
+                border-radius: 4px;
+                font-size: 0.7rem;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            }
+
+            .format-badge {
+                background: rgba(0, 0, 0, 0.6);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: white;
+
+                &.anime { background: rgba(156, 39, 176, 0.7); border-color: #e1bee7; }
+                &.j-drama { background: rgba(255, 152, 0, 0.7); border-color: #ffe0b2; }
+                &.noticias { background: rgba(33, 150, 243, 0.7); border-color: #bbdefb; }
+                &.vlog { background: rgba(76, 175, 80, 0.7); border-color: #c8e6c9; }
+                &.música { background: rgba(233, 30, 99, 0.7); border-color: #f8bbd0; }
+            }
+
+            .difficulty-badge {
+                &.n5 { background: rgba(76, 175, 80, 0.8); border: 1px solid #4CAF50; color: white; }
+                &.n4 { background: rgba(139, 195, 74, 0.8); border: 1px solid #8BC34A; color: white; }
+                &.n3 { background: rgba(255, 193, 7, 0.8); border: 1px solid #FFC107; color: black; }
+                &.n2 { background: rgba(255, 152, 0, 0.8); border: 1px solid #FF9800; color: white; }
+                &.n1 { background: rgba(244, 67, 54, 0.8); border: 1px solid #F44336; color: white; }
+            }
         }
     }
 
@@ -87,22 +221,6 @@
     }
 }
 
-.difficulty-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(0, 242, 255, 0.2); // Azul cian transparente
-    color: var(--primary);
-    padding: 0.2rem 0.5rem;
-    border: 1px solid rgba(26, 233, 184, 0.3);
-    backdrop-filter: blur(4px);
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
 .empty-state,
 .error-state,
 .loading-state {
@@ -113,5 +231,37 @@
 
     p {
         color: #888;
+    }
+}
+
+.load-more-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+
+    .btn-load-more {
+        background: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        padding: 0.8rem 2rem;
+        border-radius: 30px;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover:not(:disabled) {
+            background: rgba(26, 233, 184, 0.1);
+            box-shadow: 0 4px 15px rgba(26, 233, 184, 0.2);
+            transform: translateY(-2px);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #666;
+            color: #666;
+        }
     }
 }

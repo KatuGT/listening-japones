@@ -107,6 +107,62 @@ export class KanjiParserService {
     return result;
   }
 
+  tokenizeForDisplay(text: string): Array<{ surface: string, reading: string | null, isKanji: boolean, base_form?: string, pos?: string }> {
+    if (!this.isReady() || !this.tokenizer) return [{ surface: text, reading: null, isKanji: false }];
+
+    let clean = text.replace(/［/g, '[').replace(/］/g, ']');
+    const bridgeRegex = /([^\[\]\s]+)\s*\[([^\]]+)\]/g;
+    const parts = clean.split(bridgeRegex);
+
+    let results: Array<{ surface: string, reading: string | null, isKanji: boolean, base_form?: string, pos?: string }> = [];
+
+    const posMap: Record<string, string> = {
+      '名詞': 'Sustantivo',
+      '動詞': 'Verbo',
+      '形容詞': 'Adjetivo',
+      '副詞': 'Adverbio',
+      '助詞': 'Partícula',
+      '助動詞': 'Verbo aux.',
+      '連体詞': 'Pronombre atr.',
+      '接続詞': 'Conjunción',
+      '感動詞': 'Interjección',
+      '記号': 'Símbolo',
+      'フィラー': 'Muletilla'
+    };
+
+    for (let i = 0; i < parts.length; i += 3) {
+      const normalPart = parts[i];
+      if (normalPart) {
+        const tokens = this.tokenizer.tokenize(normalPart);
+        const mappedTokens = tokens.map((t: any) => {
+          const surface = t.surface_form;
+          const reading = t.reading ? this.katakanaToHiragana(t.reading) : null;
+          const isKanji = this.containsKanji(surface);
+          // Omitimos la lectura si es igual a la superficie en hiragana puro
+          const finalReading = (isKanji && surface !== reading) ? reading : null;
+          const pos_es = t.pos ? (posMap[t.pos] || 'Otro') : 'Desconocido';
+          
+          return { 
+            surface, 
+            reading: finalReading, 
+            isKanji,
+            base_form: (t.basic_form && t.basic_form !== '*') ? t.basic_form : surface,
+            pos: pos_es
+          };
+        });
+        results = results.concat(mappedTokens);
+      }
+
+      if (i + 1 < parts.length) {
+        const kanji = parts[i + 1];
+        const reading = parts[i + 2];
+        results.push({ surface: kanji, reading, isKanji: true, base_form: kanji, pos: 'Manual' });
+      }
+    }
+
+    return results;
+  }
+
   private containsKanji(text: string): boolean {
     return /[\u4e00-\u9faf]/.test(text);
   }
