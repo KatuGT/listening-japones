@@ -4,11 +4,15 @@ import { ListeningService } from '../../services/listening.service';
 import { KanjiParserService } from '../../services/kanji-parser';
 import { toHiragana } from 'wanakana';
 
+import { TranslationService } from '../../services/translation.service';
+
 export interface LineState {
   subtitle: any;
   guess: string;
   score: number | null;
   targetHiragana: string;
+  translation?: string;
+  isTranslating?: boolean;
 }
 
 @Component({
@@ -21,6 +25,7 @@ export interface LineState {
 export class GuessInput {
   public listeningService = inject(ListeningService);
   private kanjiParser = inject(KanjiParserService);
+  public translationService = inject(TranslationService);
 
   lines = signal<LineState[]>([]);
   isEvaluated = signal(false);
@@ -48,7 +53,9 @@ export class GuessInput {
       subtitle: sub,
       guess: '',
       score: null,
-      targetHiragana: this.kanjiParser.toHiragana(sub.text)
+      targetHiragana: this.kanjiParser.toHiragana(sub.text),
+      translation: '',
+      isTranslating: false
     }));
     this.lines.set(initialLines);
     this.isEvaluated.set(false);
@@ -114,15 +121,15 @@ export class GuessInput {
   }
 
   private calculateAccuracy(target: string, guess: string): number {
-    const s1 = target.trim();
-    const s2 = guess.trim();
+    // 1. Limpieza agresiva: quitar espacios, puntos y puntuación común
+    // También normalizamos a minúsculas por si acaso (aunque en Hiragana no aplica)
+    const cleanS1 = target.replace(/[\s、。！？.…]/g, '').toLowerCase();
+    const cleanS2 = guess.replace(/[\s、。！？.…]/g, '').toLowerCase();
 
-    if (s1 === s2) return 100;
+    if (cleanS1 === cleanS2) return 100;
 
-    // Si la diferencia es de un solo carácter en lecturas comunes (como kata/hou)
-    // podríamos ser más permisivos, pero por ahora Levenshtein estricto
-    const longer = s1.length > s2.length ? s1 : s2;
-    const shorter = s1.length > s2.length ? s2 : s1;
+    const longer = cleanS1.length > cleanS2.length ? cleanS1 : cleanS2;
+    const shorter = cleanS1.length > cleanS2.length ? cleanS2 : cleanS1;
     if (longer.length === 0) return 100;
 
     const dist = this.levenshtein(longer, shorter);
@@ -150,5 +157,53 @@ export class GuessInput {
 
   reset() {
     this.initLines(this.listeningService.allSubtitles());
+  }
+
+  // --- IA Translation Logic ---
+
+  async translateLine(index: number) {
+    const line = this.lines()[index];
+    if (!line.subtitle.text) return;
+
+    // Si ya existe una traducción guardada en el subtítulo (desde el admin), la usamos directamente
+    if (line.subtitle.translation) {
+      this.lines.update(current => {
+        const updated = [...current];
+        updated[index] = { ...line, translation: line.subtitle.translation };
+        return updated;
+      });
+      return;
+    }
+
+    this.lines.update(current => {
+      const updated = [...current];
+      updated[index] = { ...line, isTranslating: true };
+      return updated;
+    });
+
+    try {
+      const contextBefore = index > 0 ? this.lines()[index - 1].subtitle.text : '';
+      const contextAfter = index < this.lines().length - 1 ? this.lines()[index + 1].subtitle.text : '';
+
+      // Pedimos a nuestro backend (Serverless) la traducción
+      const translation = await this.translationService.translateText(
+        line.subtitle.text,
+        contextBefore,
+        contextAfter
+      );
+
+      this.lines.update(current => {
+        const updated = [...current];
+        updated[index] = { ...updated[index], translation, isTranslating: false };
+        return updated;
+      });
+    } catch (e) {
+      console.error(e);
+      this.lines.update(current => {
+        const updated = [...current];
+        updated[index] = { ...updated[index], translation: 'Error al traducir.', isTranslating: false };
+        return updated;
+      });
+    }
   }
 }

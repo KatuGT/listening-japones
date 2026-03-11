@@ -48,6 +48,25 @@
       <p>{{ line.targetHiragana }}</p>
     </div>
     }
+
+    <!-- IA Translation Area -->
+    <div class="translation-area">
+      @if (line.translation) {
+      <div class="translation-text">
+        <small>Traducción (AI):</small>
+        <p>{{ line.translation }}</p>
+      </div>
+      } @else {
+      <button
+        class="btn-translate"
+        (click)="translateLine($index)"
+        [disabled]="line.isTranslating"
+      >
+        <span class="icon">✨</span>
+        {{ line.isTranslating ? 'Traduciendo...' : 'Mostrar traducción' }}
+      </button>
+      }
+    </div>
   </div>
   } @if (!isEvaluated()) {
   <div class="list-footer">

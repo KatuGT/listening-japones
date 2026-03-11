@@ -1,0 +1,48 @@
+<div class="catalog-container">
+  <header class="catalog-header">
+    <h1>🎧 Catálogo de Listening</h1>
+    <p>Elige un video y practica tu comprensión auditiva.</p>
+  </header>
+
+  @if (isLoading()) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando videos...</p>
+  </div>
+  } @else if (error()) {
+  <div class="error-state">
+    <p>Error: {{ error() }}</p>
+  </div>
+  } @else if (videos().length === 0) {
+  <div class="empty-state">
+    <p>Aún no hay videos disponibles. ¡Sube uno desde el panel de admin!</p>
+  </div>
+  } @else {
+  <div class="video-grid">
+    @for (video of videos(); track video.id) {
+    <div class="video-card" (click)="goToVideo(video.id)">
+      <div class="thumbnail">
+        <video
+          class="card-video"
+          [src]="video.video_url"
+          [poster]="video.thumbnail_url || ''"
+          muted
+          loop
+          preload="metadata"
+          playsinline
+          (mouseenter)="playPreview($event)"
+          (mouseleave)="stopPreview($event)"
+        ></video>
+        <span class="difficulty-badge">Nivel {{ video.difficulty }}</span>
+      </div>
+      <div class="card-content">
+        <h3>{{ video.title }}</h3>
+        @if (video.description) {
+        <p>{{ video.description }}</p>
+        }
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>

@@ -2,7 +2,7 @@
   <div class="video-stage">
     <video
       #videoPlayer
-      [src]="videoSrc"
+      [src]="videoSrc()"
       class="main-video"
       (timeupdate)="onTimeUpdate($event)"
       (loadedmetadata)="onLoadedMetadata($event)"

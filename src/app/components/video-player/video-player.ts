@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { Component, effect, ElementRef, inject, signal, viewChild, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ListeningService } from '../../services/listening.service';
 
@@ -32,8 +32,18 @@ export class VideoPlayerComponent {
         "Un verdadero ninja no se rinde tan fácil..."
     ];
 
-    videoSrc = '/assets/kimetsu-t4e1/kimetsu-t4e1-video.mp4';
-
+    videoSrc = computed(() => {
+        const vid = this.listeningService.currentVideo();
+        if (!vid?.video_url) return '';
+        // Si la URL que subimos es solo la ruta en Storage (ej. 'mis-videos/kimetsu.mp4'), obtenemos la ruta pública
+        if (!vid.video_url.startsWith('http')) {
+            // Asumimos que si no es HTTP, es un path en el bucket 'media'
+            // Podríamos inyectar SupabaseService, pero por simplicidad construiremos la logica en el servicio luego si es necesario
+            // Por ahora, asumiremos que se guarda el public URL completo o necesitamos el public url
+            // Vamos a dejarlo normal asumiendo que el Admin page guardará la public URL completa.
+        }
+        return vid.video_url;
+    });
     constructor() {
         effect(() => {
             const video = this.videoElement()?.nativeElement

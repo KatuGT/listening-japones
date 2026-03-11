@@ -25,61 +25,6 @@
             animation: pulse 1.5s infinite;
         }
     }
-
-    .content-card {
-        width: 100%;
-        max-width: 1400px; // Expanded to accommodate two columns
-        background: rgba(20, 20, 30, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 24px;
-        padding: 2rem;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(20px);
-
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
-
-            h1 {
-                font-size: 2.5rem;
-                font-weight: 800;
-                background: linear-gradient(to right, var(--primary), var(--secondary));
-                -webkit-background-clip: text;
-                background-clip: text;
-                -webkit-text-fill-color: transparent;
-                margin-bottom: 0.5rem;
-            }
-
-            p {
-                color: var(--text-muted);
-                font-size: 1.1rem;
-            }
-        }
-
-        // --- NEW GRID LAYOUT ---
-        .practice-layout {
-            display: grid;
-            grid-template-columns: 1fr; // Mobile first: stacked
-            gap: 2rem;
-            align-items: start;
-
-            @media (min-width: 1024px) {
-                grid-template-columns: 1fr 1fr; // Desktop: two columns 50/50
-                gap: 3rem;
-            }
-
-            .video-section {
-                position: sticky;
-                top: 2rem; // Sticks to the top when scrolling down
-                z-index: 10;
-            }
-
-            .inputs-section {
-                // Naturally scrolls with the page
-                min-height: 100%;
-            }
-        }
-    }
 }
 
 @keyframes pulse {

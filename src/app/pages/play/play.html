@@ -1,0 +1,16 @@
+<div class="content-card">
+  <header>
+    <h1>{{ listeningService.currentVideo()?.title || 'Cargando video...' }}</h1>
+    <p>Escucha con atención e intenta transcribir lo que dicen.</p>
+  </header>
+
+  <div class="practice-layout">
+    <div class="video-section">
+      <app-video-player></app-video-player>
+    </div>
+
+    <div class="inputs-section">
+      <app-guess-input></app-guess-input>
+    </div>
+  </div>
+</div>

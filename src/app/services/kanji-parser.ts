@@ -38,38 +38,73 @@ export class KanjiParserService {
   toHiragana(text: string): string {
     if (!this.isReady() || !this.tokenizer) return text;
 
-    const tokens = this.tokenizer.tokenize(text.replace(/[、。！？]/g, ''));
-    return tokens.map((token: any) => {
-      if (token.reading) {
-        return this.katakanaToHiragana(token.reading);
+    // 1. Normalizar corchetes (full-width a half-width)
+    let clean = text.replace(/［/g, '[').replace(/］/g, ']');
+
+    // 2. Dividir el texto en partes de "override" y "texto normal"
+    const bridgeRegex = /([^\[\]\s]+)\s*\[([^\]]+)\]/g;
+    const parts = clean.split(bridgeRegex);
+    // split con un grupo de captura devuelve [previo, grupo1, grupo2, siguiente, ...]
+    
+    let result = '';
+    for (let i = 0; i < parts.length; i += 3) {
+      // Texto normal (o previo al override)
+      const normalPart = parts[i];
+      if (normalPart) {
+        const tokens = this.tokenizer.tokenize(normalPart.replace(/[、。！？\s]/g, ''));
+        result += tokens.map((t: any) => {
+          if (t.reading) return this.katakanaToHiragana(t.reading);
+          if (this.containsKanji(t.surface_form)) return '';
+          return t.surface_form;
+        }).join('');
       }
-      return token.surface_form;
-    }).join('');
+
+      // El override (si existe)
+      if (i + 1 < parts.length) {
+        // parts[i+1] es el Kanji (que ignoramos aquí)
+        // parts[i+2] es la lectura manual (que usamos)
+        result += parts[i + 2].replace(/\s/g, ''); 
+      }
+    }
+    
+    return result;
   }
 
   toFurigana(text: string): string {
     if (!this.isReady() || !this.tokenizer) return text;
 
-    // Si tiene un override manual {lectura}, lo usamos como texto plano por ahora 
-    // o podríamos intentar parsearlo si quisiéramos Furigana en el override.
-    const overrideMatch = text.match(/\{([^}]+)\}/);
-    if (overrideMatch) {
-      return text.replace(/\{[^}]+\}/, '').trim();
+    // 1. Normalizar corchetes
+    let clean = text.replace(/［/g, '[').replace(/］/g, ']');
+
+    // 2. Dividir por overrides
+    const bridgeRegex = /([^\[\]\s]+)\s*\[([^\]]+)\]/g;
+    const parts = clean.split(bridgeRegex);
+
+    let result = '';
+    for (let i = 0; i < parts.length; i += 3) {
+      // Texto normal
+      const normalPart = parts[i];
+      if (normalPart) {
+        const tokens = this.tokenizer.tokenize(normalPart);
+        result += tokens.map((t: any) => {
+          const surface = t.surface_form;
+          const reading = t.reading ? this.katakanaToHiragana(t.reading) : null;
+          if (reading && this.containsKanji(surface) && surface !== reading) {
+            return `<ruby><rb>${surface}</rb><rt>${reading}</rt></ruby>`;
+          }
+          return surface;
+        }).join('');
+      }
+
+      // El override
+      if (i + 1 < parts.length) {
+        const kanji = parts[i + 1];
+        const reading = parts[i + 2];
+        result += `<ruby><rb>${kanji}</rb><rt>${reading}</rt></ruby>`;
+      }
     }
 
-    const tokens = this.tokenizer.tokenize(text);
-    console.log('Tokens Furigana:', tokens);
-
-    return tokens.map((token: any) => {
-      const surface = token.surface_form;
-      const reading = token.reading ? this.katakanaToHiragana(token.reading) : null;
-
-      // Si el token tiene Kanji, aplicamos Ruby
-      if (reading && this.containsKanji(surface) && surface !== reading) {
-        return `<ruby><rb>${surface}</rb><rt>${reading}</rt></ruby>`;
-      }
-      return surface;
-    }).join('');
+    return result;
   }
 
   private containsKanji(text: string): boolean {

@@ -1,0 +1,262 @@
+<div class="admin-container">
+  <header class="admin-header">
+    <div class="header-main">
+      <h1>Panel de Administración 🛠️</h1>
+      <div class="admin-tabs">
+        <button [class.active]="activeTab() === 'upload'" (click)="setTab('upload')">
+          {{ editingVideoId() ? '📝 Editando Video' : '🚀 Subir Nuevo' }}
+        </button>
+        <button [class.active]="activeTab() === 'manage'" (click)="setTab('manage')">
+          📂 Gestionar Videos
+        </button>
+        <button class="btn-logout" (click)="logout()" title="Cerrar Sesión">
+          🚪 Salir
+        </button>
+      </div>
+    </div>
+    <p>Administra tu contenido y mantén el catálogo actualizado.</p>
+  </header>
+
+  @if (activeTab() === 'upload') {
+  <div class="admin-content">
+    <div class="form-section">
+      <div class="form-header">
+        <h3>{{ editingVideoId() ? 'Editar Video' : 'Datos del Video' }}</h3>
+        @if(editingVideoId()) {
+          <button class="btn-cancel" (click)="resetForm(); setTab('manage')">Cancelar</button>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Título del Anime/Clip</label>
+        <input
+          type="text"
+          [(ngModel)]="title"
+          placeholder="Ej: Kimetsu no Yaiba - Escena Épica"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Descripción (Opcional)</label>
+        <textarea
+          [(ngModel)]="description"
+          placeholder="Breve contexto de la escena..."
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Dificultad (1-5)</label>
+        <input type="number" min="1" max="5" [(ngModel)]="difficulty" />
+      </div>
+
+      <div class="form-group toggle-group">
+        <label>Estado de Publicación</label>
+        <button 
+          class="btn-toggle" 
+          [class.active]="isActive()" 
+          (click)="isActive.set(!isActive())"
+        >
+          {{ isActive() ? '🟢 Público (Activo)' : '🟡 Privado (Borrador)' }}
+        </button>
+        <p class="hint">Si está desactivado, solo tú lo verás en el Admin.</p>
+      </div>
+
+      @if (!videoFile() && !editingVideoId()) {
+        <div
+          class="form-group file-group drop-zone"
+          [class.drag-over]="isDraggingVideo()"
+          (dragover)="onVideoDragOver($event)"
+          (dragleave)="onVideoDragLeave($event)"
+          (drop)="onVideoDrop($event)"
+        >
+          <label>Archivo de Video (.mp4)</label>
+          <input
+            type="file"
+            accept="video/mp4"
+            (change)="onVideoFileChange($event)"
+          />
+          <p class="drag-hint">Arrástralo aquí o haz clic para buscarlo</p>
+        </div>
+      } @else {
+        <div class="form-group file-loaded">
+          <label>Video</label>
+          <div class="file-badge">
+            <span class="icon">🎬</span>
+            <span class="text">{{ videoFile() ? videoFile()?.name : 'Video actual conservado' }}</span>
+            <button class="btn-mini-reset" (click)="videoFile.set(null); editingVideoId.set(null)" title="Cambiar video">
+              ✕
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (parsedSubtitles().length === 0) {
+        <div
+          class="form-group file-group drop-zone"
+          [class.drag-over]="isDraggingVtt()"
+          (dragover)="onVttDragOver($event)"
+          (dragleave)="onVttDragLeave($event)"
+          (drop)="onVttDrop($event)"
+        >
+          <label>Archivo de Subtítulos (.vtt)</label>
+          <input type="file" accept=".vtt" (change)="onVttFileChange($event)" />
+          <p class="drag-hint">Arrástralo aquí para empezar a editar</p>
+        </div>
+      }
+    </div>
+
+    <div class="translation-section">
+      <!-- Tip de Ayuda para Lecturas Manuales -->
+      <div class="help-tip">
+        <div class="tip-icon">💡</div>
+        <div class="tip-content">
+          <strong>Tip de Maestro:</strong> ¿El sistema lee mal un nombre? Usa corchetes para forzar la lectura: 
+          <code>禰豆子 [ねずこ]</code>. 
+          <em>(El Kanji fuera, la lectura dentro).</em>
+        </div>
+      </div>
+
+      <div class="translation-header">
+        <h3>Subtítulos Encontrados ({{ parsedSubtitles().length }} líneas)</h3>
+        <div class="actions-row">
+          <button
+            class="btn-translate"
+            (click)="translateAll()"
+            [disabled]="isTranslating()"
+          >
+            {{ isTranslating() ? statusMessage() : '✨ Traducir todo' }}
+          </button>
+          <button class="btn-clear" (click)="parsedSubtitles.set([]); vttFile.set(null)" title="Borrar todos los subtítulos">
+            🗑️ Limpiar
+          </button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="subs-table">
+          <thead>
+            <tr>
+              <th width="8%">#</th>
+              <th width="25%">Tiempos (s)</th>
+              <th width="32%">Japonés original</th>
+              <th width="30%">Traducción (Editable)</th>
+              <th width="5%"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (sub of parsedSubtitles(); track $index) {
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td class="timing-cell">
+                <div class="timing-inputs">
+                  <input type="number" step="0.1" [(ngModel)]="sub.start" title="Inicio" />
+                  <span>→</span>
+                  <input type="number" step="0.1" [(ngModel)]="sub.end" title="Fin" />
+                </div>
+              </td>
+              <td class="jp-text">
+                <textarea
+                  class="edit-translation edit-jp"
+                  [value]="sub.text"
+                  (input)="onJpInput($index, $event)"
+                  rows="2"
+                ></textarea>
+              </td>
+              <td>
+                <div class="translation-wrapper">
+                  <textarea
+                    class="edit-translation"
+                    [(ngModel)]="sub.translation"
+                    rows="2"
+                  ></textarea>
+                  <button
+                    class="btn-translate-single"
+                    (click)="translateSingle($index)"
+                    title="Traducir solo esta línea"
+                  >
+                    ✨
+                  </button>
+                </div>
+              </td>
+              <td>
+                <button
+                  class="btn-delete-single"
+                  (click)="removeSubtitleLine($index)"
+                  title="Eliminar línea"
+                >
+                  ✕
+                </button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-actions">
+        <button class="btn-add-line" (click)="addSubtitleLine()">
+          ➕ Añadir Nueva Línea
+        </button>
+      </div>
+
+      <div class="publish-actions">
+        <p class="status-msg" [class.active]="statusMessage()">
+          {{ statusMessage() }}
+        </p>
+        <button
+          class="btn-publish"
+          (click)="publish()"
+          [disabled]="isPublishing() || isTranslating()"
+        >
+          {{ isPublishing() ? 'Guardando...' : (editingVideoId() ? 'Actualizar Cambios' : 'Guardar y Publicar Video') }}
+        </button>
+      </div>
+    </div>
+  </div>
+  } @else {
+    <div class="manage-section glass-panel">
+      <div class="manage-header">
+        <h2>Videos Publicados</h2>
+        <button class="btn-add-line" (click)="resetForm(); setTab('upload')">
+          ➕ Nuevo Video
+        </button>
+      </div>
+
+      <div class="video-manage-list">
+        @for (video of videoList(); track video.id) {
+          <div class="video-manage-item">
+            <div class="video-thumb">
+              @if (video.video_url) {
+                <video [src]="video.video_url" muted preload="metadata"></video>
+              } @else {
+                <div class="thumb-placeholder">🎬</div>
+              }
+            </div>
+            <div class="video-info">
+              <h4>{{ video.title }}</h4>
+              <p>{{ video.description || 'Sin descripción' }}</p>
+              <div class="badge-row">
+                <span class="badge diff">Nivel {{ video.difficulty }}</span>
+                <span class="badge status" [class.active]="video.is_active">
+                  {{ video.is_active ? 'Activo' : 'Borrador' }}
+                </span>
+              </div>
+            </div>
+            <div class="video-actions">
+              <button class="btn-edit" (click)="editVideo(video)" title="Editar">
+                ✏️
+              </button>
+              <button class="btn-delete" (click)="deleteVideo(video.id)" title="Eliminar">
+                🗑️
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-manage">
+            <p>No hay videos publicados aún. ¡Sube tu primer contenido!</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

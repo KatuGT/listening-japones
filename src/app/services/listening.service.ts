@@ -1,5 +1,5 @@
-import { HttpClient } from "@angular/common/http";
 import { inject, Injectable, signal, computed } from "@angular/core";
+import { SupabaseService } from './supabase.service';
 
 export interface Subtitle {
     start: number;
@@ -12,16 +12,18 @@ export interface Subtitle {
 })
 export class ListeningService {
 
-    private http = inject(HttpClient)
+    private supabaseService = inject(SupabaseService);
 
-    currentTime = signal(0)
+    currentTime = signal(0);
+    showSubtitles = signal(false);
+    subtitlesType = signal<'hiragana' | 'kanji'>('kanji');
 
-    showSubtitles = signal(false)
+    allSubtitles = signal<Subtitle[]>([]);
+    scores = signal<number[]>([]);
 
-    subtitlesType = signal<'hiragana' | 'kanji'>('kanji')
-
-    allSubtitles = signal<Subtitle[]>([])
-    scores = signal<number[]>([])
+    currentVideo = signal<any>(null); // Quick any for the Video model for now
+    isLoading = signal(true);
+    error = signal<string | null>(null);
 
     addScore(score: number) {
         this.scores.update(s => [...s, score]);
@@ -31,12 +33,30 @@ export class ListeningService {
         const s = this.scores();
         if (s.length === 0) return 0;
         return Math.round(s.reduce((a, b) => a + b, 0) / s.length);
-    })
+    });
 
-    loadSubtitles(url: string) {
-        this.http.get(url, { responseType: 'text' }).subscribe(vttText => {
-            this.allSubtitles.set(this.parseVTT(vttText));
-        });
+    async loadVideoData(videoId: string) {
+        this.isLoading.set(true);
+        this.error.set(null);
+        this.allSubtitles.set([]);
+
+        try {
+            // 1. Fetch metadata
+            const videoData = await this.supabaseService.getVideoById(videoId);
+            this.currentVideo.set(videoData);
+
+            // 2. Fetch subtitles
+            const subData = await this.supabaseService.getSubtitlesByVideoId(videoId);
+            if (subData && subData.subtitles_json) {
+                // If it's already an array (from the db json format we plan to use)
+                this.allSubtitles.set(subData.subtitles_json);
+            }
+        } catch (err: any) {
+            console.error('Error loading video data:', err);
+            this.error.set(err.message || 'Error cargando los datos del video.');
+        } finally {
+            this.isLoading.set(false);
+        }
     }
 
     private parseVTT(text: string): Subtitle[] {
