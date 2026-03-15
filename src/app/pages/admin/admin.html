@@ -4,10 +4,16 @@
       <h1>Panel de Administración 🛠️</h1>
       <div class="admin-tabs">
         <button [class.active]="activeTab() === 'upload'" (click)="setTab('upload')">
-          {{ editingVideoId() ? '📝 Editando Video' : '🚀 Subir Nuevo' }}
+          {{ editingVideoId() ? '📝 Editar' : '🚀 Subir' }}
         </button>
         <button [class.active]="activeTab() === 'manage'" (click)="setTab('manage')">
-          📂 Gestionar Videos
+          📂 Videos
+        </button>
+        <button [class.active]="activeTab() === 'feedback'" (click)="setTab('feedback')">
+          🚩 Reportes
+        </button>
+        <button [class.active]="activeTab() === 'users'" (click)="setTab('users')">
+          👥 Usuarios
         </button>
         <button class="btn-logout" (click)="logout()" title="Cerrar Sesión">
           🚪 Salir
@@ -24,7 +30,7 @@
         <div class="title-with-actions">
           <h3>{{ editingVideoId() ? 'Editar Video' : 'Datos del Video' }}</h3>
           @if(editingVideoId()) {
-            <a [routerLink]="['/play', editingVideoId()]" target="_blank" class="btn-view-public" title="Ver video publicado en una nueva pestaña">
+            <a [routerLink]="['/play', generateSlug(title())]" target="_blank" class="btn-view-public" title="Ver video publicado en una nueva pestaña">
               👁️ Ver Video
             </a>
           }
@@ -34,13 +40,17 @@
         }
       </div>
 
-      <div class="form-group">
+      <div class="form-group" [class.has-error]="isTitleTaken()">
         <label>Título del Anime/Clip</label>
         <input
           type="text"
-          [(ngModel)]="title"
+          [ngModel]="title()"
+          (ngModelChange)="onTitleChange($event)"
           placeholder="Ej: Kimetsu no Yaiba - Escena Épica"
         />
+        @if (isTitleTaken()) {
+          <p class="error-msg">⚠️ Ya existe un video con este título exacto.</p>
+        }
       </div>
 
       <div class="form-group">
@@ -225,14 +235,102 @@
         <button
           class="btn-publish"
           (click)="publish()"
-          [disabled]="isPublishing() || isTranslating()"
+          [disabled]="isPublishing() || isTranslating() || isTitleTaken()"
         >
           {{ isPublishing() ? 'Guardando...' : (editingVideoId() ? 'Actualizar Cambios' : 'Guardar y Publicar Video') }}
         </button>
       </div>
     </div>
   </div>
-  } @else {
+  } @else if (activeTab() === 'feedback') {
+    <div class="feedback-manage-section glass-panel">
+      <h2>Gestión de Reportes y Sugerencias</h2>
+      <div class="feedback-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Tipo</th>
+              <th>Video</th>
+              <th>Contenido</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of feedbackList(); track item.id) {
+              <tr [class.resolved]="item.status === 'resuelto'">
+                <td>{{ item.created_at | date:'short' }}</td>
+                <td>{{ item.user_id.substring(0,8) }}...</td>
+                <td><span class="badge" [class]="item.type">{{ item.type }}</span></td>
+                <td>{{ item.video_title }}</td>
+                <td class="content-cell">{{ item.content }}</td>
+                <td>
+                  <span class="status-badge" [class.resuelto]="item.status === 'resuelto'">
+                    {{ item.status }}
+                  </span>
+                </td>
+                <td>
+                  <div class="feedback-actions" *ngIf="item.status !== 'resuelto'">
+                    <textarea #adminRes placeholder="Responder algo..."></textarea>
+                    <button class="btn-resolve" (click)="resolveFeedback(item, adminRes.value)">
+                      Resolver
+                    </button>
+                  </div>
+                  <div class="res-preview" *ngIf="item.status === 'resuelto'">
+                    <p><strong>Respuesta:</strong> {{ item.admin_response }}</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  } @else if (activeTab() === 'users') {
+    <div class="users-manage-section glass-panel">
+      <h2>Gestión de Usuarios</h2>
+      <div class="users-grid">
+        @for (profile of profilesList(); track profile.id) {
+          <div class="user-card" [class.blocked]="profile.is_blocked" [class.is-admin]="profile.is_admin">
+            <div class="user-info">
+              <span class="user-email">{{ profile.email }}</span>
+              @if (profile.nickname) {
+                <span class="user-nickname">(@{{ profile.nickname }})</span>
+              }
+              <span class="role-badge" [class.admin]="profile.is_admin">
+                {{ profile.is_admin ? '👑 Administrador' : '👤 Usuario Estándar' }}
+              </span>
+              <span class="user-id">{{ profile.id }}</span>
+            </div>
+            <div class="user-actions">
+              <!-- PESTAÑA USUARIOS -->
+              @if (auth.currentUser()?.email === '93katu@gmail.com' && profile.email !== '93katu@gmail.com') {
+                <div class="role-actions">
+                  <button class="btn-role" (click)="updateUserRole(profile, 'collaborator')" [disabled]="profile.role === 'collaborator'">
+                    🤝 Colaborador
+                  </button>
+                  <button class="btn-role admin" (click)="updateUserRole(profile, 'admin')" [disabled]="profile.role === 'admin'">
+                    👑 Admin
+                  </button>
+                  <button class="btn-role user" (click)="updateUserRole(profile, 'user')" [disabled]="profile.role === 'user'">
+                    👤 Alumno
+                  </button>
+                </div>
+              }
+              
+              @if (profile.email !== '93katu@gmail.com') {
+                <button class="btn-block" (click)="toggleBlockUser(profile)" [class.danger]="!profile.is_blocked">
+                  {{ profile.is_blocked ? '🔓 Desbloquear' : '🚫 Bloquear' }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else if (activeTab() === 'manage') {
     <div class="manage-section glass-panel">
       <div class="manage-header">
         <h2>Videos Publicados</h2>
@@ -243,7 +341,7 @@
 
       <div class="video-manage-list">
         @for (video of videoList(); track video.id) {
-          <div class="video-manage-item">
+          <div class="video-manage-item" [class.pending-approval]="!video.is_approved">
             <div class="video-thumb">
               @if (video.video_url) {
                 <video [src]="video.video_url" muted preload="metadata"></video>
@@ -253,16 +351,26 @@
             </div>
             <div class="video-info">
               <h4>{{ video.title }}</h4>
-              <p>{{ video.description || 'Sin descripción' }}</p>
+              <p class="author-info">✍️ {{ video.profiles?.email || 'Admin' }}</p>
               <div class="badge-row">
                 <span class="badge diff">Nivel {{ video.difficulty }}</span>
                 <span class="badge status" [class.active]="video.is_active">
                   {{ video.is_active ? 'Activo' : 'Borrador' }}
                 </span>
+                @if (!video.is_approved) {
+                  <span class="badge pending">⏳ Pendiente de Aprobación</span>
+                }
               </div>
             </div>
             <div class="video-actions">
-              <a [routerLink]="['/play', video.id]" target="_blank" class="btn-view" title="Ver publicado">
+              <!-- Solo Super Admin puede aprobar -->
+              @if (!video.is_approved && auth.currentUser()?.email === '93katu@gmail.com') {
+                <button class="btn-approve" (click)="approveVideo(video.id)" title="Aprobar para publicar">
+                  ✅ Aprobar
+                </button>
+              }
+              
+              <a [routerLink]="['/play', video.slug]" target="_blank" class="btn-view" title="Ver publicado">
                 👁️
               </a>
               <button class="btn-edit" (click)="editVideo(video)" title="Editar">

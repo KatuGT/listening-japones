@@ -14,6 +14,7 @@ export interface AdminSubtitleLine {
   translation: string;
 }
 
+
 @Component({
   selector: 'app-admin',
   imports: [CommonModule, FormsModule, RouterLink],
@@ -22,7 +23,7 @@ export interface AdminSubtitleLine {
 })
 export class Admin {
   private supabase = inject(SupabaseService);
-  private auth = inject(AuthService);
+  public auth = inject(AuthService); // Public para el template
   private translationService = inject(TranslationService);
   private router = inject(Router);
 
@@ -36,34 +37,105 @@ export class Admin {
 
   parsedSubtitles = signal<AdminSubtitleLine[]>([]);
 
-  activeTab = signal<'upload' | 'manage'>('upload');
+  activeTab = signal<'upload' | 'manage' | 'feedback' | 'users'>('upload');
   videoList = signal<any[]>([]);
+  feedbackList = signal<any[]>([]);
+  profilesList = signal<any[]>([]);
   editingVideoId = signal<string | null>(null);
 
   isTranslating = signal(false);
   isPublishing = signal(false);
+  isTitleTaken = signal(false);
   statusMessage = signal('');
 
   isDraggingVideo = signal(false);
   isDraggingVtt = signal(false);
 
-  ngOnInit() {
+  async ngOnInit() {
     this.loadVideos();
   }
 
   async loadVideos() {
     try {
-      const { data: videos } = await this.supabase.getVideos();
-      this.videoList.set(videos as any[]);
-    } catch (err) {
+      console.log('Admin: Intentando cargar videos...');
+      const videos = await this.supabase.getAdminVideos();
+      console.log('Admin: Videos recibidos:', videos?.length || 0, videos);
+      this.videoList.set(videos);
+    } catch (err: any) {
       console.error('Error loading videos', err);
+      this.statusMessage.set(`Error al cargar videos: ${err.message}`);
     }
   }
 
-  setTab(tab: 'upload' | 'manage') {
-    this.activeTab.set(tab);
-    if (tab === 'manage') {
+  async approveVideo(id: string) {
+    if (!confirm('¿Aprobar este video para su publicación?')) return;
+    try {
+      await this.supabase.approveVideo(id);
       this.loadVideos();
+    } catch (err) {
+      console.error('Error approving video', err);
+    }
+  }
+
+  async loadFeedback() {
+    try {
+      const feedback = await this.supabase.getAllFeedback();
+      this.feedbackList.set(feedback);
+    } catch (err) {
+      console.error('Error loading feedback', err);
+    }
+  }
+
+  async loadProfiles() {
+    try {
+      const profiles = await this.supabase.getAllProfiles();
+      this.profilesList.set(profiles);
+    } catch (err) {
+      console.error('Error loading profiles', err);
+    }
+  }
+
+  setTab(tab: 'upload' | 'manage' | 'feedback' | 'users') {
+    this.activeTab.set(tab);
+    if (tab === 'manage') this.loadVideos();
+    if (tab === 'feedback') this.loadFeedback();
+    if (tab === 'users') this.loadProfiles();
+  }
+
+  async resolveFeedback(item: any, responseText: string) {
+    if (!responseText.trim()) return;
+    try {
+      await this.supabase.updateFeedback(item.id, {
+        status: 'resuelto',
+        admin_response: responseText
+      });
+      this.loadFeedback();
+    } catch (err) {
+      console.error('Error resolving feedback', err);
+    }
+  }
+
+  async toggleBlockUser(profile: any) {
+    try {
+      await this.supabase.updateProfile(profile.id, {
+        is_blocked: !profile.is_blocked
+      });
+      this.loadProfiles();
+    } catch (err) {
+      console.error('Error toggling block', err);
+    }
+  }
+
+  async updateUserRole(profile: any, newRole: string) {
+    if (!confirm(`¿Cambiar el rol de ${profile.email} a ${newRole}?`)) return;
+    try {
+      await this.supabase.updateProfile(profile.id, {
+        role: newRole,
+        is_admin: newRole === 'admin' || newRole === 'collaborator' // Ambos pueden entrar al panel
+      });
+      this.loadProfiles();
+    } catch (err) {
+      console.error('Error updating role', err);
     }
   }
 
@@ -258,6 +330,38 @@ export class Admin {
     }
   }
 
+  async onTitleChange(newTitle: string) {
+    this.title.set(newTitle);
+    if (!newTitle) {
+      this.isTitleTaken.set(false);
+      return;
+    }
+
+    try {
+      const taken = await this.supabase.isTitleTaken(newTitle);
+      // Si estamos editando y el título es el mismo que el original, no está "tomado" por otro
+      if (this.editingVideoId()) {
+        const originalVideo = this.videoList().find(v => v.id === this.editingVideoId());
+        if (originalVideo && originalVideo.title === newTitle) {
+          this.isTitleTaken.set(false);
+          return;
+        }
+      }
+      this.isTitleTaken.set(taken);
+    } catch (err) {
+      console.error('Error checking title', err);
+    }
+  }
+
+  generateSlug(text: string): string {
+    return text
+      .toLowerCase()
+      .trim()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, "") // Quitar acentos si los hay
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
   resetForm() {
     this.editingVideoId.set(null);
     this.title.set('');
@@ -320,9 +424,11 @@ export class Admin {
 
       const videoData: any = {
         title: this.title(),
+        slug: this.generateSlug(this.title()),
         description: this.description(),
         difficulty: this.difficulty(),
         media_format: this.mediaFormat(),
+        phrase_count: this.parsedSubtitles().length,
         is_active: this.isActive(),
       };
       if (videoUrl) videoData.video_url = videoUrl;

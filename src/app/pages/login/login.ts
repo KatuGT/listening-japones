@@ -11,8 +11,8 @@ import { AuthService } from '../../services/auth.service';
       <div class="login-card glass-panel">
         <div class="login-header">
           <span class="logo-icon">🏮</span>
-          <h1>Admin Access</h1>
-          <p>Inicia sesión para gestionar el contenido de ListeningJaponés</p>
+          <h1>Únete a la Comunidad</h1>
+          <p>Inicia sesión para ayudarnos a mejorar reportando errores o dejando tus sugerencias.</p>
         </div>
         
         <div class="login-actions">
@@ -23,7 +23,7 @@ import { AuthService } from '../../services/auth.service';
         </div>
 
         <div class="login-footer">
-          <p>Solo personal autorizado tiene acceso a las herramientas de edición.</p>
+          <p>Tu participación nos ayuda a crear la mejor herramienta para aprender japonés. ❤️</p>
         </div>
       </div>
     </div>

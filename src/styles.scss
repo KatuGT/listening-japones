@@ -1,25 +1,71 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+/* Configuracion de Tipografia Local: Noto Sans JP */
+@font-face {
+  font-family: 'Noto Sans JP';
+  src: url('/assets/fonts/Noto_Sans_JP/NotoSansJP-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans JP';
+  src: url('/assets/fonts/Noto_Sans_JP/NotoSansJP-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans JP';
+  src: url('/assets/fonts/Noto_Sans_JP/NotoSansJP-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans JP';
+  src: url('/assets/fonts/Noto_Sans_JP/NotoSansJP-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans JP';
+  src: url('/assets/fonts/Noto_Sans_JP/NotoSansJP-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
-    --bg-dark: #0a0e14;
-    --bg-card: rgba(255, 255, 255, 0.05);
-    --primary: #e91e63;
-    --secondary: #00f2ff;
-    --text-main: #ffffff;
-    --text-muted: rgba(255, 255, 255, 0.6);
-    --glass-border: rgba(255, 255, 255, 0.1);
+  --bg-dark: #0a0e14;
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --primary: #bb0000;
+  --secondary: #ff7b00;
+  --text-main: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Outfit', sans-serif;
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    min-height: 100vh;
-    overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans JP', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
 }

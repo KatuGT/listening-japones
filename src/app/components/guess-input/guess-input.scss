@@ -14,7 +14,6 @@
     padding: 1rem;
     border-radius: 12px;
     text-align: center;
-    font-family: 'Outfit', sans-serif;
     font-weight: 500;
     margin-bottom: 0.5rem;
     animation: slideIn 0.3s ease-out;
@@ -73,7 +72,6 @@
             }
 
             .line-number {
-                font-family: 'Outfit', sans-serif;
                 color: var(--text-muted);
                 font-weight: 600;
                 font-size: 0.9rem;
@@ -83,7 +81,6 @@
         }
 
         .line-score {
-            font-family: 'Outfit', sans-serif;
             font-weight: 800;
             font-size: 1.1rem;
             color: var(--primary);
@@ -285,142 +282,118 @@
                         margin-bottom: 0.5rem;
                         padding-bottom: 0.2rem;
                         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-                        .jisho-word {
-                            font-size: 1.2rem;
-                            font-weight: 600;
-                            color: white;
-                        }
-
-                        .badges-group {
-                            display: flex;
-                            gap: 0.3rem;
-                            flex-wrap: wrap;
-
-                            .badge-common {
-                                background: rgba(0, 242, 255, 0.15);
-                                color: #00ccff;
-                                font-size: 0.6rem;
-                                padding: 0.2rem 0.4rem;
-                                border-radius: 4px;
-                                text-transform: uppercase;
-                                letter-spacing: 0.05em;
-                                font-weight: bold;
-                            }
-
-                            .badge-jlpt {
-                                background: rgba(233, 30, 99, 0.15);
-                                color: #ff4d85;
-                                font-size: 0.6rem;
-                                padding: 0.2rem 0.4rem;
-                                border-radius: 4px;
-                                text-transform: uppercase;
-                                letter-spacing: 0.05em;
-                                font-weight: bold;
-                            }
-                        }
                     }
 
-                    .jisho-readings {
-                        margin-bottom: 0.6rem;
-                        background: rgba(0, 0, 0, 0.2);
-                        padding: 0.4rem;
-                        border-radius: 6px;
+                    font-size: 1rem !important; // Prevent inheritance from .target-sentence
+                    line-height: 1.4;
+                    min-width: 240px;
+                    max-width: 320px;
+                    color: white;
 
-                        .readings-title {
-                            display: block;
-                            font-size: 0.65rem;
-                            color: var(--text-muted);
-                            text-transform: uppercase;
-                            margin-bottom: 0.3rem;
-                        }
-
-                        .readings-list {
-                            display: flex;
-                            flex-wrap: wrap;
-                            gap: 0.3rem;
-
-                            .reading-tag {
-                                background: rgba(255, 255, 255, 0.05);
-                                border: 1px solid rgba(255, 255, 255, 0.1);
-                                color: rgba(255, 255, 255, 0.8);
-                                font-size: 0.75rem;
-                                padding: 0.1rem 0.4rem;
-                                border-radius: 4px;
-                            }
-                        }
+                    .jisho-word {
+                        font-size: 1.2rem !important;
                     }
 
                     .jisho-meanings {
+                        margin: 0.8rem 0;
+
+                        .meaning-list {
+                            list-style: none;
+                            padding: 0;
+                            margin: 0;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 0.5rem;
+
+                            .meaning-item {
+                                font-size: 0.95rem !important;
+                                color: rgba(255, 255, 255, 0.95);
+                                line-height: 1.4;
+                                position: relative;
+                                padding-left: 1.2rem;
+
+                                &::before {
+                                    content: '•';
+                                    position: absolute;
+                                    left: 0;
+                                    color: var(--secondary);
+                                    font-weight: bold;
+                                    opacity: 0.7;
+                                }
+
+                                &:first-child {
+                                    font-weight: 500;
+                                    color: white;
+                                }
+                            }
+                        }
+                    }
+
+                    .tooltip-fallback-info {
                         display: flex;
                         flex-direction: column;
                         gap: 0.4rem;
+                        padding: 0.5rem 0;
 
-                        .sense-item {
+                        .tooltip-row {
                             display: flex;
-                            flex-direction: column;
-                            gap: 0.1rem;
-
-                            .pos-tag {
-                                font-size: 0.65rem;
-                                color: var(--text-muted);
-                                text-transform: uppercase;
-                                font-style: italic;
-                            }
-
-                            .meaning-text {
-                                font-size: 0.9rem;
-                                color: rgba(255, 255, 255, 0.9);
-                                line-height: 1.3;
-                            }
-                        }
-                    }
-
-                    // Fallbacks
-                    .tooltip-row {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: baseline;
-                        gap: 1rem;
-                        padding: 0.2rem 0;
-
-                        &:not(:last-child) {
+                            justify-content: space-between;
+                            align-items: baseline;
+                            gap: 1rem;
+                            padding: 0.3rem 0;
                             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+                            .tooltip-title {
+                                font-size: 0.7rem !important;
+                                color: rgba(255, 255, 255, 0.4);
+                                text-transform: uppercase;
+                            }
+
+                            .tooltip-value {
+                                font-size: 1rem !important;
+                                color: var(--secondary);
+                                font-weight: 500;
+                            }
+                        }
+
+                        .no-data-msg {
+                            color: #ff4d85;
+                            font-size: 0.9rem !important;
+                            font-weight: 600;
+                            margin: 1rem 0;
+                            line-height: 1.3;
+                            white-space: normal;
+                            text-align: center;
                         }
                     }
 
-                    .tooltip-title {
-                        font-family: 'Outfit', sans-serif;
-                        font-size: 0.65rem;
+                    .no-data {
+                        font-size: 0.9rem !important;
                         color: rgba(255, 255, 255, 0.5);
-                        text-transform: uppercase;
-                        letter-spacing: 0.05em;
-                    }
-
-                    .tooltip-value {
-                        font-family: fallback, 'Outfit', sans-serif;
-                        font-size: 1.1rem;
-                        color: rgba(0, 242, 255, 0.9);
-                        font-weight: 500;
+                        padding: 1rem 0;
+                        text-align: center;
                     }
 
                     .tooltip-actions {
                         margin-top: 0.5rem;
-                        padding-top: 0.5rem;
+                        padding-top: 0.8rem;
                         border-top: 1px dashed rgba(255, 255, 255, 0.1);
                         text-align: center;
 
                         .jisho-link {
                             color: var(--primary);
-                            font-size: 0.75rem;
+                            font-size: 0.75rem !important;
                             text-decoration: none;
                             font-weight: 600;
                             text-transform: uppercase;
                             letter-spacing: 0.05em;
-                            transition: color 0.2s;
+                            display: block;
+                            padding: 0.4rem;
 
                             &:hover {
                                 color: var(--secondary);
+                                background: rgba(255, 255, 255, 0.05);
+                                border-radius: 4px;
                             }
                         }
                     }
@@ -440,7 +413,6 @@
             color: rgba(255, 255, 255, 0.7);
             padding: 0.5rem 1rem;
             border-radius: 20px;
-            font-family: 'Outfit', sans-serif;
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
@@ -484,7 +456,6 @@
 
             p {
                 margin: 0;
-                font-family: 'Outfit', sans-serif;
                 font-size: 1.1rem;
                 color: rgba(255, 255, 255, 0.9);
                 line-height: 1.4;
@@ -505,7 +476,6 @@
         border: none;
         padding: 1rem 2.5rem;
         border-radius: 20px;
-        font-family: 'Outfit', sans-serif;
         font-weight: 700;
         font-size: 1.1rem;
         letter-spacing: 0.05em;
@@ -541,7 +511,6 @@
     .summary-score {
         font-size: 5rem;
         font-weight: 900;
-        font-family: 'Outfit', sans-serif;
         background: linear-gradient(to right, var(--primary), var(--secondary));
         -webkit-background-clip: text;
         background-clip: text;
@@ -562,7 +531,6 @@
         color: white;
         padding: 0.8rem 2rem;
         border-radius: 12px;
-        font-family: 'Outfit', sans-serif;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s ease;

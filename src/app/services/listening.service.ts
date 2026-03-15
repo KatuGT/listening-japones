@@ -34,6 +34,16 @@ export class ListeningService {
 
     addScore(score: number) {
         this.scores.update(s => [...s, score]);
+        
+        // Persistir en Supabase si hay un video cargado
+        const video = this.currentVideo();
+        if (video) {
+            this.supabaseService.saveScore({
+                video_id: video.id,
+                video_title: video.title,
+                score: score
+            });
+        }
     }
 
     averageScore = computed(() => {
@@ -42,20 +52,19 @@ export class ListeningService {
         return Math.round(s.reduce((a, b) => a + b, 0) / s.length);
     });
 
-    async loadVideoData(videoId: string) {
+    async loadVideoBySlug(slug: string) {
         this.isLoading.set(true);
         this.error.set(null);
         this.allSubtitles.set([]);
 
         try {
-            // 1. Fetch metadata
-            const videoData = await this.supabaseService.getVideoById(videoId);
+            // 1. Fetch metadata by slug
+            const videoData = await this.supabaseService.getVideoBySlug(slug);
             this.currentVideo.set(videoData);
 
-            // 2. Fetch subtitles
-            const subData = await this.supabaseService.getSubtitlesByVideoId(videoId);
+            // 2. Fetch subtitles by the actual ID
+            const subData = await this.supabaseService.getSubtitlesByVideoId(videoData.id);
             if (subData && subData.subtitles_json) {
-                // If it's already an array (from the db json format we plan to use)
                 this.allSubtitles.set(subData.subtitles_json);
             }
         } catch (err: any) {

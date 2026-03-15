@@ -41,3 +41,9 @@ testem.log
 .DS_Store
 Thumbs.db
 .vercel
+
+# Secrets and environments
+src/environments/environment.ts
+src/environments/environment.development.ts
+.env
+.env.local

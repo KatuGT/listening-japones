@@ -28,6 +28,7 @@ export class SupabaseService {
         let query = this.supabase
             .from('videos')
             .select('*', { count: 'exact' })
+            .eq('is_approved', true)
             .order('created_at', { ascending: false });
 
         if (filters.onlyActive) {
@@ -55,7 +56,7 @@ export class SupabaseService {
 
         const { data, error, count } = await query;
         if (error) throw error;
-        return { data, count };
+        return { data: data as any[], count };
     }
 
     async getVideoById(id: string) {
@@ -67,6 +68,28 @@ export class SupabaseService {
 
         if (error) throw error;
         return data;
+    }
+
+    async getVideoBySlug(slug: string) {
+        const { data, error } = await this.supabase
+            .from('videos')
+            .select('*')
+            .eq('slug', slug)
+            .single();
+
+        if (error) throw error;
+        return data;
+    }
+
+    async isTitleTaken(title: string): Promise<boolean> {
+        const { data, error } = await this.supabase
+            .from('videos')
+            .select('id')
+            .eq('title', title)
+            .maybeSingle();
+        
+        if (error) throw error;
+        return !!data;
     }
 
     async deleteVideo(id: string) {
@@ -117,13 +140,42 @@ export class SupabaseService {
 
     // Admin DB Inserts
     async insertVideo(videoData: any) {
+        const { data: { user } } = await this.supabase.auth.getUser();
+        
         const { data, error } = await this.supabase
             .from('videos')
-            .insert(videoData)
+            .insert({
+                ...videoData,
+                author_id: user?.id
+            })
             .select()
             .single();
         if (error) throw error;
         return data;
+    }
+
+    async getAdminVideos() {
+        // Obtenemos todos los videos con el profile del autor
+        // Usamos profiles!author_id para ser explícitos con la clave foránea
+        const { data, error } = await this.supabase
+            .from('videos')
+            .select('*, profiles!author_id(email)')
+            .order('created_at', { ascending: false });
+        
+        if (error) {
+            console.error('Error en getAdminVideos:', error);
+            throw error;
+        }
+        return data;
+    }
+
+    async approveVideo(id: string) {
+        const { error } = await this.supabase
+            .from('videos')
+            .update({ is_approved: true })
+            .eq('id', id);
+        
+        if (error) throw error;
     }
 
     async insertSubtitles(subData: any) {
@@ -178,5 +230,152 @@ export class SupabaseService {
 
     onAuthStateChange(callback: (event: any, session: any) => void) {
         return this.supabase.auth.onAuthStateChange(callback);
+    }
+
+    // Feedback
+    async submitFeedback(feedback: { video_id?: string, video_title?: string, type: string, content: string }) {
+        const { data: { user } } = await this.supabase.auth.getUser();
+        if (!user) throw new Error('Usuario no autenticado');
+
+        const { data, error } = await this.supabase
+            .from('feedback')
+            .insert({
+                ...feedback,
+                user_id: user.id
+            })
+            .select()
+            .single();
+
+        if (error) throw error;
+    }
+
+    async verifyCaptchaAndSubmitFeedback(token: string, feedback: any) {
+        const { data, error } = await this.supabase.functions.invoke('verify-captcha', {
+            body: { token, feedback }
+        });
+
+        if (error) throw error;
+        return data;
+    }
+
+    // Scores
+    async saveScore(scoreData: { video_id: string, video_title: string, score: number }) {
+        const { data: { user } } = await this.supabase.auth.getUser();
+        if (!user) return;
+
+        // Check if there's already a score for this video
+        const { data: existing } = await this.supabase
+            .from('user_scores')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('video_id', scoreData.video_id)
+            .maybeSingle();
+
+        if (existing) {
+            if (scoreData.score > existing.score) {
+                await this.supabase
+                    .from('user_scores')
+                    .update({ score: scoreData.score })
+                    .eq('id', existing.id);
+            }
+        } else {
+            await this.supabase
+                .from('user_scores')
+                .insert({
+                    ...scoreData,
+                    user_id: user.id
+                });
+        }
+    }
+
+    async getUserHighScores() {
+        const { data: { user } } = await this.supabase.auth.getUser();
+        if (!user) return [];
+
+        const { data, error } = await this.supabase
+            .from('user_scores')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('score', { ascending: false });
+
+        if (error) throw error;
+        return data;
+    }
+
+    async getUserFeedback() {
+        const { data: { user } } = await this.supabase.auth.getUser();
+        if (!user) return [];
+
+        const { data, error } = await this.supabase
+            .from('feedback')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        return data;
+    }
+
+    // --- Admin Methods ---
+
+    async getAllFeedback() {
+        const { data, error } = await this.supabase
+            .from('feedback')
+            .select('*')
+            .order('created_at', { ascending: false });
+        if (error) throw error;
+        return data;
+    }
+
+    async updateFeedback(id: string, updates: any) {
+        const { data, error } = await this.supabase
+            .from('feedback')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    }
+
+    async getAllProfiles() {
+        const { data, error } = await this.supabase
+            .from('profiles')
+            .select('*')
+            .order('created_at', { ascending: false });
+        if (error) throw error;
+        return data;
+    }
+
+    async updateProfile(id: string, updates: any) {
+        const { data, error } = await this.supabase
+            .from('profiles')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    }
+
+    async getProfile(id: string) {
+        const { data, error } = await this.supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', id)
+            .maybeSingle();
+        if (error) throw error;
+        return data;
+    }
+
+    async checkNicknameAvailability(nickname: string) {
+        const { data, error } = await this.supabase
+            .from('profiles')
+            .select('nickname')
+            .eq('nickname', nickname)
+            .maybeSingle();
+        
+        if (error) throw error;
+        return !data; // Si no hay datos, está disponible
     }
 }

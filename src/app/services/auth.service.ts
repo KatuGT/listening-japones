@@ -21,7 +21,7 @@ export class AuthService {
       this.isLoading.set(false);
       
       if (event === 'SIGNED_IN') {
-        this.router.navigate(['/admin']);
+        // Quitamos la redirección automática a Home para que respete la URL actual al recargar
       }
       if (event === 'SIGNED_OUT') {
         this.router.navigate(['/login']);

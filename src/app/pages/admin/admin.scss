@@ -1,5 +1,6 @@
 .admin-container {
     padding: 2rem;
+    padding-top: 120px;
     max-width: 95%; 
     margin: 0 auto;
 }
@@ -95,7 +96,6 @@
             h3 {
                 margin: 0;
                 color: var(--primary);
-                font-family: 'Outfit', sans-serif;
             }
 
             .btn-view-public {
@@ -139,6 +139,22 @@
 
 .form-group {
     margin-bottom: 1.5rem;
+
+    &.has-error {
+        input {
+            border-color: #ff4757 !important;
+            background: rgba(255, 71, 87, 0.05) !important;
+        }
+    }
+
+    .error-msg {
+        color: #ff4757;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-top: 0.5rem;
+        display: block;
+        animation: shake 0.4s ease-in-out;
+    }
 
     label {
         display: block;
@@ -704,6 +720,7 @@
             font-size: 0.9rem;
             display: -webkit-box;
             -webkit-line-clamp: 1;
+            line-clamp: 1;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -786,4 +803,221 @@
     border: 1px dashed rgba(255, 255, 255, 0.1);
     color: #666;
     font-size: 1.1rem;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+}
+// --- New Admin Sections Styles ---
+
+.feedback-manage-section, .users-manage-section {
+  padding: 1rem;
+}
+
+.feedback-table-container {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  th {
+    text-align: left;
+    padding: 1rem;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+  }
+  
+  td {
+    padding: 1rem;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.9rem;
+    vertical-align: middle;
+  }
+
+  tr:hover {
+    background: rgba(255,255,255,0.02);
+  }
+
+  tr.resolved {
+    opacity: 0.6;
+    background: rgba(26, 233, 184, 0.02);
+  }
+}
+
+.status-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  
+  &.resuelto {
+    background: rgba(26, 233, 184, 0.1);
+    color: var(--primary);
+  }
+}
+
+.feedback-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 200px;
+  
+  textarea {
+    width: 100%;
+    height: 60px;
+    font-size: 0.8rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 0.5rem;
+    color: #fff;
+    resize: none;
+    
+    &:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+  }
+
+  .btn-resolve {
+    background: var(--primary);
+    color: #000;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(26, 233, 184, 0.3);
+    }
+  }
+}
+
+.res-preview {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+  max-width: 250px;
+  
+  strong { color: var(--primary); }
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.user-card {
+  background: rgba(30, 30, 45, 0.4);
+  padding: 1.5rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s;
+
+  &:hover {
+    background: rgba(30, 30, 45, 0.6);
+    border-color: rgba(255,255,255,0.1);
+  }
+
+  &.blocked {
+    border-color: rgba(187, 0, 0, 0.3);
+    .user-email { color: rgba(255,255,255,0.3); text-decoration: line-through; }
+  }
+
+  &.is-admin {
+    background: rgba(26, 233, 184, 0.05);
+    border-color: rgba(26, 233, 184, 0.2);
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    
+    .user-email { font-weight: 700; color: #fff; font-size: 1rem; }
+    .user-nickname { font-size: 0.85rem; color: var(--secondary); font-weight: 600; }
+    .role-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.2rem;
+      
+      &.admin { color: var(--primary); }
+      &.collaborator { color: #bb86fc; }
+    }
+    
+    .user-id { font-size: 0.7rem; color: rgba(255,255,255,0.3); font-family: monospace; }
+  }
+
+  .user-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: flex-end;
+  }
+
+  .role-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .btn-role {
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.02);
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+    
+    &:hover:not(:disabled) {
+      background: rgba(255,255,255,0.1);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: default;
+      border-color: transparent;
+    }
+  }
+
+  .btn-block {
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    
+    &.danger {
+      color: #ff5252;
+      border-color: rgba(255, 82, 82, 0.2);
+      &:hover { 
+        background: rgba(255, 82, 82, 0.1); 
+        border-color: #ff5252;
+      }
+    }
+  }
 }

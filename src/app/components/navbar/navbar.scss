@@ -1,16 +1,64 @@
-.navbar {
-  background: rgba(30, 30, 30, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  position: sticky;
+.navbar-glossy-container {
+  position: fixed;
   top: 0;
-  z-index: 1000;
-  padding: 1rem 0;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  height: 78px; // Altura exacta de Leonardo.ai
+  display: flex;
+  align-items: center;
+
+  .glossy-filter-svg {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .navbar-glossy-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(12px) url(#leonardo-iridescent);
+    -webkit-backdrop-filter: blur(12px);
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+
+    .iridescent-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+          rgba(255, 0, 0, 0.03) 0%,
+          rgba(0, 255, 0, 0.03) 50%,
+          rgba(0, 0, 255, 0.03) 100%);
+      mix-blend-mode: color-dodge;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+}
+
+.navbar {
+  width: 100%;
+  background: transparent;
+  border-bottom: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 .nav-container {
-  max-width: 1200px;
+  max-width: 1400px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 2rem;
   display: flex;
@@ -32,16 +80,10 @@
     transform: scale(1.05);
   }
 
-  .icon {
-    font-size: 1.8rem;
-  }
-
-  .text {
-    letter-spacing: -0.5px;
-  }
-
-  .highlight {
-    color: var(--primary);
+  .nav-logo {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
   }
 }
 
@@ -51,25 +93,52 @@
   align-items: center;
 
   .nav-link {
-    color: #ccc;
+    color: #ffffff;
     text-decoration: none;
+    font-size: 1.1rem; // Aproximadamente 18-20px
     font-weight: 500;
-    transition: color 0.2s;
-    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    opacity: 0.85;
 
     &:hover {
-      color: white;
+      background: rgba(255, 255, 255, 0.05);
+      opacity: 1;
+    }
+
+    &.active {
+      color: var(--primary);
+      background: rgba(26, 233, 184, 0.1);
+      opacity: 1;
+    }
+
+    &.admin-link, &.btn-logout {
+      font-size: 0.85rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      transition: all 0.3s;
     }
 
     &.admin-link {
-      font-size: 0.85rem;
-      border: 1px solid #444;
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      
       &:hover {
-        background: #333;
-        border-color: #666;
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+
+    &.btn-logout {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      font-family: inherit;
+      color: rgba(255, 255, 255, 0.6);
+
+      &:hover {
+        background: rgba(187, 0, 0, 0.1);
+        border-color: rgba(187, 0, 0, 0.3);
+        color: #fff;
       }
     }
   }

@@ -1,0 +1,179 @@
+<div class="catalog-page-container">
+  <header class="catalog-header">
+    <h1>🎧 Catálogo Completo</h1>
+    <p>Explora toda nuestra biblioteca de audios y mejora tu comprensión.</p>
+  </header>
+
+  <div class="filters-container">
+    <div class="search-group">
+      <span class="search-icon">🔍</span>
+      <input
+        type="search"
+        class="search-input"
+        placeholder="Buscar por título..."
+        [value]="searchQuery()"
+        (input)="onSearch($event)"
+      />
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Formato:</span>
+      <button
+        class="filter-pill"
+        [class.active]="selectedFormat() === 'Todos'"
+        (click)="setFormatFilter('Todos')"
+      >
+        Todos
+      </button>
+      <button
+        class="filter-pill"
+        [class.active]="selectedFormat() === 'Anime'"
+        (click)="setFormatFilter('Anime')"
+      >
+        Anime
+      </button>
+      <button
+        class="filter-pill"
+        [class.active]="selectedFormat() === 'J-Drama'"
+        (click)="setFormatFilter('J-Drama')"
+      >
+        J-Drama
+      </button>
+      <button
+        class="filter-pill"
+        [class.active]="selectedFormat() === 'Noticias'"
+        (click)="setFormatFilter('Noticias')"
+      >
+        Noticias
+      </button>
+      <button
+        class="filter-pill"
+        [class.active]="selectedFormat() === 'Vlog'"
+        (click)="setFormatFilter('Vlog')"
+      >
+        Vlog
+      </button>
+      <button
+        class="filter-pill"
+        [class.active]="selectedFormat() === 'Música'"
+        (click)="setFormatFilter('Música')"
+      >
+        Música
+      </button>
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Dificultad JLPT:</span>
+      <button
+        class="filter-pill diff"
+        [class.active]="selectedDifficulty() === 0"
+        (click)="setDifficultyFilter(0)"
+      >
+        Cualquiera
+      </button>
+      <button
+        class="filter-pill diff n5"
+        [class.active]="selectedDifficulty() === 1"
+        (click)="setDifficultyFilter(1)"
+      >
+        N5
+      </button>
+      <button
+        class="filter-pill diff n4"
+        [class.active]="selectedDifficulty() === 2"
+        (click)="setDifficultyFilter(2)"
+      >
+        N4
+      </button>
+      <button
+        class="filter-pill diff n3"
+        [class.active]="selectedDifficulty() === 3"
+        (click)="setDifficultyFilter(3)"
+      >
+        N3
+      </button>
+      <button
+        class="filter-pill diff n2"
+        [class.active]="selectedDifficulty() === 4"
+        (click)="setDifficultyFilter(4)"
+      >
+        N2
+      </button>
+      <button
+        class="filter-pill diff n1"
+        [class.active]="selectedDifficulty() === 5"
+        (click)="setDifficultyFilter(5)"
+      >
+        N1
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+  <app-video-card-skeleton></app-video-card-skeleton>
+  } @else if (error()) {
+  <div class="error-state">
+    <p>Error: {{ error() }}</p>
+  </div>
+  } @else if (videos().length === 0) {
+  <div class="empty-state">
+    <p>No hay videos que coincidan con tu búsqueda.</p>
+  </div>
+  @} @else {
+  <div class="grouped-results">
+    @for (group of groupedVideos(); track group.name) {
+    <section class="format-section">
+      <h2 class="section-title">
+        <span class="format-icon"
+          >{{ group.name === 'Anime' ? '🎞️' : group.name === 'J-Drama' ? '📺' :
+          '🎙️' }}</span
+        >
+        {{ group.name }}
+      </h2>
+      <div class="video-grid">
+        @for (video of group.items; track video.id) {
+        <div class="video-card" (click)="goToVideo(video.slug)">
+          <div class="thumbnail">
+            <video
+              class="card-video"
+              [src]="video.video_url"
+              [poster]="video.thumbnail_url || ''"
+              muted
+              loop
+              preload="metadata"
+              playsinline
+              (mouseenter)="playPreview($event)"
+              (mouseleave)="stopPreview($event)"
+            ></video>
+            <div class="badges-container">
+              @if (video.media_format) {
+              <span class="format-badge {{video.media_format | lowercase}}"
+                >{{ video.media_format }}</span
+              >
+              }
+              <span class="difficulty-badge n{{video.difficulty}}"
+                >N{{ 6 - video.difficulty }}</span
+              >
+            </div>
+          </div>
+          <div class="card-content">
+            <h3>{{ video.title }}</h3>
+            <span class="phrase-count">{{ video.phrase_count }} frases</span>
+            @if (video.description) {
+            <p>{{ video.description }}</p>
+            }
+          </div>
+        </div>
+        }
+      </div>
+    </section>
+    }
+  </div>
+
+  @if (hasMore()) {
+  <div class="load-more-container">
+    <button class="btn-load-more" (click)="loadMore()" [disabled]="isLoading()">
+      {{ isLoading() ? 'Cargando...' : 'Cargar más videos' }}
+    </button>
+  </div>
+  } }
+</div>

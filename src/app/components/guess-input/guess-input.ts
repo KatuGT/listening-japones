@@ -6,6 +6,7 @@ import { toHiragana } from 'wanakana';
 
 import { TranslationService } from '../../services/translation.service';
 import { JishoService, JishoResult } from '../../services/jisho.service';
+import { DictionaryService, DictionaryEntry } from '../../services/dictionary.service';
 
 export interface TargetToken {
   surface: string;
@@ -16,6 +17,8 @@ export interface TargetToken {
   isLoadingJisho?: boolean;
   jishoLoaded?: boolean;
   jishoData?: JishoResult | null;
+  spanishLoaded?: boolean;
+  spaData?: DictionaryEntry[] | null;
 }
 
 export interface LineState {
@@ -41,6 +44,7 @@ export class GuessInput {
   private kanjiParser = inject(KanjiParserService);
   public translationService = inject(TranslationService);
   public jishoService = inject(JishoService);
+  public dictionaryService = inject(DictionaryService);
 
   lines = signal<LineState[]>([]);
 
@@ -211,18 +215,45 @@ export class GuessInput {
     });
 
     const keyword = token.base_form || token.surface;
-    const result = await this.jishoService.search(keyword);
+    
+    // Ejecutamos ambas búsquedas en paralelo
+    const [jishoResult, spaResult] = await Promise.all([
+      this.jishoService.search(keyword),
+      this.dictionaryService.search(keyword)
+    ]);
+
+    // Fallback: si no hay resultados con base_form/surface, intentamos superficie original si es un compuesto
+    let finalJisho = jishoResult;
+    let finalSpa = spaResult;
+
+    if (!finalJisho && !finalSpa && token.surface !== keyword) {
+      const [retryJisho, retrySpa] = await Promise.all([
+        this.jishoService.search(token.surface),
+        this.dictionaryService.search(token.surface)
+      ]);
+      finalJisho = retryJisho;
+      finalSpa = retrySpa;
+    }
 
     // Set loaded
     this.lines.update(current => {
       const newLines = [...current];
       const newTokens = [...newLines[lineIndex].targetTokens];
+      
+      const foundSpa = finalSpa && finalSpa.length > 0;
+      const foundJisho = !!finalJisho;
+
       newTokens[tokenIndex] = { 
          ...newTokens[tokenIndex], 
          isLoadingJisho: false,
          jishoLoaded: true,
-         jishoData: result
+         jishoData: finalJisho,
+         spanishLoaded: true,
+         spaData: foundSpa ? finalSpa : null
       };
+      
+      console.log(`Token [${token.surface}] final status:`, { foundSpa, foundJisho });
+      
       newLines[lineIndex] = { ...newLines[lineIndex], targetTokens: newTokens };
       return newLines;
     });

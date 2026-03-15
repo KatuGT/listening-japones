@@ -59,49 +59,58 @@
               <div class="kanji-tooltip">
                 @if (token.isLoadingJisho) {
                   <div class="jisho-loader">
-                    <span class="pulse-dot"></span> Buscando en Jisho...
+                    <span class="pulse-dot"></span> Buscando...
                   </div>
-                } @else if (token.jishoLoaded && token.jishoData) {
-                  <div class="jisho-header">
-                    <span class="jisho-word">{{ token.jishoData.slug }}</span>
-                    <div class="badges-group">
-                      @if (token.jishoData.is_common) {
-                        <span class="badge-common">Común</span>
-                      }
-                      @if (token.jishoData.jlpt && token.jishoData.jlpt.length > 0) {
-                        <span class="badge-jlpt">{{ token.jishoData.jlpt[0] | uppercase }}</span>
-                      }
-                    </div>
-                  </div>
-
-                  @if (token.jishoData.japanese && token.jishoData.japanese.length > 1) {
-                    <div class="jisho-readings">
-                      <span class="readings-title">Otras lecturas:</span>
-                      <div class="readings-list">
-                      @for (jap of token.jishoData.japanese | slice:1:4; track jap.word || jap.reading) {
-                        <span class="reading-tag">{{ jap.word ? jap.word + ' (' + jap.reading + ')' : jap.reading }}</span>
-                      }
+                } @else if (token.jishoLoaded || token.spanishLoaded) {
+                  <!-- Metadata from Jisho (if any) -->
+                  @if (token.jishoData) {
+                    <div class="jisho-header">
+                      <span class="jisho-word">{{ token.jishoData.slug }}</span>
+                      <div class="badges-group">
+                        @if (token.jishoData.is_common) {
+                          <span class="badge-common">Común</span>
+                        }
+                        @if (token.jishoData.jlpt && token.jishoData.jlpt.length > 0) {
+                          <span class="badge-jlpt">{{ token.jishoData.jlpt[0] | uppercase }}</span>
+                        }
                       </div>
                     </div>
                   }
-                  
+
+                  <!-- Primary Meanings Area -->
                   <div class="jisho-meanings">
-                    @for (sense of token.jishoData.senses | slice:0:2; track sense) {
-                      <div class="sense-item">
-                        <span class="pos-tag">{{ sense.parts_of_speech && sense.parts_of_speech.length > 0 ? (sense.parts_of_speech[0].split(',')[0]) : '' }}</span>
-                        <span class="meaning-text">{{ sense.english_definitions.join(', ') }}</span>
+                    @if (token.spaData && token.spaData.length > 0) {
+                      <div class="spanish-definitions">
+                        <ul class="meaning-list">
+                          @for (entry of token.spaData | slice:0:1; track $index) {
+                            @for (meaning of entry.m | slice:0:4; track $index) {
+                              <li class="meaning-item">{{ meaning }}</li>
+                            }
+                          }
+                        </ul>
+                      </div>
+                    } @else if (token.jishoData) {
+                      <div class="english-definitions">
+                        <ul class="meaning-list">
+                          @for (sense of token.jishoData.senses | slice:0:2; track $index) {
+                            <li class="meaning-item">{{ sense.english_definitions.join(', ') }}</li>
+                          }
+                        </ul>
+                      </div>
+                    } @else {
+                      <!-- Technical Fallback if no definitions in either -->
+                      <div class="tooltip-fallback-info">
+                        <div class="tooltip-row">
+                          <span class="tooltip-title">Tipo:</span>
+                          <span class="tooltip-value">{{ token.pos }}</span>
+                        </div>
+                        <div class="tooltip-row">
+                          <span class="tooltip-title">Base:</span>
+                          <span class="tooltip-value">{{ token.base_form || token.surface }}</span>
+                        </div>
+                        <div class="no-data-msg">No encontramos definiciones exactas.</div>
                       </div>
                     }
-                  </div>
-                } @else if (token.jishoLoaded && !token.jishoData) {
-                  <!-- Fallback si jisho no encuentra -->
-                  <div class="tooltip-row">
-                    <span class="tooltip-title">Tipo:</span>
-                    <span class="tooltip-value">{{ token.pos }}</span>
-                  </div>
-                  <div class="tooltip-row">
-                    <span class="tooltip-title">Base:</span>
-                    <span class="tooltip-value">{{ token.base_form || token.surface }}</span>
                   </div>
                 } @else {
                   <div class="jisho-loader">Cargando...</div>

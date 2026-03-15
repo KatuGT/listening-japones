@@ -1,4 +1,16 @@
 <div class="content-card">
+  <!-- Decoraciones -->
+  <img
+    src="/assets/images/recurso-play-der.webp"
+    class="decoration-img top-left"
+    alt=""
+  />
+  <img
+    src="/assets/images/recurso-play-izq.webp"
+    class="decoration-img bottom-right"
+    alt=""
+  />
+
   <header>
     <h1>{{ listeningService.currentVideo()?.title || 'Cargando video...' }}</h1>
     <p>Escucha con atención e intenta transcribir lo que dicen.</p>
@@ -7,13 +19,20 @@
   <div class="practice-layout">
     <div class="video-section">
       <app-video-player></app-video-player>
+      
+      <div class="video-actions">
+        <button class="btn-report glass-panel" (click)="reportError()">
+          <span class="icon">🚩</span>
+          ¿Algo está mal? Reportar error
+        </button>
+      </div>
     </div>
 
     <div class="inputs-section">
       @if (listeningService.isLoading()) {
-        <app-guess-input-skeleton></app-guess-input-skeleton>
+      <app-guess-input-skeleton></app-guess-input-skeleton>
       } @else {
-        <app-guess-input></app-guess-input>
+      <app-guess-input></app-guess-input>
       }
     </div>
   </div>

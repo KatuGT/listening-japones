@@ -1,0 +1,92 @@
+<div class="profile-container">
+  <div class="profile-header glass-panel">
+    <div class="user-info">
+      <div class="avatar-placeholder">
+        {{ auth.currentUser()?.email?.charAt(0).toUpperCase() }}
+      </div>
+      <div class="user-meta">
+        <h1>Mi Perfil</h1>
+        <p class="user-email">{{ auth.currentUser()?.email }}</p>
+        
+        <div class="nickname-editor">
+          <div class="input-group">
+            <input 
+              type="text" 
+              [value]="nickname()" 
+              (input)="onNicknameChange(nicknameInput.value)"
+              #nicknameInput
+              placeholder="Elige tu nickname..."
+              maxlength="20"
+            />
+            <button 
+              class="btn-save" 
+              (click)="saveNickname()" 
+              [disabled]="isSaving() || (nicknameStatus() !== 'available' && nicknameStatus() !== 'none') || nickname() === profile()?.nickname">
+              {{ isSaving() ? '...' : 'Guardar' }}
+            </button>
+          </div>
+          
+          <div class="status-msg" [class]="nicknameStatus()">
+            @if (nicknameStatus() === 'checking') { <span class="checking">⏳ Comprobando...</span> }
+            @if (nicknameStatus() === 'available') { <span class="available">✅ Disponible</span> }
+            @if (nicknameStatus() === 'taken') { <span class="taken">❌ Ya está en uso</span> }
+            @if (nicknameStatus() === 'invalid') { <span class="invalid">⚠️ Mínimo 3 caracteres</span> }
+            @if (saveMessage()) { <span class="save-result">{{ saveMessage() }}</span> }
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-value">{{ highScores().length }}</span>
+        <span class="stat-label">Videos Practicados</span>
+      </div>
+      <div class="stat-card gold">
+        <span class="stat-value">{{ getBadgeCount() }}</span>
+        <span class="stat-label">Medallas 100%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-content">
+    <section class="achievements-section glass-panel">
+      <h2>🏆 Mis Logros (Top Scores)</h2>
+      <div class="scores-list" *ngIf="highScores().length > 0; else noScores">
+        <div class="score-item" *ngFor="let score of highScores()" [class.perfect]="score.score === 100">
+          <div class="score-info">
+            <span class="video-title">{{ score.video_title }}</span>
+            <span class="score-date">{{ score.created_at | date:'shortDate' }}</span>
+          </div>
+          <div class="score-value">
+            <span class="medal" *ngIf="score.score === 100">🥇</span>
+            {{ score.score }}%
+          </div>
+        </div>
+      </div>
+      <ng-template #noScores>
+        <div class="empty-state">
+          <p>Aún no has practicado ningún video. ¡Ve al catálogo y empieza ahora!</p>
+          <a routerLink="/catalogo" class="btn-primary">Ver Catálogo</a>
+        </div>
+      </ng-template>
+    </section>
+
+    <section class="feedback-section glass-panel">
+      <h2>🚩 Mi Feedback Enviado</h2>
+      <div class="feedback-list" *ngIf="feedbackList().length > 0; else noFeedback">
+        <div class="feedback-item" *ngFor="let item of feedbackList()">
+          <div class="feedback-header">
+            <span class="type-badge" [class]="item.type">{{ item.type | uppercase }}</span>
+            <span class="feedback-date">{{ item.created_at | date:'short' }}</span>
+          </div>
+          <p class="feedback-content">{{ item.content }}</p>
+          <span class="video-context" *ngIf="item.video_title">Video: {{ item.video_title }}</span>
+        </div>
+      </div>
+      <ng-template #noFeedback>
+        <p class="empty-msg">No has enviado reportes o sugerencias todavía.</p>
+      </ng-template>
+    </section>
+  </div>
+</div>

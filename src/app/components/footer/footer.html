@@ -1,0 +1,59 @@
+<footer class="site-footer">
+  <div class="footer-content">
+    <div class="footer-section brand">
+      <div class="logo">
+        <span class="logo-text">Wakarimasu<span>ka?</span></span>
+      </div>
+      <p class="bio">
+        Tu plataforma para sumergirte en el japonés real a través de tus animes
+        y doramas favoritos.
+      </p>
+    </div>
+
+    <div class="footer-section links">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a routerLink="/">Inicio</a></li>
+        <li><a routerLink="/catalogo">Catálogo</a></li>
+        <li><a href="#">Sobre el proyecto</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section categories">
+      <h4>Categorías</h4>
+      <ul>
+        <li>
+          <a [routerLink]="['/catalogo']" [queryParams]="{format: 'Anime'}"
+            >Anime</a
+          >
+        </li>
+        <li>
+          <a [routerLink]="['/catalogo']" [queryParams]="{format: 'J-Drama'}"
+            >J-Drama</a
+          >
+        </li>
+        <li>
+          <a [routerLink]="['/catalogo']" [queryParams]="{format: 'Vlog'}"
+            >Vlogs</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-section social">
+      <h4>Comunidad</h4>
+      <div class="social-icons">
+        <a href="#" class="social-icon">Discord</a>
+        <a href="#" class="social-icon">YouTube</a>
+        <a href="#" class="social-icon">Github</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>
+      &copy; {{ currentYear }} Wakarimasu ka. Hecho con ❤️ para estudiantes de
+      japonés.
+    </p>
+  </div>
+</footer>
