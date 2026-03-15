@@ -21,20 +21,25 @@ export class KanjiParserService {
       // Cargador personalizado para usar 'fetch' en lugar de la lógica de Node.js
       const myLoader = {
         async loadArrayBuffer(url: string): Promise<ArrayBufferLike> {
-          // Usamos .db para engañar a Vercel y que no intente optimizar el archivo binario
           const targetUrl = url.endsWith('.gz') ? `${url.replace('.gz', '.db')}` : url;
-          
-          // Importante: Usamos la ruta absoluta desde el origen para evitar fallos en subrutas
           const dictPath = `${window.location.origin}/assets/dict/${targetUrl}`;
-          console.log(`📡 Descargando diccionario: ${dictPath}`);
+          console.log(`📡 Fetching dictionary: ${dictPath}`);
 
-          const res = await fetch(dictPath);
-          if (!res.ok) throw new Error(`Fallo al cargar diccionario (${res.status}): ${dictPath}`);
-          
-          // Como los archivos .db son en realidad .gz, los descomprimimos al vuelo
-          const ds = new DecompressionStream('gzip');
-          const decompressedStream = res.body!.pipeThrough(ds);
-          return await new Response(decompressedStream).arrayBuffer();
+          try {
+            const res = await fetch(dictPath, { mode: 'same-origin' });
+            if (!res.ok) throw new Error(`HTTP Error ${res.status}: ${dictPath}`);
+            
+            const body = res.body;
+            if (!body) throw new Error('Response body is null');
+
+            console.log(`📦 Received ${targetUrl}, decompressing...`);
+            const ds = new DecompressionStream('gzip');
+            const decompressedStream = body.pipeThrough(ds);
+            return await new Response(decompressedStream).arrayBuffer();
+          } catch (err) {
+            console.error(`❌ Error in loadArrayBuffer for ${targetUrl}:`, err);
+            throw err;
+          }
         }
       };
 
@@ -42,14 +47,13 @@ export class KanjiParserService {
         loader: myLoader as any
       });
 
-      // Timeout de seguridad: si en 15 segundos no cargan los diccionarios,
-      // desbloqueamos la UI para que el usuario pueda al menos ver los videos.
+      // Timeout de seguridad: aumentado a 30 segundos para despliegues lentos
       const timeout = setTimeout(() => {
         if (!this.isReady()) {
-          console.warn('Timeout alcanzado: Desbloqueando UI sin Kuromoji activo.');
+          console.warn('🕒 Parser Initialization Timeout (30s). Unblocking UI.');
           this.isReady.set(true);
         }
-      }, 15000);
+      }, 30000);
 
       try {
         console.log('Iniciando carga de diccionarios (.db)...');

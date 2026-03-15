@@ -5,10 +5,6 @@
       "source": "/assets/dict/(.*).db",
       "headers": [
         {
-          "key": "Content-Encoding",
-          "value": "identity"
-        },
-        {
           "key": "Content-Type",
           "value": "application/octet-stream"
         }
@@ -16,9 +12,10 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/(catalogo|play|login|perfil|admin){1}(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/catalogo", "destination": "/index.html" },
+    { "source": "/login", "destination": "/index.html" },
+    { "source": "/perfil", "destination": "/index.html" },
+    { "source": "/admin", "destination": "/index.html" },
+    { "source": "/play/(.*)", "destination": "/index.html" }
   ]
 }
