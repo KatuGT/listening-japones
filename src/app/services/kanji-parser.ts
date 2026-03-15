@@ -8,6 +8,10 @@ export class KanjiParserService {
   private tokenizer: any;
   isReady = signal(false);
 
+  // Caché para evitar procesar lo mismo mil veces
+  private hiraganaCache = new Map<string, string>();
+  private tokenCache = new Map<string, any[]>();
+
   constructor() {
     this.initTokenizer();
   }
@@ -21,7 +25,12 @@ export class KanjiParserService {
           const targetUrl = url.endsWith('.gz') ? `${url.replace('.gz', '.db')}` : url;
           const res = await fetch('/assets/dict/' + targetUrl);
           if (!res.ok) throw new Error(`Fallo al cargar diccionario: ${url}`);
-          return res.arrayBuffer();
+          
+          // Como los archivos .db son en realidad .gz, los descomprimimos al vuelo
+          // usando la API nativa del navegador DecompressionStream.
+          const ds = new DecompressionStream('gzip');
+          const decompressedStream = res.body!.pipeThrough(ds);
+          return await new Response(decompressedStream).arrayBuffer();
         }
       };
 
@@ -58,6 +67,11 @@ export class KanjiParserService {
 
   toHiragana(text: string): string {
     if (!this.isReady() || !this.tokenizer) return text;
+    
+    // Si ya lo procesamos antes, devolvemos el resultado del caché
+    if (this.hiraganaCache.has(text)) {
+      return this.hiraganaCache.get(text)!;
+    }
 
     // 1. Normalizar corchetes (full-width a half-width)
     let clean = text.replace(/［/g, '[').replace(/］/g, ']');
@@ -65,29 +79,30 @@ export class KanjiParserService {
     // 2. Dividir el texto en partes de "override" y "texto normal"
     const bridgeRegex = /([^\[\]\s]+)\s*\[([^\]]+)\]/g;
     const parts = clean.split(bridgeRegex);
-    // split con un grupo de captura devuelve [previo, grupo1, grupo2, siguiente, ...]
     
     let result = '';
     for (let i = 0; i < parts.length; i += 3) {
-      // Texto normal (o previo al override)
       const normalPart = parts[i];
       if (normalPart) {
-        const tokens = this.tokenizer.tokenize(normalPart.replace(/[、。！？\s]/g, ''));
-        result += tokens.map((t: any) => {
-          if (t.reading) return this.katakanaToHiragana(t.reading);
-          if (this.containsKanji(t.surface_form)) return '';
-          return t.surface_form;
-        }).join('');
+        // Optimización: Si no hay Kanji ni Katakana, no hace falta tokenizar
+        if (!this.containsKanji(normalPart) && !this.containsKatakana(normalPart)) {
+          result += normalPart.replace(/[、。！？\s]/g, '');
+        } else {
+          const tokens = this.tokenizer.tokenize(normalPart.replace(/[、。！？\s]/g, ''));
+          result += tokens.map((t: any) => {
+            if (t.reading) return this.katakanaToHiragana(t.reading);
+            if (this.containsKanji(t.surface_form)) return '';
+            return t.surface_form;
+          }).join('');
+        }
       }
 
-      // El override (si existe)
       if (i + 1 < parts.length) {
-        // parts[i+1] es el Kanji (que ignoramos aquí)
-        // parts[i+2] es la lectura manual (que usamos)
         result += parts[i + 2].replace(/\s/g, ''); 
       }
     }
     
+    this.hiraganaCache.set(text, result);
     return result;
   }
 
@@ -131,6 +146,10 @@ export class KanjiParserService {
   tokenizeForDisplay(text: string): Array<{ surface: string, reading: string | null, isKanji: boolean, base_form?: string, pos?: string }> {
     if (!this.isReady() || !this.tokenizer) return [{ surface: text, reading: null, isKanji: false }];
 
+    if (this.tokenCache.has(text)) {
+      return this.tokenCache.get(text)!;
+    }
+
     let clean = text.replace(/［/g, '[').replace(/］/g, ']');
     const bridgeRegex = /([^\[\]\s]+)\s*\[([^\]]+)\]/g;
     const parts = clean.split(bridgeRegex);
@@ -154,24 +173,28 @@ export class KanjiParserService {
     for (let i = 0; i < parts.length; i += 3) {
       const normalPart = parts[i];
       if (normalPart) {
-        const tokens = this.tokenizer.tokenize(normalPart);
-        const mappedTokens = tokens.map((t: any) => {
-          const surface = t.surface_form;
-          const reading = t.reading ? this.katakanaToHiragana(t.reading) : null;
-          const isKanji = this.containsKanji(surface);
-          // Omitimos la lectura si es igual a la superficie en hiragana puro
-          const finalReading = (isKanji && surface !== reading) ? reading : null;
-          const pos_es = t.pos ? (posMap[t.pos] || 'Otro') : 'Desconocido';
-          
-          return { 
-            surface, 
-            reading: finalReading, 
-            isKanji,
-            base_form: (t.basic_form && t.basic_form !== '*') ? t.basic_form : surface,
-            pos: pos_es
-          };
-        });
-        results = results.concat(mappedTokens);
+        // Si no hay Kanji ni Katakana, podemos crear un token simple sin ir al tokenizer
+        if (!this.containsKanji(normalPart) && !this.containsKatakana(normalPart)) {
+          results.push({ surface: normalPart, reading: null, isKanji: false, pos: 'Texto' });
+        } else {
+          const tokens = this.tokenizer.tokenize(normalPart);
+          const mappedTokens = tokens.map((t: any) => {
+            const surface = t.surface_form;
+            const reading = t.reading ? this.katakanaToHiragana(t.reading) : null;
+            const isKanji = this.containsKanji(surface);
+            const finalReading = (isKanji && surface !== reading) ? reading : null;
+            const pos_es = t.pos ? (posMap[t.pos] || 'Otro') : 'Desconocido';
+            
+            return { 
+              surface, 
+              reading: finalReading, 
+              isKanji,
+              base_form: (t.basic_form && t.basic_form !== '*') ? t.basic_form : surface,
+              pos: pos_es
+            };
+          });
+          results = results.concat(mappedTokens);
+        }
       }
 
       if (i + 1 < parts.length) {
@@ -181,11 +204,16 @@ export class KanjiParserService {
       }
     }
 
+    this.tokenCache.set(text, results);
     return results;
   }
 
   private containsKanji(text: string): boolean {
     return /[\u4e00-\u9faf]/.test(text);
+  }
+
+  private containsKatakana(text: string): boolean {
+    return /[\u30a1-\u30f6]/.test(text);
   }
 
   private katakanaToHiragana(src: string): string {

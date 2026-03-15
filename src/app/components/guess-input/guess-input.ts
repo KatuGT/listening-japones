@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal, OnInit } from '@angular/core';
+import { Component, computed, inject, signal, OnInit, effect } from '@angular/core';
 import { ListeningService } from '../../services/listening.service';
 import { KanjiParserService } from '../../services/kanji-parser';
 import { toHiragana } from 'wanakana';
@@ -48,16 +48,29 @@ export class GuessInput implements OnInit {
 
   lines = signal<LineState[]>([]);
 
-  // Inicializamos las líneas automáticamente cuando cambian los subtítulos
-  ngOnInit() {
+  constructor() {
     this.setupReactivity();
   }
 
+  // Inicializamos las líneas automáticamente cuando cambian los subtítulos
+  ngOnInit() {
+    // Ya no es necesario llamar a setupReactivity aquí
+  }
+
   private setupReactivity() {
-    const subs = this.listeningService.allSubtitles();
-    if (subs.length > 0) {
-      this.initLines(subs);
-    }
+    // Usamos un efecto para que las líneas se inicialicen cuando:
+    // 1. Haya subtítulos disponibles
+    // 2. El parser esté listo
+    effect(() => {
+      const subs = this.listeningService.allSubtitles();
+      const ready = this.kanjiParser.isReady();
+
+      if (subs.length > 0 && ready) {
+        // Solo inicializamos si las líneas están vacías para no borrar el progreso
+        // o si queremos forzar una actualización al cambiar de video
+        this.initLines(subs);
+      }
+    });
   }
 
   private initLines(subs: any[]) {
