@@ -49,29 +49,21 @@ export class GuessInput implements OnInit {
   lines = signal<LineState[]>([]);
 
   constructor() {
-    this.setupReactivity();
-  }
-
-  // Inicializamos las líneas automáticamente cuando cambian los subtítulos
-  ngOnInit() {
-    // Ya no es necesario llamar a setupReactivity aquí
-  }
-
-  private setupReactivity() {
-    // Usamos un efecto para que las líneas se inicialicen cuando:
-    // 1. Haya subtítulos disponibles
-    // 2. El parser esté listo
+    // Definimos la reactividad directamente en el constructor para asegurar el injection context
     effect(() => {
       const subs = this.listeningService.allSubtitles();
       const ready = this.kanjiParser.isReady();
 
       if (subs.length > 0 && ready) {
-        // Solo inicializamos si las líneas están vacías para no borrar el progreso
-        // o si queremos forzar una actualización al cambiar de video
         this.initLines(subs);
       }
     });
   }
+
+  // Inicializamos las líneas automáticamente cuando cambian los subtítulos
+  ngOnInit() {
+  }
+
 
   private initLines(subs: any[]) {
     const initialLines = subs.map(sub => ({

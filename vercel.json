@@ -14,5 +14,11 @@
         }
       ]
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/(catalogo|play|login|perfil|admin){1}(.*)",
+      "destination": "/index.html"
+    }
   ]
 }

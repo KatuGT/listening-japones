@@ -23,11 +23,15 @@ export class KanjiParserService {
         async loadArrayBuffer(url: string): Promise<ArrayBufferLike> {
           // Usamos .db para engañar a Vercel y que no intente optimizar el archivo binario
           const targetUrl = url.endsWith('.gz') ? `${url.replace('.gz', '.db')}` : url;
-          const res = await fetch('/assets/dict/' + targetUrl);
-          if (!res.ok) throw new Error(`Fallo al cargar diccionario: ${url}`);
+          
+          // Importante: Usamos la ruta absoluta desde el origen para evitar fallos en subrutas
+          const dictPath = `${window.location.origin}/assets/dict/${targetUrl}`;
+          console.log(`📡 Descargando diccionario: ${dictPath}`);
+
+          const res = await fetch(dictPath);
+          if (!res.ok) throw new Error(`Fallo al cargar diccionario (${res.status}): ${dictPath}`);
           
           // Como los archivos .db son en realidad .gz, los descomprimimos al vuelo
-          // usando la API nativa del navegador DecompressionStream.
           const ds = new DecompressionStream('gzip');
           const decompressedStream = res.body!.pipeThrough(ds);
           return await new Response(decompressedStream).arrayBuffer();

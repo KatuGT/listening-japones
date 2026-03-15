@@ -209,10 +209,14 @@ export class SupabaseService {
 
     // Auth Wrappers
     async signInWithGoogle() {
+        // Aseguramos que la URL de redirección sea absoluta y tenga protocolo
+        const redirectUrl = `${window.location.origin}/admin`;
+        console.log('Authenticating with Google, redirecting to:', redirectUrl);
+
         const { data, error } = await this.supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin + '/admin'
+                redirectTo: redirectUrl
             }
         });
         if (error) throw error;
