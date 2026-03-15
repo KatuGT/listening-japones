@@ -17,8 +17,8 @@ export class KanjiParserService {
       // Cargador personalizado para usar 'fetch' en lugar de la lógica de Node.js
       const myLoader = {
         async loadArrayBuffer(url: string): Promise<ArrayBufferLike> {
-          // Usamos .gzdata para evitar que Vercel intente descompimir o procesar el archivo
-          const targetUrl = url.endsWith('.gz') ? `${url}data` : url;
+          // Usamos .db para engañar a Vercel y que no intente optimizar el archivo binario
+          const targetUrl = url.endsWith('.gz') ? `${url.replace('.gz', '.db')}` : url;
           const res = await fetch('/assets/dict/' + targetUrl);
           if (!res.ok) throw new Error(`Fallo al cargar diccionario: ${url}`);
           return res.arrayBuffer();
@@ -29,11 +29,30 @@ export class KanjiParserService {
         loader: myLoader as any
       });
 
-      this.tokenizer = await builder.build();
-      this.isReady.set(true);
-      console.log('¡Kuromoji Browser-Ready activo! 🚀');
+      // Timeout de seguridad: si en 15 segundos no cargan los diccionarios,
+      // desbloqueamos la UI para que el usuario pueda al menos ver los videos.
+      const timeout = setTimeout(() => {
+        if (!this.isReady()) {
+          console.warn('Timeout alcanzado: Desbloqueando UI sin Kuromoji activo.');
+          this.isReady.set(true);
+        }
+      }, 15000);
+
+      try {
+        console.log('Iniciando carga de diccionarios (.db)...');
+        this.tokenizer = await builder.build();
+        clearTimeout(timeout);
+        this.isReady.set(true);
+        console.log('Diccionarios cargados con éxito.');
+      } catch (err: any) {
+        clearTimeout(timeout);
+        console.error('Error al inicializar Kuromoji:', err);
+        // Desbloqueamos de todos modos para no matar la experiencia de usuario
+        this.isReady.set(true);
+      }
     } catch (err) {
-      console.error('Error al inicializar Kuromoji:', err);
+      console.error('Error fatal detectado:', err);
+      this.isReady.set(true);
     }
   }
 
