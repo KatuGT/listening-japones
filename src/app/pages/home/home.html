@@ -190,7 +190,7 @@
     <div class="header-line"></div>
   </div>
 
-  @if (isLoading()) {
+  @if (isLoading() || !kanjiParser.isReady()) {
     <div class="skeleton-grid">
       @for (i of [1,2,3]; track $index) {
         <div class="skeleton-card">

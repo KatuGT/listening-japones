@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal, afterNextRender } from '@angular/cor
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../services/supabase.service';
+import { KanjiParserService } from '../../services/kanji-parser';
 import { Video } from '../../models/video.model';
 
 import { gsap } from 'gsap';
@@ -17,6 +18,7 @@ import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 export class Home implements OnInit {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
+  public kanjiParser = inject(KanjiParserService);
 
   latestVideos = signal<Video[]>([]);
   isLoading = signal(true);
