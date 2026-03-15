@@ -2,10 +2,10 @@ const fs = require('fs');
 const path = require('path');
 
 const envFile = `export const environment = {
-    production: ${process.env.NODE_ENV === 'production'},
-    supabaseUrl: '${process.env.SUPABASE_URL || ''}',
-    supabaseKey: '${process.env.SUPABASE_KEY || ''}',
-    recaptchaSiteKey: '${process.env.RECAPTCHA_SITE_KEY || ''}'
+    production: ${process.env.production === 'true' || process.env.NODE_ENV === 'production'},
+    supabaseUrl: '${process.env.SUPABASE_URL || process.env.supabaseUrl || ''}',
+    supabaseKey: '${process.env.SUPABASE_KEY || process.env.supabaseKey || ''}',
+    recaptchaSiteKey: '${process.env.RECAPTCHA_SITE_KEY || process.env.recaptchaSiteKey || ''}'
 };
 `;
 
