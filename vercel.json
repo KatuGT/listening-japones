@@ -12,10 +12,13 @@
     }
   ],
   "rewrites": [
-    { "source": "/catalogo", "destination": "/index.html" },
-    { "source": "/login", "destination": "/index.html" },
-    { "source": "/perfil", "destination": "/index.html" },
-    { "source": "/admin", "destination": "/index.html" },
-    { "source": "/play/(.*)", "destination": "/index.html" }
+    {
+      "source": "/play/:slug",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/(catalogo|login|perfil|admin)",
+      "destination": "/index.html"
+    }
   ]
 }

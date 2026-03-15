@@ -22,23 +22,25 @@ export class KanjiParserService {
       const myLoader = {
         async loadArrayBuffer(url: string): Promise<ArrayBufferLike> {
           const targetUrl = url.endsWith('.gz') ? `${url.replace('.gz', '.db')}` : url;
-          const dictPath = `${window.location.origin}/assets/dict/${targetUrl}`;
+          // Agregamos timestamp para evitar que Vercel sirva versiones cacheadas/corruptas
+          const dictPath = `${window.location.origin}/assets/dict/${targetUrl}?v=${Date.now()}`;
           console.log(`📡 Fetching dictionary: ${dictPath}`);
 
           try {
-            const res = await fetch(dictPath, { mode: 'same-origin' });
-            if (!res.ok) throw new Error(`HTTP Error ${res.status}: ${dictPath}`);
+            const res = await fetch(dictPath);
+            if (!res.ok) throw new Error(`HTTP ${res.status}: ${dictPath}`);
             
-            const body = res.body;
-            if (!body) throw new Error('Response body is null');
+            const compressedBuffer = await res.arrayBuffer();
+            console.log(`📦 Received ${targetUrl} (${compressedBuffer.byteLength} bytes), decompressing...`);
 
-            console.log(`📦 Received ${targetUrl}, decompressing...`);
             const ds = new DecompressionStream('gzip');
-            const decompressedStream = body.pipeThrough(ds);
-            return await new Response(decompressedStream).arrayBuffer();
-          } catch (err) {
-            console.error(`❌ Error in loadArrayBuffer for ${targetUrl}:`, err);
-            throw err;
+            const decompressedStream = new Response(compressedBuffer).body!.pipeThrough(ds);
+            const finalBuffer = await new Response(decompressedStream).arrayBuffer();
+            console.log(`✅ ${targetUrl} ready.`);
+            return finalBuffer;
+          } catch (err: any) {
+            console.error(`❌ Fetch failure for ${targetUrl}:`, err);
+            throw new Error(`Dictionary Load Error [${targetUrl}]: ${err.message || err}`);
           }
         }
       };
