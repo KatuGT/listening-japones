@@ -191,9 +191,20 @@
   </div>
 
   @if (isLoading()) {
-  <div class="loading-state">
-    <p>Cargando novedades...</p>
-  </div>
+    <div class="skeleton-grid">
+      @for (i of [1,2,3]; track $index) {
+        <div class="skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-title"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-meta"></div>
+          </div>
+        </div>
+      }
+      <!-- Placeholder for the character card to maintain grid layout -->
+      <div class="character-card skeleton-card" style="opacity: 0.2; border: none; background: transparent;"></div>
+    </div>
   } @else if (error()) {
   <div class="error-state">
     <p>{{ error() }}</p>

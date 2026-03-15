@@ -1,59 +1,55 @@
-# ListeningJapones
+# Listening Japonés 🎧🇯🇵
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.1.
+Bienvenido a **Listening Japonés**, una plataforma premium diseñada para mejorar la comprensión auditiva del idioma japonés a través de contenido real (anime, canciones, noticias) con transcripciones inteligentes y análisis morfológico en tiempo real.
 
-## Development server
+## ✨ Características Principales
 
-To start a local development server, run:
+- **Transcripción Inteligente**: Sincronización precisa entre audio/video y texto.
+- **Análisis Morfológico**: Integración con **Kuromoji** para identificar kanjis, lecturas y partes de la oración.
+- **Sistema de Feedback**: Herramientas integradas para que los usuarios reporten errores o sugieran mejoras.
+- **Panel de Administración**: Gestión completa de contenido y seguridad (reCAPTCHA v3).
+- **Diseño Premium**: Interfaz moderna con animaciones fluidas (GSAP) y estética minimalista.
 
-```bash
-ng serve
-```
+## 🛠️ Tech Stack
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Frontend**: [Angular 19](https://angular.dev/) (Signals, Standalone Components, Flow Control Syntax).
+- **Backend/DB**: [Supabase](https://supabase.com/) (PostgreSQL + Auth + Edge Functions).
+- **Animaciones**: [GSAP (GreenSock)](https://greensock.com/).
+- **NLP**: [@patdx/kuromoji](https://github.com/takuyaa/kuromoji.js) para procesamiento de lenguaje natural japonés.
+- **Despliegue**: [Vercel](https://vercel.com/).
 
-## Code scaffolding
+## 🚀 Configuración Local
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+1. **Clonar el repositorio**:
+   ```bash
+   git clone <repo-url>
+   cd listening-japones
+   ```
 
-```bash
-ng generate component component-name
-```
+2. **Instalar dependencias**:
+   ```bash
+   npm install
+   ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+3. **Configurar variables de entorno**:
+   - Copia el archivo `src/environments/environment.template.ts` a `src/environments/environment.ts`.
+   - Completa las claves de Supabase y reCAPTCHA.
+   > [!IMPORTANT]
+   > El archivo `environment.ts` está en el `.gitignore` para proteger tus claves. Nunca lo subas a GitHub.
 
-```bash
-ng generate --help
-```
+4. **Ejecutar el servidor de desarrollo**:
+   ```bash
+   npm run dev
+   ```
+   Abre [http://localhost:4200](http://localhost:4200) en tu navegador.
 
-## Building
+## 🌍 Despliegue (Vercel)
 
-To build the project run:
+El proyecto está configurado para desplegarse automáticamente en Vercel. 
 
-```bash
-ng build
-```
+- Usa el script `set-env.js` (ejecutado automáticamente en el `prebuild`) para inyectar las variables de entorno de Vercel en el build de Angular.
+- El archivo `vercel.json` asegura que los diccionarios de Kuromoji no se corrompan durante la compresión de assets.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 📝 Licencia
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Este proyecto es para uso personal y educativo. Todos los derechos de los contenidos audiovisuales pertenecen a sus respectivos autores.

@@ -2,8 +2,15 @@
 
 <main class="main-layout">
   @if (!kanjiParser.isReady()) {
-  <div class="loading-overlay">
-    <p>Preparando diccionarios de japonés... 🏮</p>
+  <div class="splash-screen">
+    <div class="splash-content">
+      <div class="lantern-icon">🏮</div>
+      <h2>Sincronizando sabiduría...</h2>
+      <p>Preparando diccionarios de japonés</p>
+      <div class="loading-bar">
+        <div class="progress"></div>
+      </div>
+    </div>
   </div>
   }
 
