@@ -17,7 +17,9 @@ export class KanjiParserService {
       // Cargador personalizado para usar 'fetch' en lugar de la lógica de Node.js
       const myLoader = {
         async loadArrayBuffer(url: string): Promise<ArrayBufferLike> {
-          const res = await fetch('/assets/dict/' + url);
+          // Usamos .gzdata para evitar que Vercel intente descompimir o procesar el archivo
+          const targetUrl = url.endsWith('.gz') ? `${url}data` : url;
+          const res = await fetch('/assets/dict/' + targetUrl);
           if (!res.ok) throw new Error(`Fallo al cargar diccionario: ${url}`);
           return res.arrayBuffer();
         }

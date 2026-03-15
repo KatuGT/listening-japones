@@ -29,7 +29,7 @@
     </div>
 
     <div class="inputs-section">
-      @if (listeningService.isLoading()) {
+      @if (listeningService.isLoading() || !isParserReady()) {
       <app-guess-input-skeleton></app-guess-input-skeleton>
       } @else {
       <app-guess-input></app-guess-input>

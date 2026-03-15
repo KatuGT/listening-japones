@@ -21,7 +21,6 @@
     "@patdx/kuromoji": "^1.0.4",
     "@supabase/supabase-js": "^2.99.0",
     "gsap": "^3.14.2",
-    "kuromoji": "^0.1.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "wanakana": "^5.3.1"

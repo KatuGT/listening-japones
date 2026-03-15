@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, afterNextRender } from '@angular/core';
+import { Component, inject, OnInit, signal, afterNextRender, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../services/supabase.service';
@@ -19,6 +19,7 @@ export class Home implements OnInit {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
   public kanjiParser = inject(KanjiParserService);
+  isParserReady = computed(() => this.kanjiParser.isReady());
 
   latestVideos = signal<Video[]>([]);
   isLoading = signal(true);

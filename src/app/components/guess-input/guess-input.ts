@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { ListeningService } from '../../services/listening.service';
 import { KanjiParserService } from '../../services/kanji-parser';
 import { toHiragana } from 'wanakana';
@@ -39,7 +39,7 @@ export interface LineState {
   templateUrl: './guess-input.html',
   styleUrl: './guess-input.scss',
 })
-export class GuessInput {
+export class GuessInput implements OnInit {
   public listeningService = inject(ListeningService);
   private kanjiParser = inject(KanjiParserService);
   public translationService = inject(TranslationService);
@@ -49,21 +49,15 @@ export class GuessInput {
   lines = signal<LineState[]>([]);
 
   // Inicializamos las líneas automáticamente cuando cambian los subtítulos
-  constructor() {
+  ngOnInit() {
     this.setupReactivity();
   }
 
   private setupReactivity() {
-    // Usamos un intervalo para esperar a que Kuromoji y los subs estén listos
-    const checkReady = setInterval(() => {
-      if (this.kanjiParser.isReady()) {
-        const subs = this.listeningService.allSubtitles();
-        if (subs.length > 0) {
-          this.initLines(subs);
-          clearInterval(checkReady);
-        }
-      }
-    }, 1000);
+    const subs = this.listeningService.allSubtitles();
+    if (subs.length > 0) {
+      this.initLines(subs);
+    }
   }
 
   private initLines(subs: any[]) {

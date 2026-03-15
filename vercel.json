@@ -1,17 +1,3 @@
 {
-  "headers": [
-    {
-      "source": "/assets/dict/(.*).gz",
-      "headers": [
-        {
-          "key": "Content-Encoding",
-          "value": "identity"
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/gzip"
-        }
-      ]
-    }
-  ]
+  "cleanUrls": true
 }
