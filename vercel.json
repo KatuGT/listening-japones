@@ -13,11 +13,7 @@
   ],
   "rewrites": [
     {
-      "source": "/play/:slug",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/(catalogo|login|perfil|admin)",
+      "source": "/(play/.*|catalogo|login|perfil|admin)",
       "destination": "/index.html"
     }
   ]
