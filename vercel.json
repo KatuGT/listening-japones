@@ -1,5 +1,5 @@
 {
-  "cleanUrls": true,
+  "outputDirectory": "dist/listening-japones/browser",
   "headers": [
     {
       "source": "/assets/dict/(.*).db",
