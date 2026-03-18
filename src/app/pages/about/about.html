@@ -1,0 +1,81 @@
+<div class="about-container">
+  <div class="glass-card about-card">
+    <header class="about-header">
+      <h1 class="gradient-text">Sobre el Proyecto</h1>
+      <p class="subtitle">Entrenando el oído con el japonés que realmente se habla.</p>
+    </header>
+
+    <section class="about-section bio">
+      <div class="section-icon">🎌</div>
+      <h2>La Misión</h2>
+      <p>
+        <strong>Wakarimasu ka?</strong> nació de una frustración común: los libros de texto suenan demasiado rígidos. 
+        Este proyecto busca cerrar la brecha entre el estudio formal y la inmersión real. 
+        Utilizando fragmentos de anime, J-Dramas y Vlogs, retamos a los estudiantes a transcribir 
+        exactamente lo que escuchan, mejorando la comprensión auditiva y el vocabulario natural.
+      </p>
+    </section>
+
+    <section class="about-section registration-info glass-panel highlight">
+      <div class="info-content">
+        <span class="icon-accent">💡</span>
+        <h3>¿Sabías que puedes practicar gratis?</h3>
+        <p>
+          <strong>No necesitas una cuenta para usar Wakarimasu ka?</strong>. La plataforma es abierta y gratuita para todos los entusiastas del japonés. 
+          Sin embargo, registrarte te da superpoderes:
+        </p>
+        
+        <div class="info-cards">
+          <div class="info-card">
+            <span class="card-emoji">📩</span>
+            <div class="card-text">
+              <strong>Feedback Directo</strong>
+              <p>Envíanos errores o sugerencias para seguir mejorando.</p>
+            </div>
+          </div>
+          <div class="info-card">
+            <span class="card-emoji">🏆</span>
+            <div class="card-text">
+              <strong>Colecciona tus Logros</strong>
+              <p>Tu perfil guardará automáticamente los videos que domines al 100%.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid-sections">
+      <section class="about-section glass-panel">
+        <h3>🚀 Pilares</h3>
+        <ul>
+          @for (feature of features; track feature.title) {
+            <li>
+              <strong>{{ feature.title }}:</strong> {{ feature.desc }}
+            </li>
+          }
+        </ul>
+      </section>
+
+      <section class="about-section glass-panel">
+        <h3>💻 Tecnologías</h3>
+        <div class="tech-stack">
+          @for (tech of technologies; track tech.name) {
+            <div class="tech-item" [title]="tech.desc">
+              <span class="tech-icon">{{ tech.icon }}</span>
+              <span class="tech-name">{{ tech.name }}</span>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+
+    <footer class="about-footer">
+      <button routerLink="/catalogo" class="btn-primary">
+        Empezar a Practicar 🚀
+      </button>
+      <p class="personal-note">
+        Hecho con ❤️ para la comunidad de estudiantes de japonés.
+      </p>
+    </footer>
+  </div>
+</div>

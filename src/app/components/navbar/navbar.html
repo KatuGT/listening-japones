@@ -38,23 +38,49 @@
 
   <nav class="navbar">
   <div class="nav-container">
-    <a routerLink="/" class="nav-brand">
+    <a routerLink="/" class="nav-brand" (click)="closeMenu()">
       <img src="/assets/images/wakarimasuka-blanco.svg" alt="Wakarimasu ka? Logo" class="nav-logo">
     </a>
 
-    <div class="nav-links">
+    <!-- Links para desktop -->
+    <div class="nav-links desktop-links">
       <a routerLink="/catalogo" class="nav-link">Catálogo</a>
       
       @if (!auth.currentUser()) {
         <a routerLink="/login" class="nav-link admin-link">Ingresar</a>
       } @else {
-        <span class="user-email" *ngIf="auth.currentUser()?.email === '93katu@gmail.com'">
+        @if (auth.currentUser()?.email === '93katu@gmail.com') {
           <a routerLink="/admin" class="nav-link admin-link">Admin</a>
-        </span>
+        }
         <a routerLink="/perfil" class="nav-link admin-link">Mi Panel</a>
         <button (click)="auth.logout()" class="nav-link btn-logout">Salir</button>
       }
     </div>
+
+    <!-- Botón hamburguesa (solo mobile) -->
+    <button class="hamburger-btn" (click)="toggleMenu()" [class.open]="menuOpen()" aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
 </nav>
+
+<!-- Menú mobile desplegable -->
+@if (menuOpen()) {
+  <div class="mobile-overlay" (click)="closeMenu()"></div>
+  <div class="mobile-menu" [class.open]="menuOpen()">
+    <a routerLink="/catalogo" class="mobile-link" (click)="closeMenu()">Catálogo</a>
+    
+    @if (!auth.currentUser()) {
+      <a routerLink="/login" class="mobile-link" (click)="closeMenu()">Ingresar</a>
+    } @else {
+      @if (auth.currentUser()?.email === '93katu@gmail.com') {
+        <a routerLink="/admin" class="mobile-link" (click)="closeMenu()">Admin</a>
+      }
+      <a routerLink="/perfil" class="mobile-link" (click)="closeMenu()">Mi Panel</a>
+      <button (click)="auth.logout(); closeMenu()" class="mobile-link btn-logout-mobile">Salir</button>
+    }
+  </div>
+}
 </div>

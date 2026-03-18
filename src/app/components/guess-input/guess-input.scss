@@ -4,7 +4,11 @@
     gap: 1.5rem;
     width: 100%;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0;
+
+    @media (min-width: 768px) {
+        padding: 0 1rem;
+    }
 }
 
 .warning-banner {
@@ -23,9 +27,13 @@
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 16px;
-    padding: 1.5rem;
+    padding: 1rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+    @media (min-width: 768px) {
+        padding: 1.5rem;
+    }
 
     &.active {
         background: rgba(255, 255, 255, 0.04);
@@ -42,12 +50,12 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.8rem;
 
         .line-title-group {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
 
             .btn-replay {
                 background: rgba(255, 255, 255, 0.05);
@@ -100,21 +108,28 @@
 
     .input-wrapper {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.4rem; // Reducido
         background: rgba(0, 0, 0, 0.2);
         border-radius: 12px;
-        padding: 0.4rem;
+        padding: 0.3rem;
         border: 1px solid rgba(255, 255, 255, 0.03);
 
         input {
             flex: 1;
+            width: 0; // Permite que flex-shrink funcione
+            min-width: 0;
             background: transparent;
             border: none;
             color: white;
-            padding: 0.8rem 1rem;
-            font-size: 1.2rem;
+            padding: 0.6rem 0.8rem;
+            font-size: 1rem; // Un poco más pequeño para mobile
             font-weight: 500;
             outline: none;
+
+            @media (min-width: 768px) {
+                font-size: 1.2rem;
+                padding: 0.8rem 1rem;
+            }
 
             &::placeholder {
                 color: rgba(255, 255, 255, 0.2);
@@ -131,12 +146,8 @@
             color: rgba(255, 255, 255, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            width: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            width: 44px;
+            min-width: 44px;
 
             span {
                 font-size: 1.2rem;
@@ -173,13 +184,17 @@
 
         .target-sentence {
             margin: 0;
-            font-size: 1.6rem;
+            font-size: 1.3rem;
             color: var(--secondary);
             font-weight: 500;
             display: flex;
             flex-wrap: wrap;
             align-items: flex-end;
             line-height: 1.8;
+
+            @media (min-width: 768px) {
+                font-size: 1.6rem;
+            }
 
             span {
                 display: inline-block;
@@ -440,10 +455,14 @@
 
         .translation-text {
             background: rgba(0, 0, 0, 0.2);
-            padding: 1rem;
+            padding: 0.8rem;
             border-radius: 12px;
             border-left: 3px solid var(--secondary);
             width: 100%;
+
+            @media (min-width: 768px) {
+                padding: 1rem;
+            }
 
             small {
                 display: block;
@@ -456,9 +475,13 @@
 
             p {
                 margin: 0;
-                font-size: 1.1rem;
+                font-size: 0.95rem;
                 color: rgba(255, 255, 255, 0.9);
                 line-height: 1.4;
+
+                @media (min-width: 768px) {
+                    font-size: 1.1rem;
+                }
             }
         }
     }

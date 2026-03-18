@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   z-index: 2000;
-  height: 78px; // Altura exacta de Leonardo.ai
+  height: 78px;
   display: flex;
   align-items: center;
 
@@ -95,7 +95,7 @@
   .nav-link {
     color: #ffffff;
     text-decoration: none;
-    font-size: 1.1rem; // Aproximadamente 18-20px
+    font-size: 1.1rem;
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: 8px;
@@ -142,4 +142,162 @@
       }
     }
   }
+}
+
+// ========================
+// HAMBURGER BUTTON
+// ========================
+.hamburger-btn {
+  display: none; // Solo visible en mobile
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+
+  // Animación de X cuando está abierto
+  &.open {
+    span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    span:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+  }
+}
+
+// ========================
+// MOBILE MENU OVERLAY
+// ========================
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 78px 0 0 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1999;
+  animation: fadeIn 0.2s ease;
+}
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 78px;
+  left: 0;
+  right: 0;
+  background: rgba(10, 14, 20, 0.97);
+  backdrop-filter: blur(20px);
+  z-index: 2000;
+  padding: 1.5rem 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  animation: slideDown 0.25s ease;
+
+  .mobile-link {
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    transition: background 0.2s;
+    opacity: 0.9;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+      opacity: 1;
+    }
+  }
+
+  .btn-logout-mobile {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+
+    &:hover {
+      background: rgba(187, 0, 0, 0.1);
+      border-color: rgba(187, 0, 0, 0.3);
+      color: #fff;
+    }
+  }
+}
+
+// ========================
+// MOBILE BREAKPOINT
+// ========================
+@media (max-width: 768px) {
+  .desktop-links {
+    display: none; // Ocultamos los links de desktop
+  }
+
+  .hamburger-btn {
+    display: flex; // Mostramos el botón hamburguesa
+  }
+
+  .mobile-overlay,
+  .mobile-menu {
+    display: flex; // El @if de Angular lo controla, flex para el layout
+  }
+
+  .nav-container {
+    padding: 0 1.2rem;
+  }
+
+  .nav-brand .nav-logo {
+    height: 40px;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

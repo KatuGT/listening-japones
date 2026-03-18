@@ -15,6 +15,9 @@
         <button [class.active]="activeTab() === 'users'" (click)="setTab('users')">
           👥 Usuarios
         </button>
+        <button [class.active]="activeTab() === 'requests'" (click)="setTab('requests')">
+          ✨ Solicitudes
+        </button>
         <button class="btn-logout" (click)="logout()" title="Cerrar Sesión">
           🚪 Salir
         </button>
@@ -262,11 +265,21 @@
             @for (item of feedbackList(); track item.id) {
               <tr [class.resolved]="item.status === 'resuelto'">
                 <td>{{ item.created_at | date:'short' }}</td>
-                <td>{{ item.user_id.substring(0,8) }}...</td>
+                <td>{{ item.profiles?.nickname || item.user_id.substring(0,8) }}</td>
                 <td><span class="badge" [class]="item.type">{{ item.type }}</span></td>
-                <td>{{ item.video_title }}</td>
+                <td>{{ item.video_title || 'General' }}</td>
                 <td class="content-cell">{{ item.content }}</td>
                 <td>
+                  <div class="visibility-control">
+                    <button 
+                      class="btn-visibility" 
+                      [class.visible]="item.is_visible"
+                      (click)="toggleFeedbackVisibility(item)"
+                      [title]="item.is_visible ? 'Ocultar del Muro' : 'Hacer visible en el Muro'"
+                    >
+                      {{ item.is_visible ? '👁️ Público' : '🕵️ Privado' }}
+                    </button>
+                  </div>
                   <span class="status-badge" [class.resuelto]="item.status === 'resuelto'">
                     {{ item.status }}
                   </span>
@@ -386,6 +399,82 @@
             <p>No hay videos publicados aún. ¡Sube tu primer contenido!</p>
           </div>
         }
+      </div>
+    </div>
+  }
+
+  @if (activeTab() === 'requests') {
+    <div class="admin-content">
+      <div class="feedback-section">
+        <div class="section-header">
+          <h3>Solicitudes de Clips 🎥</h3>
+          <p>Gestiona los pedidos de la comunidad y hazlos públicos.</p>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Título / Fuente</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Visibilidad</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (request of clipRequestsList(); track request.id) {
+                <tr>
+                  <td>
+                    <div class="user-info">
+                      <strong>{{ request.profiles?.nickname || 'Anon' }}</strong>
+                      <span class="user-email">{{ request.profiles?.email }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="request-meta">
+                      <strong>{{ request.title }}</strong>
+                      @if (request.source_url) {
+                        <a [href]="request.source_url" target="_blank" class="link-url">🔗 Ver Fuente</a>
+                      }
+                    </div>
+                  </td>
+                  <td>
+                    <p class="request-desc">{{ request.description || '-' }}</p>
+                  </td>
+                  <td>
+                    <select 
+                      [ngModel]="request.status" 
+                      (ngModelChange)="updateClipRequestStatus(request, $event)"
+                      class="status-select"
+                      [class]="request.status"
+                    >
+                      <option value="pending">⏳ Pendiente</option>
+                      <option value="reviewed">👀 Revisado</option>
+                      <option value="added">🎬 Agregado</option>
+                      <option value="rejected">❌ Rechazado</option>
+                    </select>
+                  </td>
+                  <td>
+                    <button 
+                      class="btn-visibility" 
+                      [class.visible]="request.is_visible"
+                      (click)="toggleClipRequestVisibility(request)"
+                    >
+                      {{ request.is_visible ? '👁️ Público' : '🕵️ Privado' }}
+                    </button>
+                  </td>
+                  <td>{{ request.created_at | date:'dd/MM/yy HH:mm' }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="empty-cell">No hay solicitudes todavía.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   }

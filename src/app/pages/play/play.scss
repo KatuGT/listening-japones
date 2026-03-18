@@ -4,20 +4,26 @@
     background: rgba(20, 20, 30, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 24px;
-    padding: 2rem;
-    padding-top: 4rem;
-    margin-top: 100px;
-    margin-bottom: 4rem;
+    padding: 1rem; // Reducido por defecto para mobile
+    padding-top: 3rem;
+    margin: 80px auto 2rem; // Centrado y reducido
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(20px);
     position: relative;
-    // overflow: hidden; // Permitimos que las decoraciones sobresalgan
+    // overflow-x: hidden; // Eliminado: Permitimos que las flores sobresalgan en PC
+
+    @media (min-width: 768px) {
+        padding: 2rem;
+        padding-top: 4rem;
+        margin-top: 100px;
+        margin-bottom: 4rem;
+    }
 
     .decoration-img {
         position: absolute;
         pointer-events: none;
         z-index: 0;
-        opacity: 0.8; // Un poco más de presencia
+        opacity: 0.8;
         width: 350px; // Un poco más grandes
         height: auto;
         transition: opacity 0.3s ease;
@@ -33,8 +39,7 @@
         }
 
         @media (max-width: 768px) {
-            width: 150px;
-            opacity: 0.4;
+            display: none; // Ocultas en mobile por petición del usuario
         }
     }
 
@@ -46,22 +51,34 @@
 
     header {
         text-align: center;
-        margin-bottom: 3rem;
+        margin-bottom: 2rem;
+        padding: 0 0.5rem;
 
         h1 {
-            font-size: 2.8rem;
+            font-size: 1.5rem; // Más pequeño para títulos largos
             font-weight: 800;
             background: linear-gradient(to right, #fff, var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
+            line-height: 1.2;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+
+            @media (min-width: 768px) {
+                font-size: 2.8rem;
+            }
         }
 
         p {
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             margin: 0;
+
+            @media (min-width: 768px) {
+                font-size: 1.1rem;
+            }
         }
     }
 
@@ -73,9 +90,9 @@
     }
 
     .btn-report {
-        padding: 0.8rem 1.5rem;
+        padding: 0.8rem 1.2rem;
         border-radius: 16px;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         font-weight: 600;
         color: var(--text-muted);
         display: flex;
@@ -85,6 +102,11 @@
         border: 1px solid rgba(255, 255, 255, 0.05);
         background: rgba(255, 255, 255, 0.02);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        @media (min-width: 768px) {
+            padding: 0.8rem 1.5rem;
+            font-size: 0.95rem;
+        }
 
         &:hover {
             color: #fff;
@@ -100,27 +122,33 @@
     .practice-layout {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 2rem;
+        gap: 1.5rem;
         align-items: start;
+        padding: 0;
 
         @media (min-width: 1024px) {
             grid-template-columns: 3fr 2fr;
             /* Video toma más espacio que los inputs */
             gap: 3rem;
+            padding: 0 1rem;
         }
 
         .video-section {
-            position: sticky;
-            top: 6rem;
+            position: relative;
             z-index: 10;
-            /* Añadimos estilos para centrar el video dentro de su contenedor sticky */
             display: flex;
             flex-direction: column;
             align-items: center;
+
+            @media (min-width: 1024px) {
+                position: sticky;
+                top: 6rem;
+            }
         }
 
         .inputs-section {
             min-height: 100%;
+            width: 100%;
         }
     }
 }

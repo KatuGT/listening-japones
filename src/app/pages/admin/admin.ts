@@ -37,9 +37,10 @@ export class Admin {
 
   parsedSubtitles = signal<AdminSubtitleLine[]>([]);
 
-  activeTab = signal<'upload' | 'manage' | 'feedback' | 'users'>('upload');
+  activeTab = signal<'upload' | 'manage' | 'feedback' | 'users' | 'requests'>('upload');
   videoList = signal<any[]>([]);
   feedbackList = signal<any[]>([]);
+  clipRequestsList = signal<any[]>([]);
   profilesList = signal<any[]>([]);
   editingVideoId = signal<string | null>(null);
 
@@ -57,9 +58,7 @@ export class Admin {
 
   async loadVideos() {
     try {
-      console.log('Admin: Intentando cargar videos...');
       const videos = await this.supabase.getAdminVideos();
-      console.log('Admin: Videos recibidos:', videos?.length || 0, videos);
       this.videoList.set(videos);
     } catch (err: any) {
       console.error('Error loading videos', err);
@@ -95,11 +94,21 @@ export class Admin {
     }
   }
 
-  setTab(tab: 'upload' | 'manage' | 'feedback' | 'users') {
+  async loadClipRequests() {
+    try {
+      const requests = await this.supabase.getAllClipRequests();
+      this.clipRequestsList.set(requests);
+    } catch (err) {
+      console.error('Error loading clip requests', err);
+    }
+  }
+
+  setTab(tab: 'upload' | 'manage' | 'feedback' | 'users' | 'requests') {
     this.activeTab.set(tab);
     if (tab === 'manage') this.loadVideos();
     if (tab === 'feedback') this.loadFeedback();
     if (tab === 'users') this.loadProfiles();
+    if (tab === 'requests') this.loadClipRequests();
   }
 
   async resolveFeedback(item: any, responseText: string) {
@@ -107,11 +116,43 @@ export class Admin {
     try {
       await this.supabase.updateFeedback(item.id, {
         status: 'resuelto',
-        admin_response: responseText
+        admin_response: responseText,
+        resolved_at: new Date().toISOString()
       });
       this.loadFeedback();
     } catch (err) {
       console.error('Error resolving feedback', err);
+    }
+  }
+
+  async toggleFeedbackVisibility(item: any) {
+    try {
+      await this.supabase.updateFeedback(item.id, {
+        is_visible: !item.is_visible
+      });
+      this.loadFeedback();
+    } catch (err) {
+      console.error('Error toggling feedback visibility', err);
+    }
+  }
+
+  async toggleClipRequestVisibility(request: any) {
+    try {
+      await this.supabase.updateClipRequest(request.id, {
+        is_visible: !request.is_visible
+      });
+      this.loadClipRequests();
+    } catch (err) {
+      console.error('Error toggling clip request visibility', err);
+    }
+  }
+
+  async updateClipRequestStatus(request: any, status: string) {
+    try {
+      await this.supabase.updateClipRequest(request.id, { status });
+      this.loadClipRequests();
+    } catch (err) {
+      console.error('Error updating clip request status', err);
     }
   }
 
@@ -463,7 +504,6 @@ export class Admin {
       }
 
     } catch (err: any) {
-      console.error(err);
       this.statusMessage.set(`Error: ${err.message}`);
       alert(`Ocurrió un error: ${err.message}`);
     } finally {

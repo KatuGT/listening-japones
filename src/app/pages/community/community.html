@@ -1,0 +1,153 @@
+<div class="community-container">
+  <div class="community-header">
+    <h1 class="gradient-text">Comunidad</h1>
+    <p class="subtitle">Reportes de errores, sugerencias y solicitudes de la comunidad.</p>
+  </div>
+
+  <div class="community-grid">
+    <!-- Columna Izquierda: Reportes -->
+    <section class="community-section primary-column">
+      <!-- Muro de Feedback -->
+      <div class="wall-section">
+        <div class="section-header">
+          <span class="icon">📢</span>
+          <h2>Muro de Feedback</h2>
+        </div>
+
+        @if (isLoading()) {
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Cargando mensajes...</p>
+          </div>
+        } @else if (feedbackList().length === 0) {
+          <div class="empty-state">
+            <p>No hay mensajes públicos por ahora. ¡Sé el primero en reportar algo desde tu perfil!</p>
+          </div>
+        } @else {
+          <div class="feedback-list">
+            @for (item of feedbackList(); track item.id) {
+              <div class="feedback-card" [class.resolved]="item.status === 'Resuelto'">
+                <div class="card-header">
+                  <span class="user-badge">{{ item.profiles?.nickname || 'Usuario Anónimo' }}</span>
+                  <span class="date">{{ formatDate(item.created_at) }}</span>
+                </div>
+                
+                <div class="card-body">
+                  <span class="type-tag" [class]="item.type">{{ item.type }}</span>
+                  <p class="content">{{ item.content }}</p>
+                  
+                  @if (item.video_title) {
+                    <span class="video-ref">🎬 {{ item.video_title }}</span>
+                  }
+                </div>
+
+                <div class="card-footer">
+                  <span class="status-badge" [class]="item.status">
+                    {{ item.status === 'Resuelto' ? '✅ Resuelto' : '⏳ En revisión' }}
+                  </span>
+                  @if (item.resolved_at) {
+                      <span class="resolved-date">Resuelto el {{ formatDate(item.resolved_at) }}</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Muro de Solicitudes -->
+      <div class="wall-section requests-wall">
+        <div class="section-header">
+          <span class="icon">✨</span>
+          <h2>Muro de Solicitudes</h2>
+        </div>
+
+        @if (isLoading()) {
+          <div class="loading-state">
+            <div class="spinner"></div>
+          </div>
+        } @else if (clipRequestsList().length === 0) {
+          <div class="empty-state">
+            <p>Aún no hay solicitudes públicas. ¡Envía la tuya!</p>
+          </div>
+        } @else {
+          <div class="requests-grid">
+            @for (request of clipRequestsList(); track request.id) {
+              <div class="request-mini-card" [class]="request.status">
+                <div class="request-info">
+                  <span class="request-title">{{ request.title }}</span>
+                  <span class="user-name">Por {{ request.profiles?.nickname || 'Anon' }}</span>
+                </div>
+                <div class="request-status-tag">
+                  @if (request.status === 'added') { <span>🎬 Agregado</span> }
+                  @else if (request.status === 'reviewed') { <span>👀 Revisado</span> }
+                  @else if (request.status === 'rejected') { <span>❌ Rechazado</span> }
+                  @else { <span>⏳ Pendiente</span> }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Columna Derecha: Formulario y Solicitudes -->
+    <section class="community-section request-section">
+      <div class="glass-panel sticky-panel">
+        <div class="section-header">
+          <span class="icon">🎬</span>
+          <h2>Solicitar un Clip</h2>
+        </div>
+        <p class="section-desc">
+          ¿Hay algún fragmento de anime o dorama que te encantaría practicar? Envíanos el nombre o el link y lo tendremos en cuenta.
+        </p>
+
+        <form (ngSubmit)="onSubmitClipRequest()" #requestForm="ngForm" class="request-form">
+          <div class="form-group">
+            <label>Título del Anime / Serie *</label>
+            <input 
+              type="text" 
+              name="title" 
+              [(ngModel)]="clipRequest.title" 
+              placeholder="Ej: Kimetsu no Yaiba - Escena de Zenitsu" 
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Link de referencia (YouTube, etc.)</label>
+            <input 
+              type="url" 
+              name="url" 
+              [(ngModel)]="clipRequest.source_url" 
+              placeholder="https://youtube.com/..."
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Notas adicionales</label>
+            <textarea 
+              name="desc" 
+              [(ngModel)]="clipRequest.description" 
+              placeholder="Algún detalle adicional que quieras mencionar..."
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div id="recaptcha-community" class="captcha-container"></div>
+
+          <button type="submit" [disabled]="!requestForm.form.valid || isSubmitting() || !captchaToken()" class="btn-submit">
+            @if (isSubmitting()) { <span>Enviando...</span> } @else { <span>Enviar Solicitud 🚀</span> }
+          </button>
+
+          @if (successMessage()) {
+            <p class="status-msg success">{{ successMessage() }}</p>
+          }
+          @if (errorMessage()) {
+            <p class="status-msg error">{{ errorMessage() }}</p>
+          }
+        </form>
+      </div>
+    </section>
+  </div>
+</div>

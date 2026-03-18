@@ -163,7 +163,6 @@ export class SupabaseService {
             .order('created_at', { ascending: false });
         
         if (error) {
-            console.error('Error en getAdminVideos:', error);
             throw error;
         }
         return data;
@@ -212,7 +211,6 @@ export class SupabaseService {
         // Redirigimos a la pantalla actual ('last screen') para que la experiencia sea fluida.
         // Para que esto funcione en producción, recuerda el comodín '/**' en Supabase.
         const redirectUrl = window.location.origin + window.location.pathname;
-        console.log('Authenticating with Google, returning to:', redirectUrl);
 
         const { data, error } = await this.supabase.auth.signInWithOAuth({
             provider: 'google',
@@ -321,6 +319,53 @@ export class SupabaseService {
         return data;
     }
 
+    async getPublicFeedback() {
+        const { data, error } = await this.supabase
+            .from('feedback')
+            .select('*, profiles!user_id(nickname)')
+            .eq('is_visible', true)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        return data;
+    }
+
+    async requestClip(request: { title: string, source_url?: string, description?: string }) {
+        const { data: { user } } = await this.supabase.auth.getUser();
+        
+        const { data, error } = await this.supabase
+            .from('clip_requests')
+            .insert({
+                ...request,
+                user_id: user?.id || null
+            })
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    }
+
+    async getPublicClipRequests() {
+        const { data, error } = await this.supabase
+            .from('clip_requests')
+            .select('*, profiles!user_id(nickname)')
+            .eq('is_visible', true)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        return data;
+    }
+
+    async verifyCaptchaAndSubmitClipRequest(token: string, request: any) {
+        const { data, error } = await this.supabase.functions.invoke('verify-captcha', {
+            body: { token, clipRequest: request }
+        });
+
+        if (error) throw error;
+        return data;
+    }
+
     // --- Admin Methods ---
 
     async getAllFeedback() {
@@ -382,5 +427,26 @@ export class SupabaseService {
         
         if (error) throw error;
         return !data; // Si no hay datos, está disponible
+    }
+
+    // --- Clip Requests Admin ---
+    async getAllClipRequests() {
+        const { data, error } = await this.supabase
+            .from('clip_requests')
+            .select('*, profiles!user_id(email, nickname)')
+            .order('created_at', { ascending: false });
+        if (error) throw error;
+        return data;
+    }
+
+    async updateClipRequest(id: string, updates: any) {
+        const { data, error } = await this.supabase
+            .from('clip_requests')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
     }
 }

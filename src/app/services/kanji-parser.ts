@@ -24,19 +24,16 @@ export class KanjiParserService {
           const targetUrl = url.endsWith('.gz') ? `${url.replace('.gz', '.db')}` : url;
           // Agregamos timestamp para evitar que Vercel sirva versiones cacheadas/corruptas
           const dictPath = `${window.location.origin}/assets/dict/${targetUrl}?v=${Date.now()}`;
-          console.log(`📡 Fetching dictionary: ${dictPath}`);
 
           try {
             const res = await fetch(dictPath);
             if (!res.ok) throw new Error(`HTTP ${res.status}: ${dictPath}`);
             
             const compressedBuffer = await res.arrayBuffer();
-            console.log(`📦 Received ${targetUrl} (${compressedBuffer.byteLength} bytes), decompressing...`);
 
             const ds = new DecompressionStream('gzip');
             const decompressedStream = new Response(compressedBuffer).body!.pipeThrough(ds);
             const finalBuffer = await new Response(decompressedStream).arrayBuffer();
-            console.log(`✅ ${targetUrl} ready.`);
             return finalBuffer;
           } catch (err: any) {
             console.error(`❌ Fetch failure for ${targetUrl}:`, err);
@@ -58,11 +55,9 @@ export class KanjiParserService {
       }, 30000);
 
       try {
-        console.log('Iniciando carga de diccionarios (.db)...');
         this.tokenizer = await builder.build();
         clearTimeout(timeout);
         this.isReady.set(true);
-        console.log('Diccionarios cargados con éxito.');
       } catch (err: any) {
         clearTimeout(timeout);
         console.error('Error al inicializar Kuromoji:', err);
