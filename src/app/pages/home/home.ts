@@ -5,6 +5,7 @@ import { SupabaseService } from '../../services/supabase.service';
 import { AppButtonComponent } from '../../components/app-button/app-button';
 import { KanjiParserService } from '../../services/kanji-parser';
 import { Video } from '../../models/video.model';
+import { SeoService } from '../../services/seo.service';
 
 import { gsap } from 'gsap';
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
@@ -19,6 +20,7 @@ import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 export class Home implements OnInit {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
+  private seoService = inject(SeoService);
   public kanjiParser = inject(KanjiParserService);
   isParserReady = computed(() => this.kanjiParser.isReady());
 
@@ -46,6 +48,12 @@ export class Home implements OnInit {
   }
 
   async ngOnInit() {
+    this.seoService.updateTags({
+      title: 'Home',
+      description: 'Mejora tu comprensión auditiva del japonés con contenido real de anime, música, noticias y más.',
+      image: '/assets/images/open-graph-whatsapp.webp',
+      url: '/'
+    });
     await this.loadLatestVideos();
   }
 

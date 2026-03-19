@@ -11,13 +11,13 @@ import { authGuard } from './guards/auth.guard';
 import { guestGuard } from './guards/guest.guard';
 
 export const routes: Routes = [
-    { path: '', component: Home },
-    { path: 'catalogo', component: Catalog },
-    { path: 'play/:slug', component: Play },
-    { path: 'login', component: Login, canActivate: [guestGuard] },
-    { path: 'perfil', component: ProfileComponent, canActivate: [authGuard] },
-    { path: 'admin', component: Admin, canActivate: [authGuard] },
-    { path: 'sobre-el-proyecto', component: AboutComponent },
-    { path: 'comunidad', component: CommunityComponent },
+    { path: '', component: Home, title: 'Home' },
+    { path: 'catalogo', component: Catalog, title: 'Catálogo de Videos' },
+    { path: 'play/:slug', component: Play, title: 'Reproduciendo' },
+    { path: 'login', component: Login, canActivate: [guestGuard], title: 'Iniciar Sesión' },
+    { path: 'perfil', component: ProfileComponent, canActivate: [authGuard], title: 'Mi Perfil' },
+    { path: 'admin', component: Admin, canActivate: [authGuard], title: 'Panel de Administración' },
+    { path: 'sobre-el-proyecto', component: AboutComponent, title: 'Sobre el Proyecto' },
+    { path: 'comunidad', component: CommunityComponent, title: 'Comunidad' },
     { path: '**', redirectTo: '' }
 ];

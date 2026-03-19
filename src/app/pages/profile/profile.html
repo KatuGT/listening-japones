@@ -52,41 +52,49 @@
   <div class="profile-content">
     <section class="achievements-section glass-panel">
       <h2>🏆 Mis Logros (Top Scores)</h2>
-      <div class="scores-list" *ngIf="highScores().length > 0; else noScores">
-        <div class="score-item" *ngFor="let score of highScores()" [class.perfect]="score.score === 100">
-          <div class="score-info">
-            <span class="video-title">{{ score.video_title }}</span>
-            <span class="score-date">{{ score.created_at | date:'shortDate' }}</span>
-          </div>
-          <div class="score-value">
-            <span class="medal" *ngIf="score.score === 100">🥇</span>
-            {{ score.score }}%
-          </div>
+      @if (highScores().length > 0) {
+        <div class="scores-list">
+          @for (score of highScores(); track score.id) {
+            <div class="score-item" [class.perfect]="score.score === 100">
+              <div class="score-info">
+                <span class="video-title">{{ score.video_title }}</span>
+                <span class="score-date">{{ score.created_at | date:'shortDate' }}</span>
+              </div>
+              <div class="score-value">
+                @if (score.score === 100) { <span class="medal">🥇</span> }
+                {{ score.score }}%
+              </div>
+            </div>
+          }
         </div>
-      </div>
-      <ng-template #noScores>
+      } @else {
         <div class="empty-state">
           <p>Aún no has practicado ningún video. ¡Ve al catálogo y empieza ahora!</p>
           <a routerLink="/catalogo" class="btn-primary">Ver Catálogo</a>
         </div>
-      </ng-template>
+      }
     </section>
 
     <section class="feedback-section glass-panel">
       <h2>🚩 Mi Feedback Enviado</h2>
-      <div class="feedback-list" *ngIf="feedbackList().length > 0; else noFeedback">
-        <div class="feedback-item" *ngFor="let item of feedbackList()">
-          <div class="feedback-header">
-            <span class="type-badge" [class]="item.type">{{ item.type | uppercase }}</span>
-            <span class="feedback-date">{{ item.created_at | date:'short' }}</span>
-          </div>
-          <p class="feedback-content">{{ item.content }}</p>
-          <span class="video-context" *ngIf="item.video_title">Video: {{ item.video_title }}</span>
+      @if (feedbackList().length > 0) {
+        <div class="feedback-list">
+          @for (item of feedbackList(); track item.id) {
+            <div class="feedback-item">
+              <div class="feedback-header">
+                <span class="type-badge" [class]="item.type">{{ item.type | uppercase }}</span>
+                <span class="feedback-date">{{ item.created_at | date:'short' }}</span>
+              </div>
+              <p class="feedback-content">{{ item.content }}</p>
+              @if (item.video_title) {
+                <span class="video-context">Video: {{ item.video_title }}</span>
+              }
+            </div>
+          }
         </div>
-      </div>
-      <ng-template #noFeedback>
+      } @else {
         <p class="empty-msg">No has enviado reportes o sugerencias todavía.</p>
-      </ng-template>
+      }
     </section>
   </div>
 </div>

@@ -1,4 +1,4 @@
-<ng-container *ngIf="routerLink; else normalButton">
+@if (routerLink) {
   <a
     [routerLink]="routerLink"
     [ngClass]="classes"
@@ -8,9 +8,7 @@
   >
     <ng-content></ng-content>
   </a>
-</ng-container>
-
-<ng-template #normalButton>
+} @else {
   <button
     [type]="type"
     [disabled]="disabled"
@@ -18,4 +16,4 @@
   >
     <ng-content></ng-content>
   </button>
-</ng-template>
+}

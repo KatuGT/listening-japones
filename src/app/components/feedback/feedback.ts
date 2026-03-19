@@ -1,5 +1,5 @@
 import { Component, inject, signal, effect, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
 import { TextareaInputComponent } from '../textarea-input/textarea-input';
@@ -13,7 +13,7 @@ declare var grecaptcha: any;
 @Component({
   selector: 'app-feedback',
   standalone: true,
-  imports: [CommonModule, FormsModule, TextareaInputComponent, AppButtonComponent],
+  imports: [RouterLink, FormsModule, TextareaInputComponent, AppButtonComponent],
   templateUrl: './feedback.html',
   styleUrl: './feedback.scss'
 })

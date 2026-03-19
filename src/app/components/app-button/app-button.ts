@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 export type ButtonVariant = 'primary' | 'success' | 'secondary' | 'danger' | 'outline' | 'ghost';
@@ -8,7 +8,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 @Component({
   selector: 'app-button',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [NgClass, RouterLink],
   templateUrl: './app-button.html',
   styleUrls: ['./app-button.scss'],
 })

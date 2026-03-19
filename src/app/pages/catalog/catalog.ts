@@ -5,6 +5,7 @@ import { SupabaseService } from '../../services/supabase.service';
 import { Video } from '../../models/video.model';
 import { VideoCardSkeletonComponent } from '../../components/skeletons/video-card-skeleton/video-card-skeleton';
 import { AppButtonComponent } from '../../components/app-button/app-button';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-catalog',
@@ -17,6 +18,7 @@ export class Catalog implements OnInit {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private seoService = inject(SeoService);
 
   videos = signal<Video[]>([]);
   groupedVideos = computed(() => {

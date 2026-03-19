@@ -1,11 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { SupabaseService } from '../../../services/supabase.service';
 
 @Component({
   selector: 'app-admin-feedback',
   standalone: true,
-  imports: [CommonModule],
+  imports: [DatePipe],
   templateUrl: './admin-feedback.html',
   styleUrls: ['./admin-feedback.scss'],
 })

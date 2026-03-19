@@ -3,7 +3,9 @@
     <h2>Videos Publicados</h2>
   </div>
 
-  <div *ngIf="statusMessage()" class="status-banner">{{ statusMessage() }}</div>
+  @if (statusMessage()) {
+    <div class="status-banner">{{ statusMessage() }}</div>
+  }
 
   <div class="video-manage-list">
     @for (video of videoList(); track video.id) {
@@ -12,7 +14,7 @@
           @if (video.video_url) {
             <video [src]="video.video_url" muted preload="metadata"></video>
           } @else {
-            <div class="thumb-placeholder">í¾¬</div>
+            <div class="thumb-placeholder">ï¿½ï¿½ï¿½</div>
           }
         </div>
         <div class="video-info">
@@ -31,7 +33,7 @@
             <button class="btn-approve" (click)="approveVideo(video.id)">âœ… Aprobar</button>
           }
           <button class="btn-edit" (click)="onEdit(video)">âœï¸ Editar</button>
-          <button class="btn-delete" (click)="deleteVideo(video.id)">í·‘ï¸ Eliminar</button>
+          <button class="btn-delete" (click)="deleteVideo(video.id)">ï¿½ï¿½ï¿½ï¸ Eliminar</button>
         </div>
       </div>
     } @empty {

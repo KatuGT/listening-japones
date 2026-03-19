@@ -30,7 +30,7 @@
                   (click)="toggleFeedbackVisibility(item)"
                   [title]="item.is_visible ? 'Ocultar del Muro' : 'Hacer visible en el Muro'"
                 >
-                  {{ item.is_visible ? 'Ì±ÅÔ∏è P√∫blico' : 'ÌµµÔ∏è Privado' }}
+                  {{ item.is_visible ? 'ÔøΩÔøΩÔøΩÔ∏è P√∫blico' : 'ÔøΩÔøΩÔøΩÔ∏è Privado' }}
                 </button>
               </div>
               <span class="status-badge" [class.resuelto]="item.status === 'resuelto'">
@@ -38,13 +38,16 @@
               </span>
             </td>
             <td>
-              <div class="feedback-actions" *ngIf="item.status !== 'resuelto'">
-                <textarea #adminRes placeholder="Responder algo..."></textarea>
-                <button class="btn-resolve" (click)="resolveFeedback(item, adminRes.value)">Resolver</button>
-              </div>
-              <div class="res-preview" *ngIf="item.status === 'resuelto'">
-                <p><strong>Respuesta:</strong> {{ item.admin_response }}</p>
-              </div>
+              @if (item.status !== 'resuelto') {
+                <div class="feedback-actions">
+                  <textarea #adminRes placeholder="Responder algo..."></textarea>
+                  <button class="btn-resolve" (click)="resolveFeedback(item, adminRes.value)">Resolver</button>
+                </div>
+              } @else {
+                <div class="res-preview">
+                  <p><strong>Respuesta:</strong> {{ item.admin_response }}</p>
+                </div>
+              }
             </td>
           </tr>
         }

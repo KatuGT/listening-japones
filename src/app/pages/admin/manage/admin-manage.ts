@@ -5,7 +5,7 @@ import { SupabaseService } from '../../../services/supabase.service';
 @Component({
   selector: 'app-admin-manage',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './admin-manage.html',
   styleUrls: ['./admin-manage.scss'],
 })

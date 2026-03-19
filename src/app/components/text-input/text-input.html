@@ -1,5 +1,7 @@
 <div class="form-control-group">
-  <label *ngIf="label">{{ label }} <span *ngIf="required">*</span></label>
+  @if (label) {
+    <label>{{ label }} @if (required) { <span>*</span> }</label>
+  }
   <input
     [attr.name]="name"
     [type]="type"

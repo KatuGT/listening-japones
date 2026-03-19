@@ -5,7 +5,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 @Component({
   selector: 'app-text-input',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './text-input.html',
   styleUrls: ['./text-input.scss'],
   providers: [{

@@ -5,7 +5,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 @Component({
   selector: 'app-textarea-input',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './textarea-input.html',
   styleUrls: ['./textarea-input.scss'],
   providers: [{

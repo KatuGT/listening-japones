@@ -6,6 +6,7 @@ import { TextInputComponent } from '../../components/text-input/text-input';
 import { TextareaInputComponent } from '../../components/textarea-input/textarea-input';
 import { AppButtonComponent } from '../../components/app-button/app-button';
 import { environment } from '../../../environments/environment';
+import { SeoService } from '../../services/seo.service';
 
 declare var grecaptcha: any;
 
@@ -18,6 +19,7 @@ declare var grecaptcha: any;
 })
 export class CommunityComponent implements OnInit {
   private supabaseService = inject(SupabaseService);
+  private seoService = inject(SeoService);
 
   public feedbackList = signal<any[]>([]);
   public clipRequestsList = signal<any[]>([]);
@@ -35,6 +37,12 @@ export class CommunityComponent implements OnInit {
   public captchaToken = signal<string | null>(null);
 
   async ngOnInit() {
+    this.seoService.updateTags({
+      title: 'Comunidad',
+      description: 'Únete a nuestra comunidad de estudiantes de japonés. Comparte clips, sugerencias y aprende junto a otros.',
+      image: '/assets/images/open-graph-whatsapp.webp',
+      url: '/comunidad'
+    });
     await Promise.all([
       this.loadCommunityFeedback(),
       this.loadCommunityClipRequests()
