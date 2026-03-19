@@ -14,7 +14,7 @@
 .warning-banner {
     background: rgba(255, 193, 7, 0.15);
     border: 1px solid rgba(255, 193, 7, 0.3);
-    color: #ffc107;
+    color: var(--accent-warning);
     padding: 1rem;
     border-radius: 12px;
     text-align: center;
@@ -74,7 +74,7 @@
 
                 &:hover {
                     background: rgba(0, 204, 255, 0.15);
-                    border-color: #00ccff;
+                    border-color: var(--accent-info);
                     transform: scale(1.1);
                 }
             }

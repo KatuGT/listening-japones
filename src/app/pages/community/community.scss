@@ -59,7 +59,7 @@
     h2 {
       font-size: 1.8rem;
       font-weight: 700;
-      color: #fff;
+      color: var(--white);
     }
   }
 
@@ -112,9 +112,9 @@
     transform: translateY(-2px);
   }
 
-  &.added { border-left: 3px solid #00ff88; }
-  &.reviewed { border-left: 3px solid #00f2ff; }
-  &.rejected { border-left: 3px solid #ff4d4d; }
+  &.added { border-left: 3px solid var(--accent-success); }
+  &.reviewed { border-left: 3px solid var(--accent-alt); }
+  &.rejected { border-left: 3px solid var(--accent-hot); }
 
   .request-info {
     display: flex;
@@ -124,7 +124,7 @@
 
     .request-title {
       font-weight: 600;
-      color: #fff;
+      color: var(--white);
       font-size: 0.95rem;
       white-space: nowrap;
       overflow: hidden;
@@ -151,9 +151,9 @@
     }
   }
 
-  &.added .request-status-tag { color: #00ff88; background: rgba(0, 255, 136, 0.1); }
-  &.reviewed .request-status-tag { color: #00f2ff; background: rgba(0, 242, 255, 0.1); }
-  &.rejected .request-status-tag { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
+  &.added .request-status-tag { color: var(--accent-success); background: rgba(0, 255, 136, 0.1); }
+  &.reviewed .request-status-tag { color: var(--accent-alt); background: rgba(0, 242, 255, 0.1); }
+  &.rejected .request-status-tag { color: var(--accent-hot); background: rgba(255, 77, 77, 0.1); }
 }
 
 .feedback-card {
@@ -170,7 +170,7 @@
   }
 
   &.resolved {
-    border-left: 4px solid #00ff88;
+    border-left: 4px solid var(--accent-success);
   }
 
   .card-header {
@@ -201,8 +201,8 @@
       font-weight: 800;
       background: rgba(255, 255, 255, 0.1);
 
-      &.Error { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
-      &.Sugerencia { color: #00f2ff; background: rgba(0, 242, 255, 0.1); }
+      &.Error { color: var(--accent-hot); background: rgba(255, 77, 77, 0.1); }
+      &.Sugerencia { color: var(--accent-alt); background: rgba(0, 242, 255, 0.1); }
       &.Agradecimiento { color: #ff00ff; background: rgba(255, 0, 255, 0.1); }
     }
 
@@ -232,7 +232,7 @@
       font-size: 0.8rem;
       font-weight: 600;
       
-      &.Resuelto { color: #00ff88; }
+      &.Resuelto { color: var(--accent-success); }
     }
 
     .resolved-date {
@@ -270,7 +270,7 @@
     label {
       font-size: 0.9rem;
       font-weight: 600;
-      color: #fff;
+      color: var(--white);
     }
 
     input, textarea {
@@ -278,7 +278,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
       padding: 0.8rem 1rem;
-      color: #fff;
+      color: var(--white);
       font-size: 1rem;
       transition: all 0.3s ease;
 
@@ -297,28 +297,7 @@
     min-height: 78px; // Altura estándar de reCAPTCHA para evitar saltos de layout
   }
 
-  .btn-submit {
-    background: linear-gradient(135deg, var(--secondary), #ff4d00);
-    color: #fff;
-    border: none;
-    padding: 1rem;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    margin-top: 0.5rem;
 
-    &:hover:not(:disabled) {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 20px rgba(255, 123, 0, 0.2);
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
 
   .status-msg {
     font-size: 0.9rem;
@@ -326,14 +305,14 @@
     padding: 0.5rem;
     border-radius: 8px;
 
-    &.success { color: #00ff88; background: rgba(0, 255, 136, 0.1); }
-    &.error { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
+    &.success { color: var(--accent-success); background: rgba(0, 255, 136, 0.1); }
+    &.error { color: var(--accent-hot); background: rgba(255, 77, 77, 0.1); }
   }
 }
 
 // --- Utils ---
 .gradient-text {
-  background: linear-gradient(to right, #fff, var(--secondary), #ffbc00);
+  background: linear-gradient(to right, var(--white), var(--secondary), #ffbc00);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

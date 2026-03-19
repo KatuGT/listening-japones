@@ -1,0 +1,43 @@
+<div class="manage-section glass-panel">
+  <div class="manage-header">
+    <h2>Videos Publicados</h2>
+  </div>
+
+  <div *ngIf="statusMessage()" class="status-banner">{{ statusMessage() }}</div>
+
+  <div class="video-manage-list">
+    @for (video of videoList(); track video.id) {
+      <div class="video-manage-item" [class.pending-approval]="!video.is_approved">
+        <div class="video-thumb">
+          @if (video.video_url) {
+            <video [src]="video.video_url" muted preload="metadata"></video>
+          } @else {
+            <div class="thumb-placeholder">Ìæ¨</div>
+          }
+        </div>
+        <div class="video-info">
+          <h4>{{ video.title }}</h4>
+          <p class="author-info">‚úçÔ∏è {{ video.profiles?.email || 'Admin' }}</p>
+          <div class="badge-row">
+            <span class="badge diff">Nivel {{ video.difficulty }}</span>
+            <span class="badge status" [class.active]="video.is_active">{{ video.is_active ? 'Activo' : 'Borrador' }}</span>
+            @if (!video.is_approved) {
+              <span class="badge pending">‚è≥ Pendiente de Aprobaci√≥n</span>
+            }
+          </div>
+        </div>
+        <div class="video-actions">
+          @if (!video.is_approved) {
+            <button class="btn-approve" (click)="approveVideo(video.id)">‚úÖ Aprobar</button>
+          }
+          <button class="btn-edit" (click)="onEdit(video)">‚úèÔ∏è Editar</button>
+          <button class="btn-delete" (click)="deleteVideo(video.id)">Ì∑ëÔ∏è Eliminar</button>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-manage">
+        <p>No hay videos publicados a√∫n. ¬°Sube tu primer contenido!</p>
+      </div>
+    }
+  </div>
+</div>

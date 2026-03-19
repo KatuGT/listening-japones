@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AppButtonComponent } from '../../components/app-button/app-button';
 
 @Component({
     selector: 'app-about',
     standalone: true,
-    imports: [CommonModule, RouterModule],
+    imports: [CommonModule, RouterModule, AppButtonComponent],
     templateUrl: './about.html',
     styleUrl: './about.scss'
 })

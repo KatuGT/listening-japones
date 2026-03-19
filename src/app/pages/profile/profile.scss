@@ -48,7 +48,7 @@
     justify-content: center;
     font-size: 2rem;
     font-weight: 800;
-    color: #fff;
+    color: var(--white);
     box-shadow: 0 0 20px rgba(26, 233, 184, 0.3);
     flex-shrink: 0;
 
@@ -69,7 +69,7 @@
       font-size: 2rem;
       font-weight: 800;
       margin-bottom: 0.2rem;
-      background: linear-gradient(90deg, #fff, rgba(255,255,255,0.7));
+      background: linear-gradient(90deg, var(--white), rgba(255,255,255,0.7));
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -123,7 +123,7 @@
 
         .btn-save {
           background: var(--secondary);
-          color: #000;
+          color: var(--black);
           border: none;
           padding: 0.5rem 1rem;
           border-radius: 8px;
@@ -153,9 +153,9 @@
 
         .checking { color: #aaa; }
         .available { color: var(--secondary); }
-        .taken { color: #ff5252; }
-        .invalid { color: #ffc107; }
-        .save-result { color: #fff; }
+        .taken { color: var(--accent-danger); }
+        .invalid { color: var(--accent-warning); }
+        .save-result { color: var(--white); }
       }
     }
     p {
@@ -183,7 +183,7 @@
     .stat-value {
       font-size: 1.8rem;
       font-weight: 800;
-      color: #fff;
+      color: var(--white);
     }
     .stat-label {
       font-size: 0.8rem;
@@ -250,7 +250,7 @@
     flex-direction: column;
     .video-title {
       font-weight: 600;
-      color: #fff;
+      color: var(--white);
     }
     .score-date {
       font-size: 0.8rem;
@@ -328,7 +328,7 @@
   display: inline-block;
   margin-top: 1rem;
   background: var(--primary);
-  color: #000;
+  color: var(--black);
   text-decoration: none;
   padding: 0.8rem 1.5rem;
   border-radius: 12px;

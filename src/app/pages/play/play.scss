@@ -57,7 +57,7 @@
         h1 {
             font-size: 1.5rem; // Más pequeño para títulos largos
             font-weight: 800;
-            background: linear-gradient(to right, #fff, var(--secondary));
+            background: linear-gradient(to right, var(--white), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -109,7 +109,7 @@
         }
 
         &:hover {
-            color: #fff;
+            color: var(--white);
             background: rgba(187, 0, 0, 0.1);
             border-color: rgba(187, 0, 0, 0.3);
             transform: translateY(-3px);

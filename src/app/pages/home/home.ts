@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal, afterNextRender, computed } from '@a
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../services/supabase.service';
+import { AppButtonComponent } from '../../components/app-button/app-button';
 import { KanjiParserService } from '../../services/kanji-parser';
 import { Video } from '../../models/video.model';
 
@@ -11,7 +12,7 @@ import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AppButtonComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

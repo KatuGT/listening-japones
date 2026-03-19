@@ -1,0 +1,31 @@
+<div class="users-manage-section glass-panel">
+  <h2>Gesti√≥n de Usuarios</h2>
+  <div class="users-grid">
+    @for (profile of profilesList(); track profile.id) {
+      <div class="user-card" [class.blocked]="profile.is_blocked" [class.is-admin]="profile.is_admin">
+        <div class="user-info">
+          <span class="user-email">{{ profile.email }}</span>
+          @if (profile.nickname) {
+            <span class="user-nickname">(@{{ profile.nickname }})</span>
+          }
+          <span class="role-badge" [class.admin]="profile.is_admin">
+            {{ profile.is_admin ? 'Ì±ë Administrador' : 'Ì±§ Usuario Est√°ndar' }}
+          </span>
+          <span class="user-id">{{ profile.id }}</span>
+        </div>
+        <div class="user-actions">
+          @if (profile.email !== '93katu@gmail.com') {
+            <div class="role-actions">
+              <button class="btn-role" (click)="updateUserRole(profile, 'collaborator')" [disabled]="profile.role === 'collaborator'">Ì¥ù Colaborador</button>
+              <button class="btn-role admin" (click)="updateUserRole(profile, 'admin')" [disabled]="profile.role === 'admin'">Ì±ë Admin</button>
+              <button class="btn-role user" (click)="updateUserRole(profile, 'user')" [disabled]="profile.role === 'user'">Ì±§ Alumno</button>
+            </div>
+            <button class="btn-block" (click)="toggleBlockUser(profile)" [class.danger]="!profile.is_blocked">
+              {{ profile.is_blocked ? 'Ì¥ì Desbloquear' : 'Ì∫´ Bloquear' }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

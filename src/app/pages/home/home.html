@@ -170,13 +170,15 @@
       <div class="format-filters">
         <div class="filter-options">
           @for (format of formats; track format) {
-          <button
+          <app-button
             class="filter-btn"
+            variant="ghost"
+            size="sm"
             [class.active]="selectedFormat() === format"
             (click)="setFormat(format)"
           >
             {{ format }}
-          </button>
+          </app-button>
           }
         </div>
       </div>

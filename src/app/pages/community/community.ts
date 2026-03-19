@@ -2,6 +2,9 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
+import { TextInputComponent } from '../../components/text-input/text-input';
+import { TextareaInputComponent } from '../../components/textarea-input/textarea-input';
+import { AppButtonComponent } from '../../components/app-button/app-button';
 import { environment } from '../../../environments/environment';
 
 declare var grecaptcha: any;
@@ -9,7 +12,7 @@ declare var grecaptcha: any;
 @Component({
   selector: 'app-community',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TextInputComponent, TextareaInputComponent, AppButtonComponent],
   templateUrl: './community.html',
   styleUrl: './community.scss'
 })

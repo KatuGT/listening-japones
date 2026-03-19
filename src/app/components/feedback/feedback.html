@@ -41,21 +41,28 @@
               (click)="feedbackService.type.set('sugerencia')">Sugerencia</button>
           </div>
 
-          <textarea 
-            [(ngModel)]="content" 
+          <app-textarea-input
+            name="feedback"
+            label="Describe el problema"
             placeholder="Describe el problema aquí..."
-            [disabled]="isSubmitting()"></textarea>
+            [disabled]="isSubmitting()"
+            [maxLength]="1000"
+            [(ngModel)]="content"
+            [rows]="5"
+          ></app-textarea-input>
 
           <div class="captcha-container">
             <div id="recaptcha-widget"></div>
           </div>
 
-          <button 
-            class="btn-submit" 
-            (click)="submit()" 
-            [disabled]="isSubmitting() || !content().trim() || !captchaToken()">
+          <app-button
+            variant="primary"
+            [disabled]="isSubmitting() || !content().trim() || !captchaToken()"
+            (click)="submit()"
+            [block]="true"
+          >
             {{ isSubmitting() ? 'Enviando Reporte...' : 'Enviar Reporte' }}
-          </button>
+          </app-button>
         </div>
       }
     }

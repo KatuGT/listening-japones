@@ -1,0 +1,64 @@
+<div class="admin-content">
+  <div class="feedback-section">
+    <div class="section-header">
+      <h3>Solicitudes de Clips Ìæ•</h3>
+      <p>Gestiona los pedidos de la comunidad y hazlos p√∫blicos.</p>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>T√≠tulo / Fuente</th>
+            <th>Descripci√≥n</th>
+            <th>Estado</th>
+            <th>Visibilidad</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (request of clipRequestsList(); track request.id) {
+            <tr>
+              <td>
+                <div class="user-info">
+                  <strong>{{ request.profiles?.nickname || 'Anon' }}</strong>
+                  <span class="user-email">{{ request.profiles?.email }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="request-meta">
+                  <strong>{{ request.title }}</strong>
+                  @if (request.source_url) {
+                    <a [href]="request.source_url" target="_blank" class="link-url">Ì¥ó Ver Fuente</a>
+                  }
+                </div>
+              </td>
+              <td>
+                <p class="request-desc">{{ request.description || '-' }}</p>
+              </td>
+              <td>
+                <select [ngModel]="request.status" (ngModelChange)="updateClipRequestStatus(request, $event)" class="status-select" [class]="request.status">
+                  <option value="pending">‚è≥ Pendiente</option>
+                  <option value="reviewed">Ì±Ä Revisado</option>
+                  <option value="added">Ìæ¨ Agregado</option>
+                  <option value="rejected">‚ùå Rechazado</option>
+                </select>
+              </td>
+              <td>
+                <button class="btn-visibility" [class.visible]="request.is_visible" (click)="toggleClipRequestVisibility(request)">
+                    {{ request.is_visible ? 'Ì±ÅÔ∏è P√∫blico' : 'ÌµµÔ∏è Privado' }}
+                </button>
+              </td>
+              <td>{{ request.created_at | date:'dd/MM/yy HH:mm' }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-cell">No hay solicitudes todav√≠a.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

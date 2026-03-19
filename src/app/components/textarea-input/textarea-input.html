@@ -1,0 +1,15 @@
+<div class="form-control-group">
+  <label *ngIf="label">{{ label }} <span *ngIf="required">*</span></label>
+  <textarea
+    [attr.name]="name"
+    [attr.placeholder]="placeholder"
+    [required]="required"
+    [disabled]="disabled"
+    [rows]="rows"
+    [attr.maxlength]="maxLength"
+    [value]="value"
+    (input)="_onInput($event)"
+    (blur)="_onBlur()"
+    class="app-textarea-input"
+  ></textarea>
+</div>

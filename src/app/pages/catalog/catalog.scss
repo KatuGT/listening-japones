@@ -92,32 +92,39 @@
         }
 
         .filter-pill {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.6);
-            padding: 0.5rem 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 20px;
             font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
             font-weight: 500;
+            transition: all 0.2s ease;
 
-            &:hover {
+            .btn {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: rgba(255, 255, 255, 0.6);
+                padding: 0.5rem 1.2rem;
+                border-radius: 20px;
+                min-width: 82px;
+            }
+
+            &:hover .btn {
                 background: rgba(255, 255, 255, 0.1);
                 color: white;
             }
 
-            &.active {
+            &.active .btn {
                 background: rgba(0, 242, 255, 0.1);
                 border-color: var(--secondary);
                 color: var(--secondary);
                 box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
             }
 
-            &.diff.active {
+            &.diff.active .btn {
                 background: rgba(187, 0, 0, 0.1);
                 border-color: var(--primary);
-                color: #ff4d4d;
+                color: var(--accent-hot);
                 box-shadow: 0 0 15px rgba(187, 0, 0, 0.1);
             }
         }
@@ -191,7 +198,7 @@
     .thumbnail {
         position: relative;
         aspect-ratio: 16/9;
-        background: #000;
+        background: var(--black);
         overflow: hidden;
 
         .card-video {

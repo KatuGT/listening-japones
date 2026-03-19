@@ -103,42 +103,37 @@
         </p>
 
         <form (ngSubmit)="onSubmitClipRequest()" #requestForm="ngForm" class="request-form">
-          <div class="form-group">
-            <label>Título del Anime / Serie *</label>
-            <input 
-              type="text" 
-              name="title" 
-              [(ngModel)]="clipRequest.title" 
-              placeholder="Ej: Kimetsu no Yaiba - Escena de Zenitsu" 
-              required
-            >
-          </div>
+          <app-text-input
+            name="title"
+            label="Título del Anime / Serie"
+            placeholder="Ej: Kimetsu no Yaiba - Escena de Zenitsu"
+            [required]="true"
+            [maxLength]="100"
+            [(ngModel)]="clipRequest.title"
+          ></app-text-input>
 
-          <div class="form-group">
-            <label>Link de referencia (YouTube, etc.)</label>
-            <input 
-              type="url" 
-              name="url" 
-              [(ngModel)]="clipRequest.source_url" 
-              placeholder="https://youtube.com/..."
-            >
-          </div>
+          <app-text-input
+            name="url"
+            label="Link de referencia (YouTube, etc.)"
+            type="url"
+            [maxLength]="300"
+            [(ngModel)]="clipRequest.source_url"
+          ></app-text-input>
 
-          <div class="form-group">
-            <label>Notas adicionales</label>
-            <textarea 
-              name="desc" 
-              [(ngModel)]="clipRequest.description" 
-              placeholder="Algún detalle adicional que quieras mencionar..."
-              rows="3"
-            ></textarea>
-          </div>
+          <app-textarea-input
+            name="desc"
+            label="Notas adicionales"
+            [rows]="3"
+            [maxLength]="1000"
+            placeholder="Algún detalle adicional que quieras mencionar..."
+            [(ngModel)]="clipRequest.description"
+          ></app-textarea-input>
 
           <div id="recaptcha-community" class="captcha-container"></div>
 
-          <button type="submit" [disabled]="!requestForm.form.valid || isSubmitting() || !captchaToken()" class="btn-submit">
+          <app-button type="submit" variant="primary" [disabled]="!requestForm.form.valid || isSubmitting() || !captchaToken()" [block]="true">
             @if (isSubmitting()) { <span>Enviando...</span> } @else { <span>Enviar Solicitud 🚀</span> }
-          </button>
+          </app-button>
 
           @if (successMessage()) {
             <p class="status-msg success">{{ successMessage() }}</p>

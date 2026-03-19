@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../services/supabase.service';
 import { Video } from '../../models/video.model';
 import { VideoCardSkeletonComponent } from '../../components/skeletons/video-card-skeleton/video-card-skeleton';
+import { AppButtonComponent } from '../../components/app-button/app-button';
 
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, VideoCardSkeletonComponent],
+  imports: [CommonModule, VideoCardSkeletonComponent, AppButtonComponent],
   templateUrl: './catalog.html',
   styleUrl: './catalog.scss',
 })

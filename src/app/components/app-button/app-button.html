@@ -1,0 +1,21 @@
+<ng-container *ngIf="routerLink; else normalButton">
+  <a
+    [routerLink]="routerLink"
+    [ngClass]="classes"
+    [attr.target]="target"
+    [attr.aria-disabled]="disabled"
+    (click)="disabled && $event.preventDefault()"
+  >
+    <ng-content></ng-content>
+  </a>
+</ng-container>
+
+<ng-template #normalButton>
+  <button
+    [type]="type"
+    [disabled]="disabled"
+    [ngClass]="classes"
+  >
+    <ng-content></ng-content>
+  </button>
+</ng-template>

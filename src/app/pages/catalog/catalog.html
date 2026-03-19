@@ -16,95 +16,119 @@
       />
     </div>
     <div class="filter-group">
-      <span class="filter-label">Formato:</span>
-      <button
+      <span class="filter-label">Categorías:</span>
+      <app-button
         class="filter-pill"
+        variant="ghost"
+        size="sm"
         [class.active]="selectedFormat() === 'Todos'"
         (click)="setFormatFilter('Todos')"
       >
         Todos
-      </button>
-      <button
+      </app-button>
+      <app-button
         class="filter-pill"
+        variant="ghost"
+        size="sm"
         [class.active]="selectedFormat() === 'Anime'"
         (click)="setFormatFilter('Anime')"
       >
         Anime
-      </button>
-      <button
+      </app-button>
+      <app-button
         class="filter-pill"
+        variant="ghost"
+        size="sm"
         [class.active]="selectedFormat() === 'J-Drama'"
         (click)="setFormatFilter('J-Drama')"
       >
         J-Drama
-      </button>
-      <button
+      </app-button>
+      <app-button
         class="filter-pill"
+        variant="ghost"
+        size="sm"
         [class.active]="selectedFormat() === 'Noticias'"
         (click)="setFormatFilter('Noticias')"
       >
         Noticias
-      </button>
-      <button
+      </app-button>
+      <app-button
         class="filter-pill"
+        variant="ghost"
+        size="sm"
         [class.active]="selectedFormat() === 'Vlog'"
         (click)="setFormatFilter('Vlog')"
       >
         Vlog
-      </button>
-      <button
+      </app-button>
+      <app-button
         class="filter-pill"
+        variant="ghost"
+        size="sm"
         [class.active]="selectedFormat() === 'Música'"
         (click)="setFormatFilter('Música')"
       >
         Música
-      </button>
+      </app-button>
     </div>
 
     <div class="filter-group">
       <span class="filter-label">Dificultad JLPT:</span>
-      <button
+      <app-button
         class="filter-pill diff"
+        variant="ghost"
+        size="sm"
         [class.active]="selectedDifficulty() === 0"
         (click)="setDifficultyFilter(0)"
       >
         Cualquiera
-      </button>
-      <button
+      </app-button>
+      <app-button
         class="filter-pill diff n5"
+        variant="ghost"
+        size="sm"
         [class.active]="selectedDifficulty() === 1"
         (click)="setDifficultyFilter(1)"
       >
         N5
-      </button>
-      <button
+      </app-button>
+      <app-button
         class="filter-pill diff n4"
+        variant="ghost"
+        size="sm"
         [class.active]="selectedDifficulty() === 2"
         (click)="setDifficultyFilter(2)"
       >
         N4
-      </button>
-      <button
+      </app-button>
+      <app-button
         class="filter-pill diff n3"
+        variant="ghost"
+        size="sm"
         [class.active]="selectedDifficulty() === 3"
         (click)="setDifficultyFilter(3)"
       >
         N3
-      </button>
-      <button
+      </app-button>
+      <app-button
         class="filter-pill diff n2"
+        variant="ghost"
+        size="sm"
         [class.active]="selectedDifficulty() === 4"
         (click)="setDifficultyFilter(4)"
       >
         N2
-      </button>
-      <button
+      </app-button>
+      <app-button
         class="filter-pill diff n1"
+        variant="ghost"
+        size="sm"
         [class.active]="selectedDifficulty() === 5"
         (click)="setDifficultyFilter(5)"
       >
         N1
-      </button>
+      </app-button>
     </div>
   </div>
 
@@ -171,9 +195,14 @@
 
   @if (hasMore()) {
   <div class="load-more-container">
-    <button class="btn-load-more" (click)="loadMore()" [disabled]="isLoading()">
+    <app-button
+      variant="secondary"
+      [disabled]="isLoading()"
+      (click)="loadMore()"
+      [block]="true"
+    >
       {{ isLoading() ? 'Cargando...' : 'Cargar más videos' }}
-    </button>
+    </app-button>
   </div>
   } }
 </div>

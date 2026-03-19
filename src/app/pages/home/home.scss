@@ -1,3 +1,5 @@
+@use "sass:math";
+
 :host {
     display: block;
     width: 100%;
@@ -60,7 +62,7 @@
                 margin-bottom: 1rem;
                 font-weight: 800;
                 letter-spacing: -1px;
-                background: linear-gradient(to bottom, #fff, #ccc);
+                background: linear-gradient(to bottom, var(--white), var(--grey-light));
                 -webkit-background-clip: text;
                 background-clip: text;
                 -webkit-text-fill-color: transparent;
@@ -146,15 +148,15 @@
 
                     .bar {
                         width: 3px;
-                        background: linear-gradient(to top, var(--secondary), #fff);
+                        background: linear-gradient(to top, var(--secondary), var(--white));
                         border-radius: 3px;
                         animation: pulse 1.5s ease-in-out infinite;
 
                         @for $i from 1 through 10 {
                             &:nth-child(#{$i}) {
-                                height: random(15)+10px;
+                                height: math.random(15) + 10px;
                                 animation-delay: $i * 0.1s;
-                                opacity: 0.3 + (random(7) / 10);
+                                opacity: 0.3 + math.div(math.random(7), 10);
                             }
                         }
                     }
@@ -179,22 +181,24 @@
                     gap: 0.8rem;
 
                     .filter-btn {
-                        background: rgba(255, 255, 255, 0.05);
-                        border: 1px solid rgba(255, 255, 255, 0.1);
-                        color: white;
-                        padding: 0.6rem 1.4rem;
-                        border-radius: 50px;
-                        font-size: 0.9rem;
-                        font-weight: 500;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
+                        .btn {
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+                            color: white;
+                            padding: 0.6rem 1.4rem;
+                            border-radius: 50px;
+                            font-size: 0.9rem;
+                            font-weight: 500;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                        }
 
-                        &:hover {
+                        &:hover .btn {
                             background: rgba(255, 255, 255, 0.1);
                             border-color: rgba(255, 255, 255, 0.2);
                         }
 
-                        &.active {
+                        &.active .btn {
                             background: var(--secondary);
                             color: var(--bg-dark);
                             border-color: var(--secondary);
@@ -229,7 +233,7 @@
                 &:hover {
                     transform: scale(1.05) translateY(-3px);
                     box-shadow: 0 15px 40px rgba(0, 242, 255, 0.4);
-                    background: #fff;
+                    background: var(--white);
                 }
             }
         }
@@ -330,7 +334,7 @@
     .thumbnail {
         position: relative;
         aspect-ratio: 16/9;
-        background: #000;
+        background: var(--black);
         overflow: hidden;
 
         .card-video {

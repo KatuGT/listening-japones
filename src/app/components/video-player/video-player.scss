@@ -13,7 +13,7 @@
     aspect-ratio: 16 / 9;
     border-radius: 16px;
     overflow: hidden;
-    background: #000;
+    background: var(--black);
     cursor: pointer;
 
     .main-video {
@@ -28,7 +28,7 @@
       left: 0;
       width: 100%;
       height: 18%; // Ajustar según el tamaño de los subs pegados
-      background: linear-gradient(to top, #000 80%, rgba(0, 0, 0, 0));
+      background: linear-gradient(to top, var(--black) 80%, rgba(0, 0, 0, 0));
       pointer-events: none;
       z-index: 5;
     }

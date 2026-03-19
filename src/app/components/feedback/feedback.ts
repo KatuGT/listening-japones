@@ -2,6 +2,8 @@ import { Component, inject, signal, effect, ElementRef, ViewChild } from '@angul
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
+import { TextareaInputComponent } from '../textarea-input/textarea-input';
+import { AppButtonComponent } from '../app-button/app-button';
 import { AuthService } from '../../services/auth.service';
 import { FeedbackService } from '../../services/feedback.service';
 import { environment } from '../../../environments/environment';
@@ -11,7 +13,7 @@ declare var grecaptcha: any;
 @Component({
   selector: 'app-feedback',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TextareaInputComponent, AppButtonComponent],
   templateUrl: './feedback.html',
   styleUrl: './feedback.scss'
 })

@@ -47,6 +47,76 @@
   --text-main: #ffffff;
   --text-muted: rgba(255, 255, 255, 0.6);
   --glass-border: rgba(255, 255, 255, 0.1);
+
+  /* Colores reutilizables globales */
+  --white: #ffffff;
+  --black: #000000;
+  --grey-light: #cccccc;
+  --grey-80: #888888;
+  --grey-60: #666666;
+  --grey-40: #444444;
+
+  --accent-success: #1ae9b8;
+  --accent-info: #00ccff;
+  --accent-primary: #6200ea;
+  --accent-warning: #ffc107;
+  --accent-danger: #ff5252;
+  --accent-danger-strong: #ff4757;
+  --accent-alt: #00f2ff;
+  --accent-hot: #ff4d4d;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem 1.15rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--secondary), var(--accent-hot));
+  color: var(--white);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--accent-success), var(--accent-info));
+  color: var(--black);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, var(--accent-alt), var(--grey-40));
+  color: var(--white);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--accent-danger), var(--accent-danger-strong));
+  color: var(--white);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--white);
+  color: var(--white);
 }
 
 body {
