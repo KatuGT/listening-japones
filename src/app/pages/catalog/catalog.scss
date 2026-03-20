@@ -28,8 +28,9 @@
 
 .filters-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
     margin-bottom: 3rem;
     justify-content: center;
     background: rgba(255, 255, 255, 0.03);
@@ -78,17 +79,89 @@
 
     .filter-group {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         gap: 0.5rem;
-        flex-wrap: wrap;
+        width: 100%;
+        max-width: 800px;
+
+        @media (min-width: 769px) {
+            flex-direction: row;
+            align-items: center;
+            gap: 1.5rem;
+            width: auto;
+            flex-shrink: 0;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem 0;
+
+            @media (min-width: 769px) {
+                cursor: default;
+                pointer-events: none;
+            }
+        }
 
         .filter-label {
             font-size: 0.8rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.1em;
+            font-weight: 700;
+        }
+
+        .chevron {
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid var(--secondary);
+            border-bottom: 2px solid var(--secondary);
+            transform: rotate(45deg);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             margin-right: 0.5rem;
-            font-weight: 600;
+            
+            @media (min-width: 769px) {
+                display: none;
+            }
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: flex-start;
+
+            @media (min-width: 1025px) {
+                justify-content: center;
+            }
+
+            @media (max-width: 768px) {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transform: translateY(-10px);
+                transition: all 0.3s ease-out;
+                pointer-events: none;
+                width: 100%;
+            }
+        }
+
+        &.expanded {
+            .chevron {
+                transform: rotate(-135deg);
+            }
+            
+            .filter-options {
+                @media (max-width: 768px) {
+                    max-height: 500px;
+                    opacity: 1;
+                    transform: translateY(0);
+                    pointer-events: auto;
+                    padding-top: 0.5rem;
+                }
+            }
         }
 
         .filter-pill {
@@ -127,6 +200,21 @@
                 color: var(--accent-hot);
                 box-shadow: 0 0 15px rgba(187, 0, 0, 0.1);
             }
+        }
+    }
+
+    .secondary-filters {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        width: 100%;
+        align-items: flex-start;
+
+        @media (min-width: 1025px) {
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 4rem;
         }
     }
 }

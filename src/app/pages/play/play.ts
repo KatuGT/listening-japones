@@ -30,7 +30,7 @@ export class Play implements OnInit {
       if (video) {
         this.seoService.updateTags({
           title: video.title,
-          description: `Practica tu escucha con este video: ${video.title}. Nivel: ${video.level || 'N/A'}`,
+          description: `Practica tu escucha con este video: ${video.title}. Dificultad: ${video.difficulty || 'N/A'}`,
           image: video.thumbnail_url || '/assets/images/open-graph-whatsapp.webp',
           type: 'video.other',
           url: `/play/${video.slug}`

@@ -5,7 +5,7 @@
         <h3>{{ editingVideo ? 'Editar Video' : 'Datos del Video' }}</h3>
         @if(editingVideo) {
           <a [routerLink]="['/play', generateSlug(title())]" target="_blank" class="btn-view-public" title="Ver video publicado en una nueva pestaÃ±a">
-            í±ï¸ Ver Video
+            ğŸ‘ï¸ Ver Video
           </a>
         }
       </div>
@@ -44,11 +44,11 @@
     <div class="form-group">
       <label>Formato de Video</label>
       <select [(ngModel)]="mediaFormat" class="format-select">
-        <option value="Anime">í¾¬ Anime</option>
-        <option value="J-Drama">í¾­ J-Drama</option>
-        <option value="Noticias">í³° Noticias / Documental</option>
-        <option value="Vlog">í´³ Vlog / Entrevista</option>
-        <option value="MÃºsica">í¾µ MÃºsica</option>
+        <option value="Anime">ğŸï¸ Anime</option>
+        <option value="J-Drama">ğŸ“º J-Drama</option>
+        <option value="Noticias">ğŸ“° Noticias / Documental</option>
+        <option value="Vlog">ğŸ¤³ Vlog / Entrevista</option>
+        <option value="MÃºsica">ğŸµ MÃºsica</option>
       </select>
     </div>
 
@@ -59,7 +59,7 @@
         [class.active]="isActive()"
         (click)="isActive.set(!isActive())"
       >
-        {{ isActive() ? 'í¿¢ PÃºblico (Activo)' : 'í¿¡ Privado (Borrador)' }}
+        {{ isActive() ? 'ğŸŒ PÃºblico (Activo)' : 'ğŸ”’ Privado (Borrador)' }}
       </button>
       <p class="hint">Si estÃ¡ desactivado, solo tÃº lo verÃ¡s en el Admin.</p>
     </div>
@@ -84,7 +84,7 @@
       <div class="form-group file-loaded">
         <label>Video</label>
         <div class="file-badge">
-          <span class="icon">í¾¬</span>
+          <span class="icon">ğŸ¬</span>
           <span class="text">{{ videoFile() ? videoFile()?.name : 'Video actual conservado' }}</span>
           <button class="btn-mini-reset" (click)="videoFile.set(null);" title="Cambiar video">âœ•</button>
         </div>
@@ -108,9 +108,8 @@
 
   <div class="translation-section">
     <div class="help-tip">
-      <div class="tip-icon">í²¡</div>
       <div class="tip-content">
-        <strong>Tip de Maestro:</strong> Â¿El sistema lee mal un nombre? Usa corchetes para forzar la lectura:
+        <strong>ğŸ’¡ Tip de Maestro:</strong> Â¿El sistema lee mal un nombre? Usa corchetes para forzar la lectura:
         <code>ç¦°è±†å­ [ã­ãšã“]</code>.
         <em>(El Kanji fuera, la lectura dentro).</em>
       </div>
@@ -123,7 +122,7 @@
           {{ isTranslating() ? statusMessage() : 'âœ¨ Traducir todo' }}
         </button>
         <button class="btn-clear" (click)="parsedSubtitles.set([]); vttFile.set(null)">
-          í·‘ï¸ Limpiar
+          ğŸ—‘ï¸ Limpiar
         </button>
       </div>
     </div>

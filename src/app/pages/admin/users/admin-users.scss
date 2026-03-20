@@ -1,6 +1,6 @@
 .users-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
   margin-top: 2rem;
 }
@@ -9,20 +9,22 @@
   background: rgba(30, 30, 45, 0.4);
   padding: 1.5rem;
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 1.5rem;
   transition: all 0.3s;
+  position: relative;
+  min-height: 200px;
 
   &:hover {
     background: rgba(30, 30, 45, 0.6);
-    border-color: rgba(255,255,255,0.1);
+    border-color: rgba(255, 255, 255, 0.1);
   }
 
   &.blocked {
     border-color: rgba(187, 0, 0, 0.3);
-    .user-email { color: rgba(255,255,255,0.3); text-decoration: line-through; }
+    .user-email { color: rgba(255, 255, 255, 0.3); text-decoration: line-through; }
   }
 
   &.is-admin {
@@ -33,58 +35,98 @@
   .user-info {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.3rem;
+    flex: 1;
 
-    .user-email { font-weight: 700; color: var(--white); font-size: 1rem; }
-    .user-nickname { font-size: 0.85rem; color: var(--secondary); font-weight: 600; }
+    .user-email { 
+        font-weight: 700; 
+        color: var(--white); 
+        font-size: 1.1rem; 
+        overflow-wrap: break-word;
+    }
+    
+    .user-nickname { 
+        font-size: 0.9rem; 
+        color: var(--secondary); 
+        font-weight: 600; 
+    }
+    
     .role-badge {
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       font-weight: 600;
-      color: rgba(255,255,255,0.5);
-      margin-top: 0.2rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
 
       &.admin { color: var(--primary); }
-      &.collaborator { color: #bb86fc; }
     }
 
-    .user-id { font-size: 0.7rem; color: rgba(255,255,255,0.3); font-family: monospace; }
+    .user-id { 
+        font-size: 0.7rem; 
+        color: rgba(255, 255, 255, 0.2); 
+        font-family: monospace; 
+        margin-top: auto;
+        padding-top: 1rem;
+        user-select: all;
+    }
   }
 
   .user-actions {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
-    align-items: flex-end;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 
-    .role-actions { display: flex; gap: 0.5rem; }
+    .role-actions { 
+        display: flex; 
+        gap: 0.4rem; 
+        flex-wrap: wrap;
+    }
 
     .btn-role {
-      padding: 0.4rem 0.8rem;
+      flex: 1;
+      padding: 0.5rem;
       border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.02);
       color: var(--white);
       cursor: pointer;
       font-size: 0.75rem;
       transition: all 0.2s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
 
       &:hover:not(:disabled) {
-        background: rgba(255,255,255,0.1);
+        background: rgba(255, 255, 255, 0.1);
       }
 
-      &:disabled { opacity: 0.4; cursor: default; border-color: transparent; }
+      &:disabled { 
+        opacity: 0.3; 
+        cursor: default; 
+      }
     }
 
     .btn-block {
-      padding: 0.6rem 1rem;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.03);
+      padding: 0.7rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.03);
       color: var(--white);
       cursor: pointer;
       font-weight: 600;
       font-size: 0.85rem;
       transition: all 0.2s;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
 
       &.danger {
         color: var(--accent-danger);

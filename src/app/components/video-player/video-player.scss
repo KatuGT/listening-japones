@@ -115,15 +115,11 @@
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         padding: 0;
 
-        .icon {
+        .material-symbols-rounded {
           display: flex;
           align-items: center;
           justify-content: center;
           line-height: 1;
-        }
-
-        .play-icon {
-          padding-left: 3px; // Visual correction for play triangle
         }
 
         &:hover {

@@ -14,7 +14,7 @@
           @if (video.video_url) {
             <video [src]="video.video_url" muted preload="metadata"></video>
           } @else {
-            <div class="thumb-placeholder">���</div>
+            <div class="thumb-placeholder">🎬</div>
           }
         </div>
         <div class="video-info">
@@ -33,7 +33,7 @@
             <button class="btn-approve" (click)="approveVideo(video.id)">✅ Aprobar</button>
           }
           <button class="btn-edit" (click)="onEdit(video)">✏️ Editar</button>
-          <button class="btn-delete" (click)="deleteVideo(video.id)">���️ Eliminar</button>
+          <button class="btn-delete" (click)="deleteVideo(video.id)">🗑️ Eliminar</button>
         </div>
       </div>
     } @empty {

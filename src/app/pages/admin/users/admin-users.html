@@ -9,19 +9,19 @@
             <span class="user-nickname">(@{{ profile.nickname }})</span>
           }
           <span class="role-badge" [class.admin]="profile.is_admin">
-            {{ profile.is_admin ? 'í±‘ Administrador' : 'í±¤ Usuario EstÃ¡ndar' }}
+            {{ profile.is_admin ? 'ğŸ›¡ï¸ Administrador' : 'ğŸ‘¤ Usuario EstÃ¡ndar' }}
           </span>
           <span class="user-id">{{ profile.id }}</span>
         </div>
         <div class="user-actions">
           @if (profile.email !== '93katu@gmail.com') {
             <div class="role-actions">
-              <button class="btn-role" (click)="updateUserRole(profile, 'collaborator')" [disabled]="profile.role === 'collaborator'">í´ Colaborador</button>
-              <button class="btn-role admin" (click)="updateUserRole(profile, 'admin')" [disabled]="profile.role === 'admin'">í±‘ Admin</button>
-              <button class="btn-role user" (click)="updateUserRole(profile, 'user')" [disabled]="profile.role === 'user'">í±¤ Alumno</button>
+              <button class="btn-role" (click)="updateUserRole(profile, 'collaborator')" [disabled]="profile.role === 'collaborator'">ğŸ’ Colaborador</button>
+              <button class="btn-role admin" (click)="updateUserRole(profile, 'admin')" [disabled]="profile.role === 'admin'">ğŸ›¡ï¸ Admin</button>
+              <button class="btn-role user" (click)="updateUserRole(profile, 'user')" [disabled]="profile.role === 'user'">ğŸ“ Alumno</button>
             </div>
             <button class="btn-block" (click)="toggleBlockUser(profile)" [class.danger]="!profile.is_blocked">
-              {{ profile.is_blocked ? 'í´“ Desbloquear' : 'íº« Bloquear' }}
+              {{ profile.is_blocked ? 'ğŸ”“ Desbloquear' : 'ğŸš« Bloquear' }}
             </button>
           }
         </div>

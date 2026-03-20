@@ -16,40 +16,50 @@
       </thead>
       <tbody>
         @for (item of feedbackList(); track item.id) {
-          <tr [class.resolved]="item.status === 'resuelto'">
-            <td>{{ item.created_at | date:'short' }}</td>
-            <td>{{ item.profiles?.nickname || item.user_id.substring(0,8) }}</td>
-            <td><span class="badge" [class]="item.type">{{ item.type }}</span></td>
-            <td>{{ item.video_title || 'General' }}</td>
-            <td class="content-cell">{{ item.content }}</td>
-            <td>
-              <div class="visibility-control">
-                <button
-                  class="btn-visibility"
-                  [class.visible]="item.is_visible"
-                  (click)="toggleFeedbackVisibility(item)"
-                  [title]="item.is_visible ? 'Ocultar del Muro' : 'Hacer visible en el Muro'"
-                >
-                  {{ item.is_visible ? '���️ Público' : '���️ Privado' }}
-                </button>
-              </div>
-              <span class="status-badge" [class.resuelto]="item.status === 'resuelto'">
-                {{ item.status }}
-              </span>
-            </td>
-            <td>
-              @if (item.status !== 'resuelto') {
-                <div class="feedback-actions">
-                  <textarea #adminRes placeholder="Responder algo..."></textarea>
-                  <button class="btn-resolve" (click)="resolveFeedback(item, adminRes.value)">Resolver</button>
-                </div>
-              } @else {
-                <div class="res-preview">
-                  <p><strong>Respuesta:</strong> {{ item.admin_response }}</p>
-                </div>
-              }
-            </td>
-          </tr>
+        <tr [class.resolved]="item.status === 'resuelto'">
+          <td>{{ item.created_at | date:'short' }}</td>
+          <td>{{ item.profiles?.nickname || item.user_id.substring(0,8) }}</td>
+          <td>
+            <span class="badge" [class]="item.type">{{ item.type }}</span>
+          </td>
+          <td>{{ item.video_title || 'General' }}</td>
+          <td class="content-cell">{{ item.content }}</td>
+          <td>
+            <div class="visibility-control">
+              <button
+                class="btn-visibility"
+                [class.visible]="item.is_visible"
+                (click)="toggleFeedbackVisibility(item)"
+                [title]="item.is_visible ? 'Ocultar del Muro' : 'Hacer visible en el Muro'"
+              >
+                {{ item.is_visible ? '👁️ Público' : '🙈 Privado' }}
+              </button>
+            </div>
+            <span
+              class="status-badge"
+              [class.resuelto]="item.status === 'resuelto'"
+            >
+              {{ item.status }}
+            </span>
+          </td>
+          <td>
+            @if (item.status !== 'resuelto') {
+            <div class="feedback-actions">
+              <textarea #adminRes placeholder="Responder algo..."></textarea>
+              <button
+                class="btn-resolve"
+                (click)="resolveFeedback(item, adminRes.value)"
+              >
+                Resolver
+              </button>
+            </div>
+            } @else {
+            <div class="res-preview">
+              <p><strong>Respuesta:</strong> {{ item.admin_response }}</p>
+            </div>
+            }
+          </td>
+        </tr>
         }
       </tbody>
     </table>

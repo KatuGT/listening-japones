@@ -36,11 +36,11 @@
     <div class="buttons-row">
       <div class="main-actions">
         <button class="control-btn play-pause" (click)="togglePlay()">
-          <span class="icon" [class.play-icon]="!isPlaying()"
-            >{{ isPlaying() ? '⏸' : '▶' }}</span
-          >
+          <span class="material-symbols-rounded">
+            {{ isPlaying() ? 'pause' : 'play_arrow' }}
+          </span>
         </button>
-
+ 
         <button
           class="control-btn sub-toggle"
           (click)="toggleSubtitles()"
@@ -52,13 +52,13 @@
           >
         </button>
       </div>
-
+ 
       <div class="secondary-actions">
         <div class="volume-control">
           <button class="control-btn mute-btn" (click)="toggleMute()">
-            <span class="icon"
-              >{{ isMuted() || volume() === 0 ? '🔇' : '🔊' }}</span
-            >
+            <span class="material-symbols-rounded">
+              {{ isMuted() || volume() === 0 ? 'volume_off' : 'volume_up' }}
+            </span>
           </button>
           <div class="volume-slider-container">
             <input

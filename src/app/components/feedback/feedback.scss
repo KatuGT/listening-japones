@@ -61,10 +61,11 @@
   text-align: center;
   margin-bottom: 2rem;
 
-  .modal-icon {
-    font-size: 3rem;
+  .modal-icon.material-symbols-rounded {
+    font-size: 4.5rem;
     display: block;
     margin-bottom: 1rem;
+    color: var(--secondary);
   }
 
   h3 {
@@ -187,10 +188,11 @@ textarea {
   text-align: center;
   padding: 1rem 0;
 
-  .success-icon {
-    font-size: 4rem;
+  .success-icon.material-symbols-rounded {
+    font-size: 5rem;
     display: block;
     margin-bottom: 1.5rem;
+    color: var(--accent-success);
     animation: bounce 0.6s ease;
   }
 

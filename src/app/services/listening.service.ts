@@ -1,5 +1,6 @@
 import { inject, Injectable, signal, computed } from "@angular/core";
 import { SupabaseService } from './supabase.service';
+import { Video } from '../models/video.model';
 
 export interface Subtitle {
     start: number;
@@ -28,9 +29,16 @@ export class ListeningService {
     allSubtitles = signal<Subtitle[]>([]);
     scores = signal<number[]>([]);
 
-    currentVideo = signal<any>(null); // Quick any for the Video model for now
-    isLoading = signal(true);
+    currentVideo = signal<Video | null>(null);
+    isLoading = signal(false); // Cambiado a false por defecto para evitar flash si hay caché
     error = signal<string | null>(null);
+
+    // Caché para videos individuales (Detalles + Subtítulos)
+    private videoCache = new Map<string, { video: Video, subtitles: Subtitle[] }>();
+
+    // Estado global para el catálogo (similar a SWR/React Query)
+    videos = signal<Video[]>([]);
+    hasLoadedCatalog = signal(false);
 
     addScore(score: number) {
         this.scores.update(s => [...s, score]);
@@ -53,6 +61,15 @@ export class ListeningService {
     });
 
     async loadVideoBySlug(slug: string) {
+        // 0. Verificar si ya tenemos esto en caché (Optimización SWR-like)
+        if (this.videoCache.has(slug)) {
+            const cached = this.videoCache.get(slug)!;
+            this.currentVideo.set(cached.video);
+            this.allSubtitles.set(cached.subtitles);
+            this.isLoading.set(false);
+            return;
+        }
+
         this.isLoading.set(true);
         this.error.set(null);
         this.allSubtitles.set([]);
@@ -67,6 +84,12 @@ export class ListeningService {
             if (subData && subData.subtitles_json) {
                 this.allSubtitles.set(subData.subtitles_json);
             }
+            // 3. Guardar en caché para la próxima vez
+            this.videoCache.set(slug, {
+                video: videoData as Video,
+                subtitles: subData?.subtitles_json || []
+            });
+
         } catch (err: any) {
             console.error('Error loading video data:', err);
             this.error.set(err.message || 'Error cargando los datos del video.');

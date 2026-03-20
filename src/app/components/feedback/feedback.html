@@ -3,18 +3,20 @@
     <div class="modal-backdrop" (click)="feedbackService.close()"></div>
   
   <div class="modal-content glass-panel" (click)="$event.stopPropagation()">
-    <button class="btn-close" (click)="feedbackService.close()">✕</button>
+    <button class="btn-close" (click)="feedbackService.close()">
+      <span class="material-symbols-rounded">close</span>
+    </button>
 
     @if (showSuccess()) {
       <div class="success-message">
-        <span class="success-icon">✨</span>
+        <span class="success-icon material-symbols-rounded">auto_awesome</span>
         <h3>¡Gracias por colaborar!</h3>
         <p>Tu reporte nos ayuda a mejorar la experiencia para todos.</p>
         <button class="btn-submit" (click)="feedbackService.close()">Cerrar</button>
       </div>
     } @else {
       <div class="modal-header">
-        <span class="modal-icon">🚩</span>
+        <span class="modal-icon material-symbols-rounded">flag</span>
         <h3>Reportar un problema</h3>
         
         @if (feedbackService.videoTitle()) {

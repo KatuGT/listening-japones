@@ -15,120 +15,132 @@
         (input)="onSearch($event)"
       />
     </div>
-    <div class="filter-group">
-      <span class="filter-label">Categorías:</span>
-      <app-button
-        class="filter-pill"
-        variant="ghost"
-        size="sm"
-        [class.active]="selectedFormat() === 'Todos'"
-        (click)="setFormatFilter('Todos')"
-      >
-        Todos
-      </app-button>
-      <app-button
-        class="filter-pill"
-        variant="ghost"
-        size="sm"
-        [class.active]="selectedFormat() === 'Anime'"
-        (click)="setFormatFilter('Anime')"
-      >
-        Anime
-      </app-button>
-      <app-button
-        class="filter-pill"
-        variant="ghost"
-        size="sm"
-        [class.active]="selectedFormat() === 'J-Drama'"
-        (click)="setFormatFilter('J-Drama')"
-      >
-        J-Drama
-      </app-button>
-      <app-button
-        class="filter-pill"
-        variant="ghost"
-        size="sm"
-        [class.active]="selectedFormat() === 'Noticias'"
-        (click)="setFormatFilter('Noticias')"
-      >
-        Noticias
-      </app-button>
-      <app-button
-        class="filter-pill"
-        variant="ghost"
-        size="sm"
-        [class.active]="selectedFormat() === 'Vlog'"
-        (click)="setFormatFilter('Vlog')"
-      >
-        Vlog
-      </app-button>
-      <app-button
-        class="filter-pill"
-        variant="ghost"
-        size="sm"
-        [class.active]="selectedFormat() === 'Música'"
-        (click)="setFormatFilter('Música')"
-      >
-        Música
-      </app-button>
-    </div>
-
-    <div class="filter-group">
-      <span class="filter-label">Dificultad JLPT:</span>
-      <app-button
-        class="filter-pill diff"
-        variant="ghost"
-        size="sm"
-        [class.active]="selectedDifficulty() === 0"
-        (click)="setDifficultyFilter(0)"
-      >
-        Cualquiera
-      </app-button>
-      <app-button
-        class="filter-pill diff n5"
-        variant="ghost"
-        size="sm"
-        [class.active]="selectedDifficulty() === 1"
-        (click)="setDifficultyFilter(1)"
-      >
-        N5
-      </app-button>
-      <app-button
-        class="filter-pill diff n4"
-        variant="ghost"
-        size="sm"
-        [class.active]="selectedDifficulty() === 2"
-        (click)="setDifficultyFilter(2)"
-      >
-        N4
-      </app-button>
-      <app-button
-        class="filter-pill diff n3"
-        variant="ghost"
-        size="sm"
-        [class.active]="selectedDifficulty() === 3"
-        (click)="setDifficultyFilter(3)"
-      >
-        N3
-      </app-button>
-      <app-button
-        class="filter-pill diff n2"
-        variant="ghost"
-        size="sm"
-        [class.active]="selectedDifficulty() === 4"
-        (click)="setDifficultyFilter(4)"
-      >
-        N2
-      </app-button>
-      <app-button
-        class="filter-pill diff n1"
-        variant="ghost"
-        size="sm"
-        [class.active]="selectedDifficulty() === 5"
-        (click)="setDifficultyFilter(5)"
-      >
-        N1
-      </app-button>
+    <div class="secondary-filters">
+      <div class="filter-group" [class.expanded]="isCategoriesExpanded()">
+        <div class="filter-header" (click)="isCategoriesExpanded.set(!isCategoriesExpanded())">
+          <span class="filter-label">Categorías:</span>
+          <span class="chevron"></span>
+        </div>
+        <div class="filter-options">
+          <app-button
+            class="filter-pill"
+            variant="ghost"
+            size="sm"
+            [class.active]="selectedFormat() === 'Todos'"
+            (click)="setFormatFilter('Todos')"
+          >
+            Todos
+          </app-button>
+          <app-button
+            class="filter-pill"
+            variant="ghost"
+            size="sm"
+            [class.active]="selectedFormat() === 'Anime'"
+            (click)="setFormatFilter('Anime')"
+          >
+            Anime
+          </app-button>
+          <app-button
+            class="filter-pill"
+            variant="ghost"
+            size="sm"
+            [class.active]="selectedFormat() === 'J-Drama'"
+            (click)="setFormatFilter('J-Drama')"
+          >
+            J-Drama
+          </app-button>
+          <app-button
+            class="filter-pill"
+            variant="ghost"
+            size="sm"
+            [class.active]="selectedFormat() === 'Noticias'"
+            (click)="setFormatFilter('Noticias')"
+          >
+            Noticias
+          </app-button>
+          <app-button
+            class="filter-pill"
+            variant="ghost"
+            size="sm"
+            [class.active]="selectedFormat() === 'Vlog'"
+            (click)="setFormatFilter('Vlog')"
+          >
+            Vlog
+          </app-button>
+          <app-button
+            class="filter-pill"
+            variant="ghost"
+            size="sm"
+            [class.active]="selectedFormat() === 'Música'"
+            (click)="setFormatFilter('Música')"
+          >
+            Música
+          </app-button>
+        </div>
+      </div>
+  
+      <div class="filter-group" [class.expanded]="isDifficultyExpanded()">
+        <div class="filter-header" (click)="isDifficultyExpanded.set(!isDifficultyExpanded())">
+          <span class="filter-label">Dificultad JLPT:</span>
+          <span class="chevron"></span>
+        </div>
+        <div class="filter-options">
+          <app-button
+            class="filter-pill diff"
+            variant="ghost"
+            size="sm"
+            [class.active]="selectedDifficulty() === 0"
+            (click)="setDifficultyFilter(0)"
+          >
+            Cualquiera
+          </app-button>
+          <app-button
+            class="filter-pill diff n5"
+            variant="ghost"
+            size="sm"
+            [class.active]="selectedDifficulty() === 1"
+            (click)="setDifficultyFilter(1)"
+          >
+            N5
+          </app-button>
+          <app-button
+            class="filter-pill diff n4"
+            variant="ghost"
+            size="sm"
+            [class.active]="selectedDifficulty() === 2"
+            (click)="setDifficultyFilter(2)"
+          >
+            N4
+          </app-button>
+          <app-button
+            class="filter-pill diff n3"
+            variant="ghost"
+            size="sm"
+            [class.active]="selectedDifficulty() === 3"
+            (click)="setDifficultyFilter(3)"
+          >
+            N3
+          </app-button>
+          <app-button
+            class="filter-pill diff n2"
+            variant="ghost"
+            size="sm"
+            [class.active]="selectedDifficulty() === 4"
+            (click)="setDifficultyFilter(4)"
+          >
+            N2
+          </app-button>
+          <app-button
+            class="filter-pill diff n1"
+            variant="ghost"
+            size="sm"
+            [class.active]="selectedDifficulty() === 5"
+            (click)="setDifficultyFilter(5)"
+          >
+            N1
+          </app-button>
+        </div>
+      </div>
     </div>
   </div>
 

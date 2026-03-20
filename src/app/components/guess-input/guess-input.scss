@@ -58,23 +58,22 @@
             gap: 0.5rem;
 
             .btn-replay {
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                color: white;
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
+                background: transparent;
+                border: none;
+                color: var(--text-muted);
+                cursor: pointer;
+                transition: all 0.2s;
+                padding: 4px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                cursor: pointer;
-                transition: all 0.2s;
-                font-size: 0.9rem;
-                padding-left: 2px; // optical alignment for play icon
+
+                .material-symbols-rounded {
+                    font-size: 1.4rem;
+                }
 
                 &:hover {
-                    background: rgba(0, 204, 255, 0.15);
-                    border-color: var(--accent-info);
+                    color: var(--accent-info);
                     transform: scale(1.1);
                 }
             }

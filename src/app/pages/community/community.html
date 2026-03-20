@@ -10,7 +10,7 @@
       <!-- Muro de Feedback -->
       <div class="wall-section">
         <div class="section-header">
-          <span class="icon">📢</span>
+          <span class="icon material-symbols-rounded">campaign</span>
           <h2>Muro de Feedback</h2>
         </div>
 
@@ -58,7 +58,7 @@
       <!-- Muro de Solicitudes -->
       <div class="wall-section requests-wall">
         <div class="section-header">
-          <span class="icon">✨</span>
+          <span class="icon material-symbols-rounded">auto_awesome</span>
           <h2>Muro de Solicitudes</h2>
         </div>
 
@@ -95,7 +95,7 @@
     <section class="community-section request-section">
       <div class="glass-panel sticky-panel">
         <div class="section-header">
-          <span class="icon">🎬</span>
+          <span class="icon material-symbols-rounded">movie</span>
           <h2>Solicitar un Clip</h2>
         </div>
         <p class="section-desc">
@@ -132,7 +132,9 @@
           <div id="recaptcha-community" class="captcha-container"></div>
 
           <app-button type="submit" variant="primary" [disabled]="!requestForm.form.valid || isSubmitting() || !captchaToken()" [block]="true">
-            @if (isSubmitting()) { <span>Enviando...</span> } @else { <span>Enviar Solicitud 🚀</span> }
+            @if (isSubmitting()) { <span>Enviando...</span> } @else { 
+              <span>Enviar Solicitud <span class="material-symbols-rounded" style="vertical-align: middle; margin-left: 4px;">rocket_launch</span></span> 
+            }
           </app-button>
 
           @if (successMessage()) {
