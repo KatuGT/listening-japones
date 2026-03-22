@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SupabaseService } from './supabase.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -22,8 +23,8 @@ export class TranslationService {
                     const session = await this.supabase.getSession();
                     const token = session?.access_token || '';
 
-                    // LLamamos directo al puerto 3000 para evitar que el proxy de Angular agrupe (buffer) el streaming
-                    const response = await fetch('http://localhost:3000/api/translate', {
+                    // LLamamos a la API usando la URL del entorno
+                    const response = await fetch(environment.translateApiUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
