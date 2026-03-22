@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 export default async function handler(req: any, res: any) {
     const supabaseUrl = process.env.SUPABASE_URL || process.env.supabaseUrl || '';
     const supabaseKey = process.env.SUPABASE_KEY || process.env.supabaseKey || '';
-    
+
     // Enable CORS to allow direct connection bypassing the Angular proxy if needed later
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -26,16 +26,16 @@ export default async function handler(req: any, res: any) {
             console.error('[API Translate] Intento de acceso sin token');
             return res.status(401).json({ error: 'No autorizado. Falta token de sesión.' });
         }
-        
+
         const token = authHeader.split(' ')[1];
-        
+
         if (!supabaseUrl || !supabaseKey) {
             console.error('[API Translate] Variables de entorno de Supabase no configuradas.');
             return res.status(500).json({ error: 'Configuración de servidor incompleta.' });
         }
 
         const supabase = createClient(supabaseUrl, supabaseKey);
-        
+
         // Verificar token con Supabase
         const { data: { user }, error: authError } = await supabase.auth.getUser(token);
         if (authError || !user) {
@@ -82,7 +82,7 @@ Traducción sugerida:`;
         console.log(`[API Translate] Solicitando streaming a Gemini para: "${text.substring(0, 20)}..."`);
 
         const result = streamText({
-            model: googleProvider('gemini-1.5-flash'),
+            model: googleProvider('gemini-2.5-flash'),
             prompt: prompt,
         });
 
