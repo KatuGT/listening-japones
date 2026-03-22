@@ -26,6 +26,36 @@
           ¿Algo está mal? Reportar error
         </button>
       </div>
+
+      <!-- Anotaciones de ayuda -->
+      <div class="player-annotations glass-panel">
+        <ul class="annotation-list">
+          <li>
+            <span class="bullet">✨</span>
+            <p>No te preocupes por símbolos como <strong>"!"</strong> o los <strong>espacios</strong>, el sistema los ignorará por ti.</p>
+          </li>
+          <li>
+            <span class="bullet">✍️</span>
+            <p>Al escribir lo que escuchas, solo verás <strong>hiragana</strong>: no te preocupes por el kanji o katakana.</p>
+          </li>
+          <li>
+            <span class="bullet">💡</span>
+            <p>Leer la traducción puede ayudarte a comprender mejor. Usa el botón de <span class="highlight-btn">✨ Mostrar traducción</span> si lo necesitas.</p>
+          </li>
+          <li>
+            <span class="bullet">🎧</span>
+            <p>
+              Haz clic en 
+              <span 
+                class="material-symbols-rounded inline-icon"
+                (mouseenter)="listeningService.highlightReplay.set(true)"
+                (mouseleave)="listeningService.highlightReplay.set(false)"
+              >sound_detection_loud_sound</span> 
+              para reproducir el video desde ese punto en específico *
+            </p>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div class="inputs-section">

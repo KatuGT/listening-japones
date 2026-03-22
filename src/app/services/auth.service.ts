@@ -1,6 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 import { Router } from '@angular/router';
+import { ProfileService } from './profile.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +9,7 @@ import { Router } from '@angular/router';
 export class AuthService {
   private supabase = inject(SupabaseService);
   private router = inject(Router);
+  private profileService = inject(ProfileService);
 
   currentUser = signal<any>(null);
   isLoading = signal(true);
@@ -24,6 +26,7 @@ export class AuthService {
         // Quitamos la redirección automática a Home para que respete la URL actual al recargar
       }
       if (event === 'SIGNED_OUT') {
+        this.profileService.clearCache();
         this.router.navigate(['/login']);
       }
     });

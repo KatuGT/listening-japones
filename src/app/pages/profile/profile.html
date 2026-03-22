@@ -21,7 +21,7 @@
             <button 
               class="btn-save" 
               (click)="saveNickname()" 
-              [disabled]="isSaving() || (nicknameStatus() !== 'available' && nicknameStatus() !== 'none') || nickname() === profile()?.nickname">
+              [disabled]="isSaving() || (nicknameStatus() !== 'available' && nicknameStatus() !== 'none') || nickname() === profileService.profileData()?.nickname">
               {{ isSaving() ? '...' : 'Guardar' }}
             </button>
           </div>
@@ -39,7 +39,7 @@
     
     <div class="stats-grid">
       <div class="stat-card">
-        <span class="stat-value">{{ highScores().length }}</span>
+        <span class="stat-value">{{ profileService.highScores().length }}</span>
         <span class="stat-label">Videos Practicados</span>
       </div>
       <div class="stat-card gold">
@@ -52,9 +52,9 @@
   <div class="profile-content">
     <section class="achievements-section glass-panel">
       <h2>🏆 Mis Logros (Top Scores)</h2>
-      @if (highScores().length > 0) {
+      @if (profileService.highScores().length > 0) {
         <div class="scores-list">
-          @for (score of highScores(); track score.id) {
+          @for (score of profileService.highScores(); track score.id) {
             <div class="score-item" [class.perfect]="score.score === 100">
               <div class="score-info">
                 <span class="video-title">{{ score.video_title }}</span>
@@ -77,9 +77,9 @@
 
     <section class="feedback-section glass-panel">
       <h2>🚩 Mi Feedback Enviado</h2>
-      @if (feedbackList().length > 0) {
+      @if (profileService.feedbackList().length > 0) {
         <div class="feedback-list">
-          @for (item of feedbackList(); track item.id) {
+          @for (item of profileService.feedbackList(); track item.id) {
             <div class="feedback-item">
               <div class="feedback-header">
                 <span class="type-badge" [class]="item.type">{{ item.type | uppercase }}</span>

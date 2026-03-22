@@ -17,7 +17,12 @@
   >
     <div class="line-header">
       <div class="line-title-group">
-        <button class="btn-replay" (click)="replayLine($index)" title="Reproducir frase">
+        <button 
+          class="btn-replay" 
+          [class.highlighted]="listeningService.highlightReplay()"
+          (click)="replayLine($index)" 
+          title="Reproducir frase"
+        >
           <span class="material-symbols-rounded">sound_detection_loud_sound</span>
         </button>
         <span class="line-number">Frase {{ $index + 1 }}</span>

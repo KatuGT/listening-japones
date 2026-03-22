@@ -15,12 +15,14 @@ if (process.env.NODE_ENV !== 'production') {
     }
 }
 
+const isProd = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' || process.env.production === 'true';
+
 const envFile = `export const environment = {
-    production: ${process.env.production === 'true' || process.env.NODE_ENV === 'production'},
+    production: ${isProd},
     supabaseUrl: '${process.env.SUPABASE_URL || process.env.supabaseUrl || ''}',
     supabaseKey: '${process.env.SUPABASE_KEY || process.env.supabaseKey || ''}',
     recaptchaSiteKey: '${process.env.RECAPTCHA_SITE_KEY || process.env.recaptchaSiteKey || ''}',
-    translateApiUrl: '${process.env.NODE_ENV === 'production' ? '/api/translate' : 'http://localhost:3000/api/translate'}'
+    translateApiUrl: '${isProd ? '/api/translate' : 'http://localhost:3000/api/translate'}'
 };
 `;
 

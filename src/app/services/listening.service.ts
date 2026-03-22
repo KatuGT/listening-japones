@@ -19,6 +19,9 @@ export class ListeningService {
     // Señal especial para pedirle al reproductor de video que salte a un momento
     requestSeek = signal<number | null>(null);
     
+    // Señal para resaltar los botones de replay (hover sync)
+    highlightReplay = signal(false);
+    
     // Progreso
     currentScore = signal(0);
     isEvaluated = signal(false); // <--- Nuevo estado global para saber si el usuario ya terminó

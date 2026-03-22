@@ -541,16 +541,29 @@
 
                 .format-filters {
                     width: 100%;
-
+                    
                     .filter-options {
-                        // Los botones hacen wrap en varias líneas
                         flex-wrap: wrap;
+                        overflow-x: visible;
                         justify-content: center;
-                        gap: 0.6rem;
+                        padding: 0.5rem 0;
+                        gap: 0.8rem;
 
                         .filter-btn {
-                            padding: 0.5rem 1rem;
-                            font-size: 0.85rem;
+                            flex: 0 1 auto;
+                            padding: 0;
+
+                            ::ng-deep .btn {
+                                backdrop-filter: blur(8px);
+                                -webkit-backdrop-filter: blur(8px);
+                                border-color: rgba(255, 255, 255, 0.15);
+                                padding: 0.6rem 1.2rem;
+                                font-size: 0.9rem;
+                            }
+
+                            &.active ::ng-deep .btn {
+                                box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+                            }
                         }
                     }
                 }
@@ -560,6 +573,13 @@
 
     .latest-releases {
         padding: 0 1.2rem 4rem;
+
+        .section-header {
+            margin-bottom: 2rem;
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
     }
 }
 
