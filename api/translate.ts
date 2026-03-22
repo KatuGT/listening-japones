@@ -3,8 +3,8 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createClient } from '@supabase/supabase-js';
 
 export default async function handler(req: any, res: any) {
-    const supabaseUrl = process.env.SUPABASE_URL || '';
-    const supabaseKey = process.env.SUPABASE_KEY || '';
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.supabaseUrl || '';
+    const supabaseKey = process.env.SUPABASE_KEY || process.env.supabaseKey || '';
     
     // Enable CORS to allow direct connection bypassing the Angular proxy if needed later
     res.setHeader('Access-Control-Allow-Origin', '*');
