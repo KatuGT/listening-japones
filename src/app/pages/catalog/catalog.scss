@@ -89,7 +89,7 @@
             align-items: center;
             gap: 1.5rem;
             width: auto;
-            flex-shrink: 0;
+            flex-shrink: 1; /* Permitimos que se encoja si es necesario */
         }
 
         .filter-header {
@@ -208,13 +208,18 @@
         flex-direction: column;
         gap: 1.5rem;
         width: 100%;
-        align-items: flex-start;
+        align-items: center; /* Centrado por defecto en móvil */
+        flex-wrap: wrap;     /* Permitimos que los grupos bajen de línea */
 
-        @media (min-width: 1025px) {
+        @media (min-width: 769px) {
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            gap: 4rem;
+            gap: 2rem;       /* Reducimos un poco el gap para que quepa mejor en tablets */
+        }
+
+        @media (min-width: 1200px) {
+            gap: 4rem;       /* En pantallas grandes mantenemos el espacio extra */
         }
     }
 }

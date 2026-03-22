@@ -2,11 +2,10 @@ import { streamText } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || ''; // Usually the anon key is enough for getUser passing the JWT, but here we can just use the provided key
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 export default async function handler(req: any, res: any) {
+    const supabaseUrl = process.env.SUPABASE_URL || '';
+    const supabaseKey = process.env.SUPABASE_KEY || '';
+    
     // Enable CORS to allow direct connection bypassing the Angular proxy if needed later
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -29,6 +28,13 @@ export default async function handler(req: any, res: any) {
         }
         
         const token = authHeader.split(' ')[1];
+        
+        if (!supabaseUrl || !supabaseKey) {
+            console.error('[API Translate] Variables de entorno de Supabase no configuradas.');
+            return res.status(500).json({ error: 'Configuración de servidor incompleta.' });
+        }
+
+        const supabase = createClient(supabaseUrl, supabaseKey);
         
         // Verificar token con Supabase
         const { data: { user }, error: authError } = await supabase.auth.getUser(token);
@@ -76,7 +82,7 @@ Traducción sugerida:`;
         console.log(`[API Translate] Solicitando streaming a Gemini para: "${text.substring(0, 20)}..."`);
 
         const result = streamText({
-            model: googleProvider('gemini-2.5-flash'),
+            model: googleProvider('gemini-1.5-flash'),
             prompt: prompt,
         });
 
