@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../services/supabase.service';
 import { AppButtonComponent } from '../../components/app-button/app-button';
 import { KanjiParserService } from '../../services/kanji-parser';
+import { ListeningService } from '../../services/listening.service';
 import { Video } from '../../models/video.model';
 import { SeoService } from '../../services/seo.service';
 
@@ -22,9 +23,10 @@ export class Home implements OnInit {
   private router = inject(Router);
   private seoService = inject(SeoService);
   public kanjiParser = inject(KanjiParserService);
+  private listeningService = inject(ListeningService);
   isParserReady = computed(() => this.kanjiParser.isReady());
 
-  latestVideos = signal<Video[]>([]);
+  latestVideos = this.listeningService.homeVideos;
   isLoading = signal(true);
   error = signal<string | null>(null);
 
@@ -59,6 +61,12 @@ export class Home implements OnInit {
 
   async loadLatestVideos() {
     try {
+      // Si ya tenemos videos cacheados y ya se marcó como cargado, no hacemos nada
+      if (this.latestVideos().length > 0 && this.listeningService.hasLoadedHome()) {
+        this.isLoading.set(false);
+        return;
+      }
+
       this.isLoading.set(true);
       this.error.set(null);
 
@@ -68,6 +76,7 @@ export class Home implements OnInit {
       });
 
       this.latestVideos.set(data as Video[]);
+      this.listeningService.hasLoadedHome.set(true);
     } catch (err: any) {
       this.error.set(err.message || 'Error cargando videos');
       console.error('Error loading videos', err);

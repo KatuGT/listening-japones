@@ -163,9 +163,15 @@
                   class="edit-translation"
                   [(ngModel)]="sub.translation"
                   rows="2"
+                  [disabled]="sub.isTranslatingLine === true"
+                  [placeholder]="sub.isTranslatingLine ? 'Trabajando... ✨' : ''"
                 ></textarea>
-                <button class="btn-translate-single" (click)="translateSingle($index)">
-                  ✨
+                <button class="btn-translate-single" (click)="translateSingle($index)" [disabled]="sub.isTranslatingLine === true" title="Traducir esta línea">
+                  @if (sub.isTranslatingLine) {
+                    ⏳
+                  } @else {
+                    ✨
+                  }
                 </button>
               </div>
             </td>

@@ -57,12 +57,16 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "listening-japones:build:production"
             },
             "development": {
-              "buildTarget": "listening-japones:build:development"
+              "buildTarget": "listening-japones:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

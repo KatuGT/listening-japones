@@ -40,6 +40,14 @@ export class ListeningService {
     videos = signal<Video[]>([]);
     hasLoadedCatalog = signal(false);
 
+    // Estado global para el home
+    homeVideos = signal<Video[]>([]);
+    hasLoadedHome = signal(false);
+
+    // Estado global para el panel de administración
+    adminVideos = signal<any[]>([]);
+    hasLoadedAdmin = signal(false);
+
     addScore(score: number) {
         this.scores.update(s => [...s, score]);
         

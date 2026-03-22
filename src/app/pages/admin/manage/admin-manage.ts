@@ -1,6 +1,7 @@
 import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../../services/supabase.service';
+import { ListeningService } from '../../../services/listening.service';
 
 @Component({
   selector: 'app-admin-manage',
@@ -11,10 +12,11 @@ import { SupabaseService } from '../../../services/supabase.service';
 })
 export class AdminManage {
   private supabase = inject(SupabaseService);
+  private listeningService = inject(ListeningService);
 
   @Output() editVideo = new EventEmitter<any>();
 
-  videoList = signal<any[]>([]);
+  videoList = this.listeningService.adminVideos;
   statusMessage = signal('');
 
   constructor() {
@@ -23,8 +25,14 @@ export class AdminManage {
 
   async loadVideos() {
     try {
+      // Si ya cargamos y no estamos forzando refresh, salimos
+      if (this.videoList().length > 0 && this.listeningService.hasLoadedAdmin()) {
+        return;
+      }
+
       const videos = await this.supabase.getAdminVideos();
       this.videoList.set(videos);
+      this.listeningService.hasLoadedAdmin.set(true);
     } catch (err) {
       console.error('Error loading videos', err);
       this.statusMessage.set('Error cargando videos.');
@@ -35,6 +43,8 @@ export class AdminManage {
     if (!confirm('¿Aprobar este video para su publicación?')) return;
     try {
       await this.supabase.approveVideo(id);
+      // Forzamos recarga invalidando el caché
+      this.listeningService.hasLoadedAdmin.set(false);
       this.loadVideos();
     } catch (err) {
       console.error('Error approving video', err);
@@ -46,6 +56,8 @@ export class AdminManage {
     try {
       await this.supabase.deleteSubtitles(id);
       await this.supabase.deleteVideo(id);
+      // Forzamos recarga invalidando el caché
+      this.listeningService.hasLoadedAdmin.set(false);
       this.loadVideos();
     } catch (err) {
       console.error('Error deleting video', err);

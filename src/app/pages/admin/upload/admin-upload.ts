@@ -11,6 +11,7 @@ export interface AdminSubtitleLine {
   end: number;
   text: string;
   translation: string;
+  isTranslatingLine?: boolean;
 }
 
 @Component({
@@ -71,7 +72,10 @@ export class AdminUpload implements OnChanges {
 
   onVideoFileChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) this.videoFile.set(file);
+    if (file) {
+      this.videoFile.set(file);
+      this.updateTitleFromFile(file);
+    }
   }
 
   onVttFileChange(event: Event) {
@@ -107,6 +111,7 @@ export class AdminUpload implements OnChanges {
     const file = event.dataTransfer?.files?.[0];
     if (file && file.type.startsWith('video/')) {
       this.videoFile.set(file);
+      this.updateTitleFromFile(file);
     }
   }
 
@@ -126,6 +131,18 @@ export class AdminUpload implements OnChanges {
     const file = event.dataTransfer?.files?.[0];
     if (file && file.name.endsWith('.vtt')) {
       this.handleVttFile(file);
+    }
+  }
+
+  private updateTitleFromFile(file: File) {
+    // Solo auto-completamos si el título está vacío
+    if (!this.title() || this.title().trim() === '') {
+      const fileName = file.name.split('.').slice(0, -1).join('.');
+      const cleanTitle = fileName
+        .replace(/[_-]/g, ' ') // Cambiamos guiones por espacios
+        .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalizamos palabras
+
+      this.onTitleChange(cleanTitle);
     }
   }
 
@@ -258,15 +275,32 @@ export class AdminUpload implements OnChanges {
   private async translateLineInternal(i: number, subs: AdminSubtitleLine[]) {
     const contextBefore = i > 0 ? subs[i - 1].text : '';
     const contextAfter = i < subs.length - 1 ? subs[i + 1].text : '';
-    try {
-      const translation = await this.translationService.translateText(subs[i].text, contextBefore, contextAfter);
-      subs[i].translation = translation;
+    
+    return new Promise<void>((resolve) => {
+      subs[i].isTranslatingLine = true;
+      subs[i].translation = '';
       this.parsedSubtitles.set([...subs]);
-    } catch (err: any) {
-      console.error('Error translating line', i, err);
-      subs[i].translation = `[Error: ${err.message}]`;
-      this.parsedSubtitles.set([...subs]);
-    }
+
+      this.translationService.translateTextStream(subs[i].text, contextBefore, contextAfter)
+        .subscribe({
+          next: (val) => {
+            subs[i].translation = val;
+            this.parsedSubtitles.set([...subs]);
+          },
+          error: (err) => {
+            console.error('Error translating line', i, err);
+            subs[i].translation = `[Error: ${err.message}]`;
+            subs[i].isTranslatingLine = false;
+            this.parsedSubtitles.set([...subs]);
+            resolve();
+          },
+          complete: () => {
+            subs[i].isTranslatingLine = false;
+            this.parsedSubtitles.set([...subs]);
+            resolve();
+          }
+        });
+    });
   }
 
   async publish() {
@@ -302,6 +336,7 @@ export class AdminUpload implements OnChanges {
         media_format: this.mediaFormat(),
         phrase_count: this.parsedSubtitles().length,
         is_active: this.isActive(),
+        is_approved: this.isActive(), // Si el admin lo activa, se aprueba automáticamente
       };
       if (videoUrl) videoData.video_url = videoUrl;
 

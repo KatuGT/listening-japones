@@ -21,6 +21,14 @@ import { SeoService } from '../../services/seo.service';
   ],
   templateUrl: './admin.html',
   styleUrls: ['./admin.scss'],
+  styles: [
+    `
+    :host {
+      display: block;
+      width: 100%;
+    }
+    `
+  ]
 })
 export class Admin implements OnInit {
   private auth = inject(AuthService);
