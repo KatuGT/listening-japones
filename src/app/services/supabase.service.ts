@@ -231,6 +231,12 @@ export class SupabaseService {
         return this.supabase.auth.getUser();
     }
 
+    async getSession() {
+        const { data, error } = await this.supabase.auth.getSession();
+        if (error) throw error;
+        return data.session;
+    }
+
     onAuthStateChange(callback: (event: any, session: any) => void) {
         return this.supabase.auth.onAuthStateChange(callback);
     }

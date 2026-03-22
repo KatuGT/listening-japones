@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { SupabaseService } from './supabase.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class TranslationService {
+    private supabase = inject(SupabaseService);
 
     /**
      * Traduce texto de forma fluida (streaming).
@@ -16,11 +18,16 @@ export class TranslationService {
 
             (async () => {
                 try {
+                    // Obtener token de sesión actual
+                    const session = await this.supabase.getSession();
+                    const token = session?.access_token || '';
+
                     // LLamamos directo al puerto 3000 para evitar que el proxy de Angular agrupe (buffer) el streaming
                     const response = await fetch('http://localhost:3000/api/translate', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
                         },
                         body: JSON.stringify({ text: japaneseText, contextBefore, contextAfter }),
                         signal: controller.signal
