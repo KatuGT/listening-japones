@@ -9,4 +9,5 @@ export interface Video {
     media_format?: string;
     phrase_count: number;
     created_at: string;
+    hide_subs: boolean;
 }

@@ -1,5 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { SupabaseService } from '../../services/supabase.service';
 import { AuthService } from '../../services/auth.service';
 import { AdminUpload } from './upload/admin-upload';
 import { AdminManage } from './manage/admin-manage';
@@ -33,6 +35,8 @@ import { SeoService } from '../../services/seo.service';
 export class Admin implements OnInit {
   private auth = inject(AuthService);
   private seoService = inject(SeoService);
+  private route = inject(ActivatedRoute);
+  private supabase = inject(SupabaseService);
 
   activeTab = signal<'upload' | 'manage' | 'feedback' | 'users' | 'requests'>('upload');
   editingVideo = signal<any | null>(null);
@@ -43,6 +47,25 @@ export class Admin implements OnInit {
       description: 'Gestión de videos, usuarios y feedback de la comunidad.',
       url: '/admin'
     });
+
+    // Check for "edit" query parameter
+    this.route.queryParams.subscribe(params => {
+      const editId = params['edit'];
+      if (editId) {
+        this.loadVideoToEdit(editId);
+      }
+    });
+  }
+
+  async loadVideoToEdit(id: string) {
+    try {
+      const video = await this.supabase.getVideoById(id);
+      if (video) {
+        this.setEditingVideo(video);
+      }
+    } catch (err) {
+      console.error('Error fetching video for edit', err);
+    }
   }
 
   setTab(tab: 'upload' | 'manage' | 'feedback' | 'users' | 'requests') {

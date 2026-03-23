@@ -10,7 +10,9 @@
       (click)="togglePlay()"
     ></video>
 
-    <div class="subtitle-mask"></div>
+    @if (listeningService.currentVideo()?.hide_subs !== false) {
+      <div class="subtitle-mask"></div>
+    }
     <app-subtitle-display></app-subtitle-display>
   </div>
 

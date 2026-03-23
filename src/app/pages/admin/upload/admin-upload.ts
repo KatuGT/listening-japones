@@ -28,6 +28,7 @@ export class AdminUpload implements OnChanges {
 
   @Input() editingVideo: any | null = null;
   @Output() clearEditing = new EventEmitter<void>();
+  @Output() videoSaved = new EventEmitter<any>();
 
   title = signal('');
   description = signal('');
@@ -36,6 +37,7 @@ export class AdminUpload implements OnChanges {
   isActive = signal(false);
   videoFile = signal<File | null>(null);
   vttFile = signal<File | null>(null);
+  hideSubs = signal(true);
   parsedSubtitles = signal<AdminSubtitleLine[]>([]);
 
   isTranslating = signal(false);
@@ -60,6 +62,7 @@ export class AdminUpload implements OnChanges {
     this.difficulty.set(video.difficulty || 1);
     this.mediaFormat.set(video.media_format || 'Anime');
     this.isActive.set(video.is_active || false);
+    this.hideSubs.set(video.hide_subs ?? true);
     this.videoFile.set(null);
 
     try {
@@ -219,10 +222,46 @@ export class AdminUpload implements OnChanges {
     this.statusMessage.set(`Línea ${index + 1} traducida.`);
   }
 
-  addSubtitleLine() {
-    const currentSubs = this.parsedSubtitles();
-    const lastEnd = currentSubs.length > 0 ? currentSubs[currentSubs.length - 1].end : 0;
-    this.parsedSubtitles.set([...currentSubs, { start: lastEnd, end: lastEnd + 2, text: '', translation: '' }]);
+  addSubtitleLine(index?: number) {
+    const currentSubs = [...this.parsedSubtitles()];
+    let newStart = 0;
+    let newEnd = 2;
+
+    if (index !== undefined) {
+      // Si insertamos en medio, intentamos estimar el tiempo
+      const prevSub = index > 0 ? currentSubs[index - 1] : null;
+      const nextSub = currentSubs[index];
+
+      if (prevSub && nextSub) {
+        // En medio de dos: empezamos donde termina la anterior, 
+        // y terminamos un poco después (ej. 1s después o a la mitad del hueco)
+        newStart = prevSub.end;
+        const gap = nextSub.start - prevSub.end;
+        if (gap > 1) {
+          newEnd = prevSub.end + 1;
+        } else if (gap > 0) {
+          newEnd = prevSub.end + (gap / 2);
+        } else {
+          newEnd = prevSub.end + 0.5;
+        }
+      } else if (nextSub) {
+        // Al principio: empezamos 2 segundos antes del siguiente
+        newStart = Math.max(0, nextSub.start - 2);
+        newEnd = nextSub.start;
+      } else if (prevSub) {
+        // Al final: empezamos donde termina el último
+        newStart = prevSub.end;
+        newEnd = prevSub.end + 2;
+      }
+      
+      currentSubs.splice(index, 0, { start: newStart, end: newEnd, text: '', translation: '' });
+    } else {
+      // Comportamiento original: añadir al final
+      const lastEnd = currentSubs.length > 0 ? currentSubs[currentSubs.length - 1].end : 0;
+      currentSubs.push({ start: lastEnd, end: lastEnd + 2, text: '', translation: '' });
+    }
+
+    this.parsedSubtitles.set(currentSubs);
   }
 
   removeSubtitleLine(index: number) {
@@ -264,6 +303,7 @@ export class AdminUpload implements OnChanges {
     this.difficulty.set(1);
     this.mediaFormat.set('Anime');
     this.isActive.set(false);
+    this.hideSubs.set(true);
     this.videoFile.set(null);
     this.vttFile.set(null);
     this.parsedSubtitles.set([]);
@@ -337,22 +377,23 @@ export class AdminUpload implements OnChanges {
         phrase_count: this.parsedSubtitles().length,
         is_active: this.isActive(),
         is_approved: this.isActive(), // Si el admin lo activa, se aprueba automáticamente
+        hide_subs: this.hideSubs(),
       };
       if (videoUrl) videoData.video_url = videoUrl;
 
       if (this.editingVideo && this.editingVideo.id) {
         await this.supabase.updateVideo(this.editingVideo.id, videoData);
         await this.supabase.updateSubtitles(this.editingVideo.id, this.parsedSubtitles());
-        this.statusMessage.set('¡Actualizado con éxito!');
+        this.statusMessage.set('¡Actualizado con éxito! ✨');
+        this.videoSaved.emit({ ...this.editingVideo, ...videoData });
       } else {
         const videoRecord = await this.supabase.insertVideo(videoData);
         await this.supabase.insertSubtitles({ video_id: videoRecord.id, subtitles_json: this.parsedSubtitles() });
-        this.statusMessage.set('¡Guardado exitosamente!');
+        this.statusMessage.set('¡Guardado exitosamente! ✨');
+        this.videoSaved.emit(videoRecord);
       }
 
-      alert('¡Datos guardados con éxito!');
-      this.resetForm();
-      this.router.navigate(['/admin']);
+      // No llamamos a resetForm() ni navegamos fuera para que el usuario pueda seguir editando
     } catch (err: any) {
       this.statusMessage.set(`Error: ${err.message}`);
       alert(`Ocurrió un error: ${err.message}`);

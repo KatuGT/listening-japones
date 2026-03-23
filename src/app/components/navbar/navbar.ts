@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ProfileService } from '../../services/profile.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -12,6 +13,7 @@ import { CommonModule } from '@angular/common';
 })
 export class NavbarComponent {
   auth = inject(AuthService);
+  profileService = inject(ProfileService);
   menuOpen = signal(false);
 
   toggleMenu() {

@@ -49,7 +49,7 @@
       @if (!auth.currentUser()) {
         <a routerLink="/login" class="nav-link admin-link">Ingresar</a>
       } @else {
-        @if (auth.currentUser()?.email === '93katu@gmail.com') {
+        @if (profileService.isUserAdmin(auth.currentUser())) {
           <a routerLink="/admin" class="nav-link admin-link">Admin</a>
         }
         <a routerLink="/perfil" class="nav-link admin-link">Mi Panel</a>
@@ -75,7 +75,7 @@
     @if (!auth.currentUser()) {
       <a routerLink="/login" class="mobile-link" (click)="closeMenu()">Ingresar</a>
     } @else {
-      @if (auth.currentUser()?.email === '93katu@gmail.com') {
+      @if (profileService.isUserAdmin(auth.currentUser())) {
         <a routerLink="/admin" class="mobile-link" (click)="closeMenu()">Admin</a>
       }
       <a routerLink="/perfil" class="mobile-link" (click)="closeMenu()">Mi Panel</a>

@@ -1,5 +1,7 @@
 import { Component, inject, OnInit, computed, effect } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { ProfileService } from '../../services/profile.service';
 import { VideoPlayerComponent } from '../../components/video-player/video-player';
 import { GuessInput } from '../../components/guess-input/guess-input';
 import { GuessInputSkeletonComponent } from '../../components/skeletons/guess-input-skeleton/guess-input-skeleton';
@@ -21,6 +23,11 @@ export class Play implements OnInit {
   protected feedbackService = inject(FeedbackService);
   protected kanjiParser = inject(KanjiParserService);
   private seoService = inject(SeoService);
+  protected authService = inject(AuthService);
+  protected profileService = inject(ProfileService);
+  private router = inject(Router);
+
+  isAdmin = computed(() => this.profileService.isUserAdmin(this.authService.currentUser()));
 
   isParserReady = computed(() => this.kanjiParser.isReady());
 
@@ -42,6 +49,13 @@ export class Play implements OnInit {
   reportError() {
     const video = this.listeningService.currentVideo();
     this.feedbackService.open('error', video?.id, video?.title);
+  }
+
+  goToEdit() {
+    const video = this.listeningService.currentVideo();
+    if (video) {
+      this.router.navigate(['/admin'], { queryParams: { edit: video.id } });
+    }
   }
 
   ngOnInit() {

@@ -14,96 +14,120 @@
       }
     </div>
 
-    <div class="form-group" [class.has-error]="isTitleTaken()">
-      <label>Título del Anime/Clip</label>
-      <input
-        type="text"
-        [ngModel]="title()"
-        (ngModelChange)="onTitleChange($event)"
-        placeholder="Ej: Kimetsu no Yaiba - Escena Épica"
-      />
-      @if (isTitleTaken()) {
-        <p class="error-msg">⚠️ Ya existe un video con este título exacto.</p>
-      }
-    </div>
+    <div class="metadata-grid">
+      <!-- Columna 1: Info Principal y Configuración -->
+      <div class="metadata-col">
+        <div class="form-group" [class.has-error]="isTitleTaken()">
+          <label>Título del Anime/Clip</label>
+          <input
+            type="text"
+            [ngModel]="title()"
+            (ngModelChange)="onTitleChange($event)"
+            placeholder="Ej: Kimetsu no Yaiba - Escena Épica"
+          />
+          @if (isTitleTaken()) {
+            <p class="error-msg">⚠️ Ya existe un video con este título exacto.</p>
+          }
+        </div>
 
-    <div class="form-group">
-      <label>Descripción (Opcional)</label>
-      <textarea
-        [(ngModel)]="description"
-        placeholder="Breve contexto de la escena..."
-      ></textarea>
-    </div>
+        <div class="form-group">
+          <label>Descripción (Opcional)</label>
+          <textarea
+            [(ngModel)]="description"
+            placeholder="Breve contexto de la escena..."
+            rows="4"
+          ></textarea>
+        </div>
 
-    <div class="form-group">
-      <label>Dificultad (1-5)</label>
-      <input type="number" min="1" max="5" [(ngModel)]="difficulty" />
-      <p class="hint">1: Principiante (N5), 5: Nativo (N1)</p>
-    </div>
+        <div class="form-group">
+          <label>Dificultad (Nivel)</label>
+          <select [(ngModel)]="difficulty" class="format-select">
+            <option [value]="1">⭐ N5 - Principiante</option>
+            <option [value]="2">⭐⭐ N4 - Básico</option>
+            <option [value]="3">⭐⭐⭐ N3 - Intermedio</option>
+            <option [value]="4">⭐⭐⭐⭐ N2 - Avanzado</option>
+            <option [value]="5">🔥 N1 - Nativo</option>
+          </select>
+        </div>
 
-    <div class="form-group">
-      <label>Formato de Video</label>
-      <select [(ngModel)]="mediaFormat" class="format-select">
-        <option value="Anime">🎞️ Anime</option>
-        <option value="J-Drama">📺 J-Drama</option>
-        <option value="Noticias">📰 Noticias / Documental</option>
-        <option value="Vlog">🤳 Vlog / Entrevista</option>
-        <option value="Música">🎵 Música</option>
-      </select>
-    </div>
+        <div class="form-group">
+          <label>Categorías</label>
+          <select [(ngModel)]="mediaFormat" class="format-select">
+            <option value="Anime">🎞️ Anime</option>
+            <option value="J-Drama">📺 J-Drama</option>
+            <option value="Noticias">📰 Noticias / Documental</option>
+            <option value="Vlog">🤳 Vlog / Entrevista</option>
+            <option value="Música">🎵 Música</option>
+          </select>
+        </div>
 
-    <div class="form-group toggle-group">
-      <label>Estado de Publicación</label>
-      <button
-        class="btn-toggle"
-        [class.active]="isActive()"
-        (click)="isActive.set(!isActive())"
-      >
-        {{ isActive() ? '🌍 Público (Activo)' : '🔒 Privado (Borrador)' }}
-      </button>
-      <p class="hint">Si está desactivado, solo tú lo verás en el Admin.</p>
-    </div>
-
-    @if (!videoFile() && !editingVideo) {
-      <div
-        class="form-group file-group drop-zone"
-        [class.drag-over]="isDraggingVideo()"
-        (dragover)="onVideoDragOver($event)"
-        (dragleave)="onVideoDragLeave($event)"
-        (drop)="onVideoDrop($event)"
-      >
-        <label>Archivo de Video (.mp4)</label>
-        <input
-          type="file"
-          accept="video/mp4"
-          (change)="onVideoFileChange($event)"
-        />
-        <p class="drag-hint">Arrástralo aquí o haz clic para buscarlo</p>
-      </div>
-    } @else {
-      <div class="form-group file-loaded">
-        <label>Video</label>
-        <div class="file-badge">
-          <span class="icon">🎬</span>
-          <span class="text">{{ videoFile() ? videoFile()?.name : 'Video actual conservado' }}</span>
-          <button class="btn-mini-reset" (click)="videoFile.set(null);" title="Cambiar video">✕</button>
+        <div class="form-group toggle-group">
+          <label>Estado de Publicación</label>
+          <button
+            class="btn-toggle"
+            [class.active]="isActive()"
+            (click)="isActive.set(!isActive())"
+          >
+            {{ isActive() ? '🌍 Público (Activo)' : '🔒 Privado (Borrador)' }}
+          </button>
         </div>
       </div>
-    }
 
-    @if (parsedSubtitles().length === 0) {
-      <div
-        class="form-group file-group drop-zone"
-        [class.drag-over]="isDraggingVtt()"
-        (dragover)="onVttDragOver($event)"
-        (dragleave)="onVttDragLeave($event)"
-        (drop)="onVttDrop($event)"
-      >
-        <label>Archivo de Subtítulos (.vtt)</label>
-        <input type="file" accept=".vtt" (change)="onVttFileChange($event)" />
-        <p class="drag-hint">Arrástralo aquí para empezar a editar</p>
+      <!-- Columna 2: Archivos y Ayudas Visuales -->
+      <div class="metadata-col">
+        <div class="form-group toggle-group">
+          <label>Capa para ocultar subs del video</label>
+          <button
+            class="btn-toggle"
+            [class.active]="hideSubs()"
+            (click)="hideSubs.set(!hideSubs())"
+          >
+            {{ hideSubs() ? '👁️ Tapar subs (Recomendado)' : '🔓 Mostrar subs originales' }}
+          </button>
+        </div>
+
+        @if (!videoFile() && !editingVideo) {
+          <div
+            class="form-group file-group drop-zone"
+            [class.drag-over]="isDraggingVideo()"
+            (dragover)="onVideoDragOver($event)"
+            (dragleave)="onVideoDragLeave($event)"
+            (drop)="onVideoDrop($event)"
+          >
+            <label>Archivo de Video (.mp4)</label>
+            <input
+              type="file"
+              accept="video/mp4"
+              (change)="onVideoFileChange($event)"
+            />
+            <p class="drag-hint">Arrástralo aquí o haz clic para buscarlo</p>
+          </div>
+        } @else {
+          <div class="form-group file-loaded">
+            <label>Video</label>
+            <div class="file-badge">
+              <span class="icon">🎬</span>
+              <span class="text">{{ videoFile() ? videoFile()?.name : 'Video actual conservado' }}</span>
+              <button class="btn-mini-reset" (click)="videoFile.set(null);" title="Cambiar video">✕</button>
+            </div>
+          </div>
+        }
+
+        @if (parsedSubtitles().length === 0) {
+          <div
+            class="form-group file-group drop-zone"
+            [class.drag-over]="isDraggingVtt()"
+            (dragover)="onVttDragOver($event)"
+            (dragleave)="onVttDragLeave($event)"
+            (drop)="onVttDrop($event)"
+          >
+            <label>Archivo de Subtítulos (.vtt)</label>
+            <input type="file" accept=".vtt" (change)="onVttFileChange($event)" />
+            <p class="drag-hint">Arrástralo aquí para empezar a editar</p>
+          </div>
+        }
       </div>
-    }
+    </div>
   </div>
 
   <div class="translation-section">
@@ -118,6 +142,9 @@
     <div class="translation-header">
       <h3>Subtítulos Encontrados ({{ parsedSubtitles().length }} líneas)</h3>
       <div class="actions-row">
+        <button class="btn-add-start" (click)="addSubtitleLine(0)" title="Añadir al principio">
+          ➕ Al Inicio
+        </button>
         <button class="btn-translate" (click)="translateAll()" [disabled]="isTranslating()">
           {{ isTranslating() ? statusMessage() : '✨ Traducir todo' }}
         </button>
@@ -135,7 +162,7 @@
             <th width="25%">Tiempos (s)</th>
             <th width="32%">Japonés original</th>
             <th width="30%">Traducción (Editable)</th>
-            <th width="5%"></th>
+            <th width="10%"></th>
           </tr>
         </thead>
         <tbody>
@@ -175,8 +202,9 @@
                 </button>
               </div>
             </td>
-            <td>
-              <button class="btn-delete-single" (click)="removeSubtitleLine($index)">✕</button>
+            <td class="row-actions">
+              <button class="btn-add-after" (click)="addSubtitleLine($index + 1)" title="Insertar línea después">➕</button>
+              <button class="btn-delete-single" (click)="removeSubtitleLine($index)" title="Eliminar línea">✕</button>
             </td>
           </tr>
           }

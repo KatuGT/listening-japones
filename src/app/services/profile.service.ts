@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal, computed } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 
 /**
@@ -13,11 +13,28 @@ import { SupabaseService } from './supabase.service';
 export class ProfileService {
   private supabase = inject(SupabaseService);
 
+  // El email "dueño" del sitio (fallback de seguridad)
+  private readonly ADMIN_EMAIL = '93katu@gmail.com';
+
   // Cache signals (Estado reactivo compartido)
   highScores = signal<any[]>([]);
   feedbackList = signal<any[]>([]);
   profileData = signal<any>(null);
   
+  // Computed property para saber si es admin
+  isAdmin = computed(() => {
+    const profile = this.profileData();
+    if (profile?.is_admin) return true;
+    
+    // Si no ha cargado el profile pero el email coincide
+    return false; // Por ahora mejor esperar al profile o checkear el currentUser
+  });
+
+  // Una versión que no dependa solo del profile si queremos rapidez
+  isUserAdmin(user: any) {
+    return user?.email === this.ADMIN_EMAIL || this.profileData()?.is_admin;
+  }
+
   hasLoaded = signal(false);
   isLoading = signal(false);
 

@@ -31,6 +31,7 @@
       <app-admin-upload 
         [editingVideo]="editingVideo()"
         (clearEditing)="setEditingVideo(null)"
+        (videoSaved)="setEditingVideo($event)"
       ></app-admin-upload>
     }
 

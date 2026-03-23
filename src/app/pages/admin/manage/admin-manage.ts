@@ -1,12 +1,13 @@
 import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { SupabaseService } from '../../../services/supabase.service';
 import { ListeningService } from '../../../services/listening.service';
 
 @Component({
   selector: 'app-admin-manage',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, RouterLink],
   templateUrl: './admin-manage.html',
   styleUrls: ['./admin-manage.scss'],
 })

@@ -12,7 +12,14 @@
   />
 
   <header>
-    <h1>{{ listeningService.currentVideo()?.title || 'Cargando video...' }}</h1>
+    <div class="header-main">
+      <h1>{{ listeningService.currentVideo()?.title || 'Cargando video...' }}</h1>
+      @if (isAdmin()) {
+        <button class="btn-edit-video" (click)="goToEdit()">
+          <span class="icon">📝</span> Editar Video
+        </button>
+      }
+    </div>
     <p>Escucha con atención e intenta transcribir lo que dicen.</p>
   </header>
 

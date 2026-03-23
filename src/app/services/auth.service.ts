@@ -22,9 +22,10 @@ export class AuthService {
       this.currentUser.set(session?.user ?? null);
       this.isLoading.set(false);
       
-      if (event === 'SIGNED_IN') {
-        // Quitamos la redirección automática a Home para que respete la URL actual al recargar
+      if (session?.user) {
+        this.profileService.loadProfileData();
       }
+
       if (event === 'SIGNED_OUT') {
         this.profileService.clearCache();
         this.router.navigate(['/login']);

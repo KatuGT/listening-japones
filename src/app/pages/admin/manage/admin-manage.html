@@ -32,6 +32,7 @@
           @if (!video.is_approved) {
             <button class="btn-approve" (click)="approveVideo(video.id)">✅ Aprobar</button>
           }
+          <a [routerLink]="['/play', video.slug]" class="btn-view" target="_blank">👁️ Ver</a>
           <button class="btn-edit" (click)="onEdit(video)">✏️ Editar</button>
           <button class="btn-delete" (click)="deleteVideo(video.id)">🗑️ Eliminar</button>
         </div>
