@@ -18,7 +18,7 @@ export class SupabaseService {
     private supabase: SupabaseClient;
 
     constructor() {
-        this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+        this.supabase = createClient(environment.SUPABASE_URL, environment.SUPABASE_KEY);
     }
 
 

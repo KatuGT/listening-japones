@@ -20,6 +20,10 @@
     background-position: center;
     margin-bottom: 4rem;
 
+    @media (max-width: 768px) {
+        background-image: url('/assets/images/bg-home-mobile.webp');
+    }
+
     .hero-overlay {
         position: absolute;
         top: 0;
