@@ -19,8 +19,8 @@ const isProd = process.env.NODE_ENV === 'production' || process.env.VERCEL === '
 
 const envFile = `export const environment = {
     production: ${isProd},
-    supabaseUrl: '${process.env.SUPABASE_URL || process.env.supabaseUrl || ''}',
-    supabaseKey: '${process.env.SUPABASE_KEY || process.env.supabaseKey || ''}',
+    SUPABASE_URL: '${process.env.SUPABASE_URL || process.env.supabaseUrl || ''}',
+    SUPABASE_KEY: '${process.env.SUPABASE_KEY || process.env.supabaseKey || ''}',
     recaptchaSiteKey: '${process.env.RECAPTCHA_SITE_KEY || process.env.recaptchaSiteKey || ''}',
     translateApiUrl: '${isProd ? '/api/translate' : 'http://localhost:3000/api/translate'}'
 };
