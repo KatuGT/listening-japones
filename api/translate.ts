@@ -1,12 +1,14 @@
-import { streamText } from 'ai';
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { createClient } from '@supabase/supabase-js';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+    // Lazy-load everything to bypass the ESM/CJS module resolution issue
+    const { createClient } = await import('@supabase/supabase-js');
+    const { streamText } = await import('ai');
+    const { createGoogleGenerativeAI } = await import('@ai-sdk/google');
+
     const supabaseUrl = process.env['SUPABASE_URL'] || '';
     const supabaseKey = process.env['SUPABASE_KEY'] || '';
 
-    // Enable CORS to allow direct connection bypassing the Angular proxy if needed later
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -20,7 +22,6 @@ export default async function handler(req: any, res: any) {
     }
 
     try {
-        // --- AUTHENTICATION & AUTHORIZATION ---
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             console.error('[API Translate] Intento de acceso sin token');
@@ -36,14 +37,12 @@ export default async function handler(req: any, res: any) {
 
         const supabase = createClient(supabaseUrl, supabaseKey);
 
-        // Verificar token con Supabase
         const { data: { user }, error: authError } = await supabase.auth.getUser(token);
         if (authError || !user) {
             console.error('[API Translate] Token inválido o expirado', authError?.message);
             return res.status(401).json({ error: 'Sesión inválida o expirada.' });
         }
 
-        // Verificar rol en la tabla profiles
         const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('role')
@@ -51,22 +50,19 @@ export default async function handler(req: any, res: any) {
             .single();
 
         if (profileError || !profile || (profile.role !== 'admin' && profile.role !== 'colaborador')) {
-            console.error(`[API Translate] Usuario ${user.id} intentó usar IA sin permisos. Rol actual: ${profile?.role}`);
-            return res.status(403).json({ error: 'No tienes los permisos necesarios para usar esta función.' });
+            console.error(`[API Translate] Sin permisos. Rol: ${profile?.role}`);
+            return res.status(403).json({ error: 'No tienes permisos para usar esta función.' });
         }
-        // --- FIN AUTH ---
 
         const apiKey = process.env['GEMINI_API_KEY'];
         if (!apiKey) {
-            console.error('[API Translate] GEMINI_API_KEY is not set');
+            console.error('[API Translate] GEMINI_API_KEY no configurada');
             return res.status(500).json({ error: 'API key de Google no configurada' });
         }
 
-        const googleProvider = createGoogleGenerativeAI({
-            apiKey: apiKey,
-        });
-
+        const googleProvider = createGoogleGenerativeAI({ apiKey });
         const { text, contextBefore, contextAfter } = req.body;
+
         if (!text) {
             return res.status(400).json({ error: 'Falta texto' });
         }
@@ -79,20 +75,19 @@ Contexto siguiente: "${contextAfter || ''}"
 
 Traducción sugerida:`;
 
-        console.log(`[API Translate] Solicitando streaming a Gemini para: "${text.substring(0, 20)}..."`);
+        console.log(`[API Translate] Solicitando a Gemini: "${text.substring(0, 30)}..."`);
 
         const result = streamText({
             model: googleProvider('gemini-2.5-flash'),
-            prompt: prompt,
+            prompt,
         });
 
-        // Exactamente el mismo método que usa Midudev en Express
-        return result.pipeTextStreamToResponse(res);
+        return result.pipeTextStreamToResponse(res as any);
 
     } catch (error: any) {
         console.error('[API Translate] Error:', error.message || error);
         if (!res.headersSent) {
-            return res.status(500).json({ error: error.message || 'Error en el servidor de streaming' });
+            return res.status(500).json({ error: error.message || 'Error en el servidor' });
         }
         return res.end();
     }
