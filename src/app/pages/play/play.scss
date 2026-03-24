@@ -236,6 +236,24 @@
                         font-weight: 700;
                     }
 
+                    .full-video-link {
+                        color: var(--secondary);
+                        text-decoration: none;
+                        font-weight: 600;
+                        transition: all 0.2s ease;
+                        display: inline-flex;
+                        align-items: center;
+                        border-bottom: 1px dashed rgba(var(--secondary-rgb), 0.3);
+                        padding-bottom: 1px;
+
+                        &:hover {
+                            color: var(--white);
+                            border-bottom-style: solid;
+                            border-bottom-color: var(--secondary);
+                            transform: translateX(3px);
+                        }
+                    }
+
                     .highlight-btn {
                         background: rgba(255, 255, 255, 0.05);
                         padding: 2px 8px;

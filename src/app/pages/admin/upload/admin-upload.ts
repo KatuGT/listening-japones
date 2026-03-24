@@ -5,6 +5,8 @@ import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../../services/supabase.service';
 import { TranslationService } from '../../../services/translation.service';
 import { toHiragana } from 'wanakana';
+import { TextInputComponent } from '../../../components/text-input/text-input';
+import { TextareaInputComponent } from '../../../components/textarea-input/textarea-input';
 
 export interface AdminSubtitleLine {
   start: number;
@@ -17,7 +19,7 @@ export interface AdminSubtitleLine {
 @Component({
   selector: 'app-admin-upload',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TextInputComponent, TextareaInputComponent],
   templateUrl: './admin-upload.html',
   styleUrls: ['./admin-upload.scss'],
 })
@@ -37,6 +39,7 @@ export class AdminUpload implements OnChanges {
   isActive = signal(false);
   videoFile = signal<File | null>(null);
   vttFile = signal<File | null>(null);
+  fullVideoUrl = signal('');
   hideSubs = signal(true);
   parsedSubtitles = signal<AdminSubtitleLine[]>([]);
 
@@ -63,6 +66,7 @@ export class AdminUpload implements OnChanges {
     this.mediaFormat.set(video.media_format || 'Anime');
     this.isActive.set(video.is_active || false);
     this.hideSubs.set(video.hide_subs ?? true);
+    this.fullVideoUrl.set(video.full_video_url || '');
     this.videoFile.set(null);
 
     try {
@@ -304,6 +308,7 @@ export class AdminUpload implements OnChanges {
     this.mediaFormat.set('Anime');
     this.isActive.set(false);
     this.hideSubs.set(true);
+    this.fullVideoUrl.set('');
     this.videoFile.set(null);
     this.vttFile.set(null);
     this.parsedSubtitles.set([]);
@@ -378,6 +383,7 @@ export class AdminUpload implements OnChanges {
         is_active: this.isActive(),
         is_approved: this.isActive(), // Si el admin lo activa, se aprueba automáticamente
         hide_subs: this.hideSubs(),
+        full_video_url: this.fullVideoUrl(),
       };
       if (videoUrl) videoData.video_url = videoUrl;
 

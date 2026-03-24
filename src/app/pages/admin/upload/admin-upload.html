@@ -17,27 +17,25 @@
     <div class="metadata-grid">
       <!-- Columna 1: Info Principal y Configuración -->
       <div class="metadata-col">
-        <div class="form-group" [class.has-error]="isTitleTaken()">
-          <label>Título del Anime/Clip</label>
-          <input
-            type="text"
-            [ngModel]="title()"
-            (ngModelChange)="onTitleChange($event)"
-            placeholder="Ej: Kimetsu no Yaiba - Escena Épica"
-          />
-          @if (isTitleTaken()) {
-            <p class="error-msg">⚠️ Ya existe un video con este título exacto.</p>
-          }
-        </div>
+        <app-text-input
+          name="videoTitle"
+          label="Título del Anime/Clip"
+          [ngModel]="title()"
+          (ngModelChange)="onTitleChange($event)"
+          placeholder="Ej: Kimetsu no Yaiba - Escena Épica"
+        ></app-text-input>
+        @if (isTitleTaken()) {
+          <p class="error-msg">⚠️ Ya existe un video con este título exacto.</p>
+        }
 
-        <div class="form-group">
-          <label>Descripción (Opcional)</label>
-          <textarea
-            [(ngModel)]="description"
-            placeholder="Breve contexto de la escena..."
-            rows="4"
-          ></textarea>
-        </div>
+        <app-textarea-input
+          name="videoDescription"
+          label="Descripción (Opcional)"
+          [ngModel]="description()"
+          (ngModelChange)="description.set($event)"
+          placeholder="Breve contexto de la escena..."
+          [rows]="4"
+        ></app-textarea-input>
 
         <div class="form-group">
           <label>Dificultad (Nivel)</label>
@@ -61,6 +59,18 @@
           </select>
         </div>
 
+        <app-text-input
+          name="fullVideoUrl"
+          label="Link al video completo (Opcional)"
+          type="url"
+          [ngModel]="fullVideoUrl()"
+          (ngModelChange)="fullVideoUrl.set($event)"
+          placeholder="Ej: https://youtube.com/watch?v=..."
+        ></app-text-input>
+      </div>
+
+      <!-- Columna 2: Archivos y Ayudas Visuales -->
+      <div class="metadata-col">
         <div class="form-group toggle-group">
           <label>Estado de Publicación</label>
           <button
@@ -71,10 +81,7 @@
             {{ isActive() ? '🌍 Público (Activo)' : '🔒 Privado (Borrador)' }}
           </button>
         </div>
-      </div>
 
-      <!-- Columna 2: Archivos y Ayudas Visuales -->
-      <div class="metadata-col">
         <div class="form-group toggle-group">
           <label>Capa para ocultar subs del video</label>
           <button

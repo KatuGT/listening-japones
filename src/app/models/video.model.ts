@@ -5,6 +5,7 @@ export interface Video {
     description?: string;
     thumbnail_url?: string;
     video_url: string;
+    full_video_url?: string;
     difficulty: number;
     media_format?: string;
     phrase_count: number;

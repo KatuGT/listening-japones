@@ -37,6 +37,16 @@
       <!-- Anotaciones de ayuda -->
       <div class="player-annotations glass-panel">
         <ul class="annotation-list">
+          @if (listeningService.currentVideo()?.full_video_url) {
+            <li>
+              <span class="bullet material-symbols-rounded">movie</span>
+              <p>
+                <a [href]="listeningService.currentVideo()?.full_video_url" target="_blank" class="full-video-link">
+                  Ver video completo en fuente original
+                </a>
+              </p>
+            </li>
+          }
           <li>
             <span class="bullet">✨</span>
             <p>No te preocupes por símbolos como <strong>"!"</strong> o los <strong>espacios</strong>, el sistema los ignorará por ti.</p>
