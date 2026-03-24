@@ -4,6 +4,7 @@
       #videoPlayer
       [src]="videoSrc()"
       class="main-video"
+      preload="metadata"
       (timeupdate)="onTimeUpdate($event)"
       (loadedmetadata)="onLoadedMetadata($event)"
       (ended)="onEnded()"

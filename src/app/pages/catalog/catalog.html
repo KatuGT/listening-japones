@@ -17,7 +17,10 @@
     </div>
     <div class="secondary-filters">
       <div class="filter-group" [class.expanded]="isCategoriesExpanded()">
-        <div class="filter-header" (click)="isCategoriesExpanded.set(!isCategoriesExpanded())">
+        <div
+          class="filter-header"
+          (click)="isCategoriesExpanded.set(!isCategoriesExpanded())"
+        >
           <span class="filter-label">Categorías:</span>
           <span class="chevron"></span>
         </div>
@@ -78,9 +81,12 @@
           </app-button>
         </div>
       </div>
-  
+
       <div class="filter-group" [class.expanded]="isDifficultyExpanded()">
-        <div class="filter-header" (click)="isDifficultyExpanded.set(!isDifficultyExpanded())">
+        <div
+          class="filter-header"
+          (click)="isDifficultyExpanded.set(!isDifficultyExpanded())"
+        >
           <span class="filter-label">Dificultad JLPT:</span>
           <span class="chevron"></span>
         </div>
@@ -152,7 +158,7 @@
   </div>
   } @else if (videos().length === 0) {
   <div class="empty-state">
-    <p>No hay videos que coincidan con tu búsqueda.</p>
+    <p></p>
   </div>
   @} @else {
   <div class="grouped-results">
@@ -177,8 +183,6 @@
               loop
               preload="metadata"
               playsinline
-              (mouseenter)="playPreview($event)"
-              (mouseleave)="stopPreview($event)"
             ></video>
             <div class="badges-container">
               @if (video.media_format) {
