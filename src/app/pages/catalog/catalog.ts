@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, CUSTOM_ELEMENTS_SCHEMA, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../services/supabase.service';
@@ -14,18 +14,29 @@ import { SeoService } from '../../services/seo.service';
   imports: [CommonModule, VideoCardSkeletonComponent, AppButtonComponent],
   templateUrl: './catalog.html',
   styleUrl: './catalog.scss',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class Catalog implements OnInit {
+export class Catalog implements OnInit, AfterViewInit {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private seoService = inject(SeoService);
   private listeningService = inject(ListeningService);
+  
+  @ViewChildren('swiperContainer') swiperContainers!: QueryList<ElementRef>;
+
+  // Configuración base de Swiper
+  swiperConfig: any = {
+    pagination: {
+      clickable: true,
+    },
+  };
 
   videos = this.listeningService.videos;
   groupedVideos = computed(() => {
     const currentVideos = this.videos();
     const groups: { [key: string]: Video[] } = {};
+    const isOverview = this.selectedFormat() === 'Todos';
     
     currentVideos.forEach(video => {
       const format = video.media_format || 'Otros';
@@ -35,7 +46,11 @@ export class Catalog implements OnInit {
       groups[format].push(video);
     });
     
-    return Object.entries(groups).map(([name, items]) => ({ name, items }));
+    return Object.entries(groups).map(([name, items]) => {
+      // Si estamos en vista general, solo mostramos los últimos 20 de cada categoría
+      const displayItems = isOverview ? items.slice(0, 20) : items;
+      return { name, items: displayItems };
+    });
   });
 
   isLoading = signal(true);
@@ -63,6 +78,72 @@ export class Catalog implements OnInit {
     });
   }
 
+  ngAfterViewInit() {
+    // Escuchar cuando se añaden nuevos carruseles al DOM (dinámicos)
+    this.swiperContainers.changes.subscribe(() => {
+      this.initSwipers();
+    });
+    
+    // Intento inicial
+    this.initSwipers();
+  }
+
+  private initSwipers() {
+    // Pequeño delay para asegurar que el elemento está listo en el DOM
+    setTimeout(() => {
+      this.swiperContainers.forEach((container) => {
+        const swiperEl = container.nativeElement;
+        // Solo inicializar si no se ha hecho ya
+        if (!swiperEl.initialized) {
+          
+          Object.assign(swiperEl, this.swiperConfig);
+          swiperEl.initialize();
+          
+          // Lógica manual para ocultar/mostrar botones
+          const wrapper = swiperEl.closest('.carousel-wrapper');
+          const prevBtn = wrapper?.querySelector('.custom-swiper-button.prev') as HTMLElement;
+          const nextBtn = wrapper?.querySelector('.custom-swiper-button.next') as HTMLElement;
+
+          // Evaluación inicial
+          setTimeout(() => {
+             if (swiperEl.swiper && swiperEl.swiper.isLocked) {
+                 if (prevBtn) prevBtn.style.display = 'none';
+                 if (nextBtn) nextBtn.style.display = 'none';
+             } else {
+                 if (prevBtn) prevBtn.style.display = 'none';
+                 if (nextBtn) nextBtn.style.display = 'flex';
+             }
+          }, 50);
+          
+          swiperEl.addEventListener('swiperprogress', (e: any) => {
+            const [swiper, progress] = e.detail;
+            
+            if (swiper.isLocked) {
+              if (prevBtn) prevBtn.style.display = 'none';
+              if (nextBtn) nextBtn.style.display = 'none';
+              return;
+            }
+
+            if (prevBtn) prevBtn.style.display = progress <= 0 ? 'none' : 'flex';
+            if (nextBtn) nextBtn.style.display = progress >= 1 ? 'none' : 'flex';
+          });
+        }
+      });
+    }, 100);
+  }
+
+  slidePrev(event: Event) {
+    event.stopPropagation();
+    const swiperEl = (event.currentTarget as HTMLElement).closest('.carousel-wrapper')?.querySelector('swiper-container') as any;
+    swiperEl?.swiper?.slidePrev();
+  }
+
+  slideNext(event: Event) {
+    event.stopPropagation();
+    const swiperEl = (event.currentTarget as HTMLElement).closest('.carousel-wrapper')?.querySelector('swiper-container') as any;
+    swiperEl?.swiper?.slideNext();
+  }
+
   async loadVideos(reset: boolean = false) {
     try {
       // Optimización Caché Estilo SWR (Solo cargamos si no hay datos o si es un reset)
@@ -85,6 +166,8 @@ export class Catalog implements OnInit {
 
       this.error.set(null);
 
+      const isOverview = this.selectedFormat() === 'Todos';
+      const limit = isOverview && reset ? 60 : this.PAGE_SIZE;
       const offset = this.currentPage * this.PAGE_SIZE;
 
       const { data, count } = await this.supabaseService.getVideos({
@@ -92,7 +175,7 @@ export class Catalog implements OnInit {
         searchQuery: this.searchQuery(),
         mediaFormat: this.selectedFormat(),
         difficulty: this.selectedDifficulty(),
-        limit: this.PAGE_SIZE,
+        limit: limit,
         offset: offset
       });
 
@@ -149,14 +232,4 @@ export class Catalog implements OnInit {
     this.router.navigate(['/play', slug]);
   }
 
-  playPreview(event: MouseEvent) {
-    const video = event.currentTarget as HTMLVideoElement;
-    video.play().catch(() => {});
-  }
-
-  stopPreview(event: MouseEvent) {
-    const video = event.currentTarget as HTMLVideoElement;
-    video.pause();
-    video.currentTime = 0;
-  }
 }

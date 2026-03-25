@@ -89,7 +89,8 @@
             align-items: center;
             gap: 1.5rem;
             width: auto;
-            flex-shrink: 1; /* Permitimos que se encoja si es necesario */
+            flex-shrink: 1;
+            /* Permitimos que se encoja si es necesario */
         }
 
         .filter-header {
@@ -121,7 +122,7 @@
             transform: rotate(45deg);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             margin-right: 0.5rem;
-            
+
             @media (min-width: 769px) {
                 display: none;
             }
@@ -152,7 +153,7 @@
             .chevron {
                 transform: rotate(-135deg);
             }
-            
+
             .filter-options {
                 @media (max-width: 768px) {
                     max-height: 500px;
@@ -208,18 +209,22 @@
         flex-direction: column;
         gap: 1.5rem;
         width: 100%;
-        align-items: center; /* Centrado por defecto en móvil */
-        flex-wrap: wrap;     /* Permitimos que los grupos bajen de línea */
+        align-items: center;
+        /* Centrado por defecto en móvil */
+        flex-wrap: wrap;
+        /* Permitimos que los grupos bajen de línea */
 
         @media (min-width: 769px) {
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            gap: 2rem;       /* Reducimos un poco el gap para que quepa mejor en tablets */
+            gap: 2rem;
+            /* Reducimos un poco el gap para que quepa mejor en tablets */
         }
 
         @media (min-width: 1200px) {
-            gap: 4rem;       /* En pantallas grandes mantenemos el espacio extra */
+            gap: 4rem;
+            /* En pantallas grandes mantenemos el espacio extra */
         }
     }
 }
@@ -232,18 +237,13 @@
     margin-bottom: 5rem;
     animation: fadeIn 0.8s ease-out both;
 
-    .section-title {
+    .section-header {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 1rem;
-        font-size: 1.6rem;
         margin-bottom: 2.5rem;
-        color: white;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        position: relative;
         padding-bottom: 0.8rem;
+        position: relative;
 
         &::after {
             content: '';
@@ -255,11 +255,132 @@
             background: linear-gradient(90deg, var(--secondary), transparent);
             border-radius: 2px;
         }
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1.6rem;
+        color: white;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 0;
+        /* Quitamos el margen inferior porque ahora está en el header */
+        padding-bottom: 0;
+        /* Quitamos el padding inferior */
 
         .format-icon {
             font-size: 2rem;
             filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.3));
         }
+    }
+
+    .view-all-btn {
+        opacity: 0.8;
+        transition: all 0.3s ease;
+        padding: 0.5rem 1rem;
+
+        &:hover {
+            opacity: 1;
+            transform: translateX(5px);
+        }
+
+        .arrow {
+            margin-left: 0.5rem;
+            display: inline-block;
+        }
+    }
+}
+
+/* Contenedor relativo para posicionar las flechas personalizadas */
+.carousel-wrapper {
+    position: relative;
+    /* Compensar el padding del contenedor principal para llegar hasta el borde de la pantalla */
+    margin-left: -2rem;
+    margin-right: -2rem;
+}
+
+/* Carrusel Swiper (Netflix-style) */
+.category-carousel {
+
+    --swiper-theme-color: var(--secondary);
+
+    swiper-slide {
+        width: 300px;
+        /* Ancho fijo para cada slide */
+        height: auto;
+    }
+}
+
+/* Paginación personalizada externa */
+.swiper-pagination-nuestro {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 1rem;
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0;
+    right: 0;
+    z-index: 5;
+
+    /* Estilos para los bullets generados por Swiper */
+    ::ng-deep .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.3);
+        opacity: 1;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &.swiper-pagination-bullet-active {
+            background: var(--secondary);
+            transform: scale(1.2);
+        }
+    }
+}
+
+/* Botones personalizados HTML (Fuera del Shadow DOM) */
+.custom-swiper-button {
+    position: absolute;
+    top: 0;
+    /* Evitamos tapar los bullets limitando su alto */
+    height: 100%;
+    width: 60px;
+    background: transparent;
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &.prev {
+        left: 0;
+        border-radius: 0 16px 16px 0;
+    }
+
+    &.next {
+        right: 0;
+        border-radius: 16px 0 0 16px;
+    }
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.75);
+    }
+
+    svg {
+        filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+    }
+
+    /* Ocultar botones en móvil */
+    @media (max-width: 768px) {
+        display: none;
     }
 }
 
@@ -326,19 +447,53 @@
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 color: white;
 
-                &.anime { background: rgba(156, 39, 176, 0.6); }
-                &.j-drama { background: rgba(255, 152, 0, 0.6); }
-                &.noticias { background: rgba(33, 150, 243, 0.6); }
-                &.vlog { background: rgba(76, 175, 80, 0.6); }
-                &.música { background: rgba(233, 30, 99, 0.6); }
+                &.anime {
+                    background: rgba(156, 39, 176, 0.6);
+                }
+
+                &.j-drama {
+                    background: rgba(255, 152, 0, 0.6);
+                }
+
+                &.noticias {
+                    background: rgba(33, 150, 243, 0.6);
+                }
+
+                &.vlog {
+                    background: rgba(76, 175, 80, 0.6);
+                }
+
+                &.música {
+                    background: rgba(233, 30, 99, 0.6);
+                }
             }
 
             .difficulty-badge {
-                &.n5 { background: rgba(76, 175, 80, 0.7); border: 1px solid rgba(255, 255, 255, 0.2); }
-                &.n4 { background: rgba(139, 195, 74, 0.7); border: 1px solid rgba(255, 255, 255, 0.2); }
-                &.n3 { background: rgba(255, 193, 7, 0.7); border: 1px solid rgba(255, 255, 255, 0.2); color: black; }
-                &.n2 { background: rgba(255, 152, 0, 0.7); border: 1px solid rgba(255, 255, 255, 0.2); }
-                &.n1 { background: rgba(244, 67, 54, 0.7); border: 1px solid rgba(255, 255, 255, 0.2); }
+                &.n5 {
+                    background: rgba(76, 175, 80, 0.7);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                }
+
+                &.n4 {
+                    background: rgba(139, 195, 74, 0.7);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                }
+
+                &.n3 {
+                    background: rgba(255, 193, 7, 0.7);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    color: black;
+                }
+
+                &.n2 {
+                    background: rgba(255, 152, 0, 0.7);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                }
+
+                &.n1 {
+                    background: rgba(244, 67, 54, 0.7);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                }
             }
         }
     }
@@ -381,7 +536,8 @@
     }
 }
 
-.empty-state, .error-state {
+.empty-state,
+.error-state {
     text-align: center;
     padding: 6rem 2rem;
     background: rgba(255, 255, 255, 0.02);

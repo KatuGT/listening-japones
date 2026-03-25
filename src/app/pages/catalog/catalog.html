@@ -164,13 +164,83 @@
   <div class="grouped-results">
     @for (group of groupedVideos(); track group.name) {
     <section class="format-section">
-      <h2 class="section-title">
-        <span class="format-icon"
-          >{{ group.name === 'Anime' ? '🎞️' : group.name === 'J-Drama' ? '📺' :
-          '🎙️' }}</span
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="format-icon"
+            >{{ group.name === 'Anime' ? '🎞️' : group.name === 'J-Drama' ? '📺'
+            : '🎙️' }}</span
+          >
+          {{ group.name }}
+        </h2>
+        @if (selectedFormat() === 'Todos') {
+        <app-button
+          variant="ghost"
+          size="sm"
+          (click)="setFormatFilter(group.name)"
+          class="view-all-btn"
         >
-        {{ group.name }}
-      </h2>
+          Ver todo <span class="arrow">→</span>
+        </app-button>
+        }
+      </div>
+
+      @if (selectedFormat() === 'Todos') {
+      <div class="carousel-wrapper">
+        <swiper-container
+          #swiperContainer
+          [attr.init]="false"
+          slides-per-view="auto"
+          space-between="24"
+          class="category-carousel"
+        >
+          @for (video of group.items; track video.id) {
+          <swiper-slide>
+            <div class="video-card" (click)="goToVideo(video.slug)">
+              <div class="thumbnail">
+                <video
+                  class="card-video"
+                  [src]="video.video_url"
+                  [poster]="video.thumbnail_url || ''"
+                  muted
+                  loop
+                  preload="metadata"
+                  playsinline="false"
+                ></video>
+                <div class="badges-container">
+                  @if (video.media_format) {
+                  <span class="format-badge {{video.media_format | lowercase}}"
+                    >{{ video.media_format }}</span
+                  >
+                  }
+                  <span class="difficulty-badge n{{video.difficulty}}"
+                    >N{{ 6 - video.difficulty }}</span
+                  >
+                </div>
+              </div>
+              <div class="card-content">
+                <h3>{{ video.title }}</h3>
+                <span class="phrase-count">{{ video.phrase_count }} frases</span>
+                @if (video.description) {
+                <p>{{ video.description }}</p>
+                }
+              </div>
+            </div>
+          </swiper-slide>
+          }
+          
+          <!-- Paginación usando 'slot' de Web Components -->
+          <div class="swiper-pagination-nuestro" slot="pagination"></div>
+        </swiper-container>
+        
+        <!-- Flechas Personalizadas Netflix-style -->
+        <button class="custom-swiper-button prev" aria-label="Anterior" (click)="slidePrev($event)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <button class="custom-swiper-button next" aria-label="Siguiente" (click)="slideNext($event)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+      } @else {
       <div class="video-grid">
         @for (video of group.items; track video.id) {
         <div class="video-card" (click)="goToVideo(video.slug)">
@@ -205,6 +275,7 @@
         </div>
         }
       </div>
+      }
     </section>
     }
   </div>
