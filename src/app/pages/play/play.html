@@ -83,4 +83,37 @@
       }
     </div>
   </div>
+
+  @if (relatedVideos().length > 0) {
+  <div class="related-videos-section">
+    <h3 class="related-title">Sigue practicando 🎧</h3>
+    <div class="video-grid">
+      @for (video of relatedVideos(); track video.id) {
+      <div class="video-card" (click)="goToVideo(video.slug)">
+        <div class="thumbnail">
+          <video
+            class="card-image"
+            [src]="video.video_url"
+            [poster]="video.thumbnail_url || ''"
+            muted
+            preload="metadata"
+            playsinline="false"
+          ></video>
+          
+          <div class="badges-container">
+            <span class="format-badge {{video.media_format?.toLowerCase()}}">{{ video.media_format }}</span>
+            @if (video.difficulty) {
+              <span class="difficulty-badge n{{video.difficulty}}">N{{ 6 - video.difficulty }}</span>
+            }
+          </div>
+        </div>
+        <div class="card-content">
+          <h4>{{ video.title }}</h4>
+          <span class="phrase-count">{{ video.phrase_count }} frases</span>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  }
 </div>

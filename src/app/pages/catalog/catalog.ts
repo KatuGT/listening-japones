@@ -46,10 +46,21 @@ export class Catalog implements OnInit, AfterViewInit {
       groups[format].push(video);
     });
     
+    const categoryOrder = ['Anime', 'Vlog', 'J-Drama', 'Noticias', 'Música'];
+
     return Object.entries(groups).map(([name, items]) => {
       // Si estamos en vista general, solo mostramos los últimos 20 de cada categoría
       const displayItems = isOverview ? items.slice(0, 20) : items;
       return { name, items: displayItems };
+    }).sort((a, b) => {
+      let indexA = categoryOrder.indexOf(a.name);
+      let indexB = categoryOrder.indexOf(b.name);
+      
+      // Si una categoría no está en el orden forzado (ej. "Otros"), se va al final
+      if (indexA === -1) indexA = 999;
+      if (indexB === -1) indexB = 999;
+      
+      return indexA - indexB;
     });
   });
 
