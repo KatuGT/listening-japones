@@ -120,6 +120,33 @@
           </div>
         }
 
+        @if (!thumbnailFile() && (!editingVideo || isRemovingThumbnail())) {
+          <div
+            class="form-group file-group drop-zone"
+            [class.drag-over]="isDraggingThumbnail()"
+            (dragover)="onThumbnailDragOver($event)"
+            (dragleave)="onThumbnailDragLeave($event)"
+            (drop)="onThumbnailDrop($event)"
+          >
+            <label>Miniatura del Video (Opcional, .jpg, .webp)</label>
+            <input
+              type="file"
+              accept="image/*"
+              (change)="onThumbnailFileChange($event)"
+            />
+            <p class="drag-hint">Mejora el rendimiento: Arrastra una imagen aquí</p>
+          </div>
+        } @else {
+          <div class="form-group file-loaded">
+            <label>Miniatura (Opcional)</label>
+            <div class="file-badge">
+              <span class="icon">🖼️</span>
+              <span class="text">{{ thumbnailFile() ? thumbnailFile()?.name : (editingVideo?.thumbnail_url ? 'Imagen actual conservada' : 'Sin miniatura (Se extraerá del video)') }}</span>
+              <button class="btn-mini-reset" (click)="thumbnailFile.set(null); isRemovingThumbnail.set(true);" title="Cambiar miniatura">✕</button>
+            </div>
+          </div>
+        }
+
         @if (parsedSubtitles().length === 0) {
           <div
             class="form-group file-group drop-zone"

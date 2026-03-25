@@ -7,11 +7,31 @@
     <div class="status-banner">{{ statusMessage() }}</div>
   }
 
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Buscar por título o slug..." />
+    </div>
+    
+    <div class="filter-box">
+      <select [(ngModel)]="selectedFormat" class="format-select">
+        <option value="Todos">Todas las categorías</option>
+        <option value="Anime">Anime</option>
+        <option value="J-Drama">J-Drama</option>
+        <option value="Noticias">Noticias / Documental</option>
+        <option value="Vlog">Vlog / Entrevista</option>
+        <option value="Música">Música</option>
+      </select>
+    </div>
+  </div>
+
   <div class="video-manage-list">
-    @for (video of videoList(); track video.id) {
+    @for (video of filteredVideos(); track video.id) {
       <div class="video-manage-item" [class.pending-approval]="!video.is_approved">
         <div class="video-thumb">
-          @if (video.video_url) {
+          @if (video.thumbnail_url) {
+            <img [src]="video.thumbnail_url" [alt]="video.title" loading="lazy" />
+          } @else if (video.video_url) {
             <video [src]="video.video_url" muted preload="metadata"></video>
           } @else {
             <div class="thumb-placeholder">🎬</div>

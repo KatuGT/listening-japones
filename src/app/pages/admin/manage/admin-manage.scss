@@ -18,6 +18,68 @@
   margin-bottom: 1rem;
 }
 
+.filters-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+
+  .search-box {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    input {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 2.5rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      font-size: 0.95rem;
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+
+  .filter-box {
+    min-width: 200px;
+    
+    .format-select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      font-size: 0.95rem;
+      cursor: pointer;
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+      
+      option {
+        background: var(--bg-dark);
+        color: white;
+      }
+    }
+  }
+}
+
 .video-manage-list {
   display: flex;
   flex-direction: column;

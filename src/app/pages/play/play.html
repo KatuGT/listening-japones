@@ -91,14 +91,17 @@
       @for (video of relatedVideos(); track video.id) {
       <div class="video-card" (click)="goToVideo(video.slug)">
         <div class="thumbnail">
-          <video
-            class="card-image"
-            [src]="video.video_url"
-            [poster]="video.thumbnail_url || ''"
-            muted
-            preload="metadata"
-            playsinline="false"
-          ></video>
+          @if (video.thumbnail_url) {
+            <img class="card-image" [src]="video.thumbnail_url" [alt]="video.title" loading="lazy" />
+          } @else {
+            <video
+              class="card-image"
+              [src]="video.video_url"
+              muted
+              preload="metadata"
+              playsinline="false"
+            ></video>
+          }
           
           <div class="badges-container">
             <span class="format-badge {{video.media_format?.toLowerCase()}}">{{ video.media_format }}</span>

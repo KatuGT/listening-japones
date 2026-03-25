@@ -39,6 +39,7 @@ export class AdminUpload implements OnChanges {
   isActive = signal(false);
   videoFile = signal<File | null>(null);
   vttFile = signal<File | null>(null);
+  thumbnailFile = signal<File | null>(null);
   fullVideoUrl = signal('');
   hideSubs = signal(true);
   parsedSubtitles = signal<AdminSubtitleLine[]>([]);
@@ -50,6 +51,8 @@ export class AdminUpload implements OnChanges {
 
   isDraggingVideo = signal(false);
   isDraggingVtt = signal(false);
+  isDraggingThumbnail = signal(false);
+  isRemovingThumbnail = signal(false);
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['editingVideo'] && this.editingVideo) {
@@ -68,6 +71,9 @@ export class AdminUpload implements OnChanges {
     this.hideSubs.set(video.hide_subs ?? true);
     this.fullVideoUrl.set(video.full_video_url || '');
     this.videoFile.set(null);
+    this.vttFile.set(null);
+    this.thumbnailFile.set(null);
+    this.isRemovingThumbnail.set(false);
 
     try {
       const subsData = await this.supabase.getSubtitlesByVideoId(video.id);
@@ -88,6 +94,13 @@ export class AdminUpload implements OnChanges {
   onVttFileChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     this.handleVttFile(file);
+  }
+
+  onThumbnailFileChange(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      this.thumbnailFile.set(file);
+    }
   }
 
   handleVttFile(file?: File) {
@@ -119,6 +132,25 @@ export class AdminUpload implements OnChanges {
     if (file && file.type.startsWith('video/')) {
       this.videoFile.set(file);
       this.updateTitleFromFile(file);
+    }
+  }
+
+  onThumbnailDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isDraggingThumbnail.set(true);
+  }
+
+  onThumbnailDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isDraggingThumbnail.set(false);
+  }
+
+  onThumbnailDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isDraggingThumbnail.set(false);
+    const file = event.dataTransfer?.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      this.thumbnailFile.set(file);
     }
   }
 
@@ -232,13 +264,10 @@ export class AdminUpload implements OnChanges {
     let newEnd = 2;
 
     if (index !== undefined) {
-      // Si insertamos en medio, intentamos estimar el tiempo
       const prevSub = index > 0 ? currentSubs[index - 1] : null;
       const nextSub = currentSubs[index];
 
       if (prevSub && nextSub) {
-        // En medio de dos: empezamos donde termina la anterior, 
-        // y terminamos un poco después (ej. 1s después o a la mitad del hueco)
         newStart = prevSub.end;
         const gap = nextSub.start - prevSub.end;
         if (gap > 1) {
@@ -249,18 +278,15 @@ export class AdminUpload implements OnChanges {
           newEnd = prevSub.end + 0.5;
         }
       } else if (nextSub) {
-        // Al principio: empezamos 2 segundos antes del siguiente
         newStart = Math.max(0, nextSub.start - 2);
         newEnd = nextSub.start;
       } else if (prevSub) {
-        // Al final: empezamos donde termina el último
         newStart = prevSub.end;
         newEnd = prevSub.end + 2;
       }
       
       currentSubs.splice(index, 0, { start: newStart, end: newEnd, text: '', translation: '' });
     } else {
-      // Comportamiento original: añadir al final
       const lastEnd = currentSubs.length > 0 ? currentSubs[currentSubs.length - 1].end : 0;
       currentSubs.push({ start: lastEnd, end: lastEnd + 2, text: '', translation: '' });
     }
@@ -311,6 +337,8 @@ export class AdminUpload implements OnChanges {
     this.fullVideoUrl.set('');
     this.videoFile.set(null);
     this.vttFile.set(null);
+    this.thumbnailFile.set(null);
+    this.isRemovingThumbnail.set(false);
     this.parsedSubtitles.set([]);
     this.statusMessage.set('');
     this.isTitleTaken.set(false);
@@ -363,6 +391,8 @@ export class AdminUpload implements OnChanges {
 
     try {
       let videoUrl = '';
+      let thumbnailUrl = '';
+      
       if (this.videoFile()) {
         this.statusMessage.set('Subiendo video a Storage...');
         const file = this.videoFile()!;
@@ -371,6 +401,16 @@ export class AdminUpload implements OnChanges {
         const filePath = `videos/${fileName}`;
         await this.supabase.uploadVideoToStorage(filePath, file);
         videoUrl = this.supabase.getPublicMediaUrl(filePath);
+      }
+
+      if (this.thumbnailFile()) {
+        this.statusMessage.set('Subiendo miniatura a Storage...');
+        const file = this.thumbnailFile()!;
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+        const filePath = `thumbnails/${fileName}`;
+        await this.supabase.uploadVideoToStorage(filePath, file);
+        thumbnailUrl = this.supabase.getPublicMediaUrl(filePath);
       }
 
       const videoData: any = {
@@ -386,6 +426,7 @@ export class AdminUpload implements OnChanges {
         full_video_url: this.fullVideoUrl(),
       };
       if (videoUrl) videoData.video_url = videoUrl;
+      if (thumbnailUrl) videoData.thumbnail_url = thumbnailUrl;
 
       if (this.editingVideo && this.editingVideo.id) {
         await this.supabase.updateVideo(this.editingVideo.id, videoData);
