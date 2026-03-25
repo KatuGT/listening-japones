@@ -252,7 +252,7 @@
 
     <div class="publish-actions">
       <p class="status-msg" [class.active]="statusMessage()">{{ statusMessage() }}</p>
-      <button class="btn-publish" (click)="publish()" [disabled]="isPublishing() || isTranslating() || isTitleTaken()">
+      <button class="btn-publish" (click)="publish()" [disabled]="isPublishing() || isTranslating() || isTitleTaken() || (editingVideo && !hasChanges())">
         {{ isPublishing() ? 'Guardando...' : (editingVideo ? 'Actualizar Cambios' : 'Guardar y Publicar Video') }}
       </button>
     </div>

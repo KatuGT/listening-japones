@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -48,11 +48,39 @@ export class AdminUpload implements OnChanges {
   isPublishing = signal(false);
   isTitleTaken = signal(false);
   statusMessage = signal('');
+  originalSubtitles = signal<string>('');
 
   isDraggingVideo = signal(false);
   isDraggingVtt = signal(false);
   isDraggingThumbnail = signal(false);
   isRemovingThumbnail = signal(false);
+
+  hasChanges = computed(() => {
+    if (!this.editingVideo) return true;
+
+    const isMetadataChanged = 
+      this.title() !== this.editingVideo.title ||
+      this.description() !== (this.editingVideo.description || '') ||
+      this.difficulty() !== this.editingVideo.difficulty ||
+      this.mediaFormat() !== this.editingVideo.media_format ||
+      this.isActive() !== this.editingVideo.is_active ||
+      this.hideSubs() !== (this.editingVideo.hide_subs ?? true) ||
+      this.fullVideoUrl() !== (this.editingVideo.full_video_url || '');
+
+    const hasNewFiles = !!this.videoFile() || !!this.vttFile() || !!this.thumbnailFile() || this.isRemovingThumbnail();
+
+    // Comparamos subtítulos sin los flags de UI como isTranslatingLine
+    const currentSubsJson = JSON.stringify(this.parsedSubtitles().map(s => ({
+      start: s.start,
+      end: s.end,
+      text: s.text,
+      translation: s.translation
+    })));
+    
+    const subsChanged = currentSubsJson !== this.originalSubtitles();
+
+    return isMetadataChanged || hasNewFiles || subsChanged;
+  });
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['editingVideo'] && this.editingVideo) {
@@ -77,7 +105,9 @@ export class AdminUpload implements OnChanges {
 
     try {
       const subsData = await this.supabase.getSubtitlesByVideoId(video.id);
-      this.parsedSubtitles.set(subsData?.subtitles_json || []);
+      const subs = subsData?.subtitles_json || [];
+      this.parsedSubtitles.set(subs);
+      this.originalSubtitles.set(JSON.stringify(subs));
     } catch (err) {
       console.error('Error cargando subtítulos', err);
     }
